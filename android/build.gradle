@@ -24,4 +24,15 @@ allprojects {
             url "$rootDir/../node_modules/react-native/android"
         }
     }
+
+}
+
+subprojects {
+    afterEvaluate {
+        android {
+            lintOptions {
+                abortOnError false
+            }
+        }
+    }
 }
