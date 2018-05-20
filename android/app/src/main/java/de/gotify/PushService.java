@@ -14,6 +14,8 @@ import android.support.v4.app.NotificationCompat;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -30,6 +32,8 @@ public class PushService extends Service {
     private final OkHttpClient client = new OkHttpClient.Builder().readTimeout(0, TimeUnit.MILLISECONDS).build();
     private static final String TOKEN = "@global:token";
     private static final String URL = "@global:url";
+    private static final List<String> UPDATE_ON_KEYS = Arrays.asList(TOKEN, URL);
+    
     private Handler handler = null;
     private WebSocket socket = null;
     private Gson gson = null;
@@ -37,6 +41,10 @@ public class PushService extends Service {
     private SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (!UPDATE_ON_KEYS.contains(key)) {
+                return;
+            }
+            
             if (socket != null) {
                 Log.i("Closing WebSocket (preference change)");
                 socket.close(1000, "client logout");
