@@ -37,6 +37,7 @@ public class PushService extends Service {
     private Handler handler = null;
     private WebSocket socket = null;
     private Gson gson = null;
+    private long lastError = 0;
 
     private SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         @Override
@@ -139,18 +140,30 @@ public class PushService extends Service {
                     return;
                 }
 
-                showNotification(-3, "WS Conn Failed", "The websocket connection failed, trying again in a minute: " + t.getMessage());
+                boolean recentErrored = recentErrored();
+                lastError = System.currentTimeMillis();
 
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        start();
-                    }
-                }, TimeUnit.MINUTES.toMillis(1));
+                if (recentErrored) {
+                    Log.i("Waiting one minute to reconnect to the WebSocket (because WebSocket failed recently)");
+                    showNotification(-3, "WebSocket connection failed", "The WebSocket connection failed, trying again in a minute: " + t.getMessage());
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            start();
+                        }
+                    }, TimeUnit.MINUTES.toMillis(1));
+                } else {
+                    Log.i("Trying to reconnect to WebSocket");
+                    start();
+                }
             }
         });
     }
 
+    private boolean recentErrored() {
+        return System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(1) < lastError;
+    }    
+    
     private void showNotification(int id, String title, String message) {
         Intent intent = new Intent(this, MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
