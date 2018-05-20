@@ -77,6 +77,7 @@ public class PushService extends Service {
                 .setContentTitle("Gotify")
                 .setOngoing(true)
                 .setPriority(Notification.PRIORITY_MIN)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                 .setContentText(message)
                 .setContentIntent(pendingIntent).build();
 
