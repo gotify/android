@@ -29,11 +29,11 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
 public class PushService extends Service {
-    private final OkHttpClient client = new OkHttpClient.Builder().readTimeout(0, TimeUnit.MILLISECONDS).build();
     private static final String TOKEN = "@global:token";
     private static final String URL = "@global:url";
     private static final List<String> UPDATE_ON_KEYS = Arrays.asList(TOKEN, URL);
     
+    private final OkHttpClient client = new OkHttpClient.Builder().readTimeout(0, TimeUnit.MILLISECONDS).pingInterval(1, TimeUnit.MINUTES).connectTimeout(10, TimeUnit.SECONDS).build();
     private Handler handler = null;
     private WebSocket socket = null;
     private Gson gson = null;
