@@ -28,7 +28,9 @@ import okhttp3.WebSocketListener;
 
 public class PushService extends Service {
     private final OkHttpClient client = new OkHttpClient.Builder().readTimeout(0, TimeUnit.MILLISECONDS).build();
-    public Handler handler = null;
+    private static final String TOKEN = "@global:token";
+    private static final String URL = "@global:url";
+    private Handler handler = null;
     private WebSocket socket = null;
     private Gson gson = null;
 
@@ -62,9 +64,7 @@ public class PushService extends Service {
         handler = new Handler();
         gson = new Gson();
         start();
-        // https://github.com/sriraman/react-native-shared-preferences/issues/12 for why wit_player_shared_preferences
-        final SharedPreferences preferences = this.getSharedPreferences("wit_player_shared_preferences", Context.MODE_PRIVATE);
-        preferences.registerOnSharedPreferenceChangeListener(listener);
+        appPreferences().registerOnSharedPreferenceChangeListener(listener);
     }
 
     private void foregroundNotification(String message) {
@@ -84,10 +84,8 @@ public class PushService extends Service {
     }
 
     private void start() {
-        final SharedPreferences preferences = this.getSharedPreferences("wit_player_shared_preferences", Context.MODE_PRIVATE);
-        String url = preferences.getString("@global:url", null);
-        String token = preferences.getString("@global:token", null);
-
+        String url = appPreferences().getString(URL, null);
+        String token = appPreferences().getString(TOKEN,  null);
 
         if (url == null || token == null) {
             foregroundNotification("login required");
@@ -127,8 +125,8 @@ public class PushService extends Service {
                 foregroundNotification("Error: " + t.getMessage());
                 Log.e("WebSocket failure", t);
                 if (response != null && response.code() >= 400 && response.code() <= 499) {
-                    preferences.edit().remove("@global:token").apply();
                     showNotification(-2, "WebSocket Bad-Request", "Could not connect: " + response.message());
+                    appPreferences().edit().remove(TOKEN).apply();
                     return;
                 }
 
@@ -163,6 +161,11 @@ public class PushService extends Service {
 
         NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(id, b.build());
+    }
+    
+    private SharedPreferences appPreferences() {
+        // https://github.com/sriraman/react-native-shared-preferences/issues/12 for why wit_player_shared_preferences
+        return this.getSharedPreferences("wit_player_shared_preferences", Context.MODE_PRIVATE);
     }
 
     @Override
