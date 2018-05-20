@@ -29,6 +29,7 @@ public class MainApplication extends Application implements ReactApplication {
           new MainReactPackage(),
             new RNSharedPreferencesReactPackage(),
             new RNDeviceInfo(),
+            new GotifyPackage(),
             new VectorIconsPackage()
       );
     }
