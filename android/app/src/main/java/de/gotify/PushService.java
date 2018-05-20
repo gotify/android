@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -37,6 +36,7 @@ public class PushService extends Service {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (socket != null) {
+                Log.i("Closing WebSocket (preference change)");
                 socket.close(1000, "client logout");
                 socket = null;
             }
@@ -57,6 +57,8 @@ public class PushService extends Service {
 
     @Override
     public void onCreate() {
+        Log.i("Creating WebSocket-Service");
+
         handler = new Handler();
         gson = new Gson();
         start();
@@ -94,42 +96,39 @@ public class PushService extends Service {
 
         HttpUrl httpUrl = HttpUrl.parse(url).newBuilder().addPathSegment("stream").addQueryParameter("token", token).build();
 
-        final Request request = new Request.Builder()
-                .url(httpUrl)
-                .get()
-                .build();
-        foregroundNotification("Initializing WebSocket");
+        final Request request = new Request.Builder().url(httpUrl).get().build();
 
+        foregroundNotification("Initializing WebSocket");
+        Log.i("Initializing WebSocket");
         socket = client.newWebSocket(request, new WebSocketListener() {
 
             @Override
             public void onOpen(WebSocket webSocket, Response response) {
+                Log.i("Initialized WebSocket");
                 foregroundNotification("Listening to " + request.url().host());
             }
 
             @Override
             public void onMessage(WebSocket webSocket, String text) {
-                Log.i("gotify-ws", "Received" + text);
-
                 Map<String, String> hashMap = gson.fromJson(text, new TypeToken<Map<String, String>>() {
                 }.getType());
-
                 showNotification(Integer.parseInt(hashMap.get("id")), hashMap.get("title"), hashMap.get("message"));
             }
 
             @Override
             public void onClosed(WebSocket webSocket, int code, String reason) {
-                foregroundNotification("Stopped");
-                showNotification(-4, "WS Conn Closed", "The websocket connection closed, this normmaly means the token was invalidated. A re-login is required");
+                Log.e("WebSocket closed " + reason);
+                foregroundNotification("WebSocket closed, re-login required");
+                showNotification(-4, "WebSocket closed", "The WebSocket connection closed, this normally means the token(login) was invalidated. A re-login is required");
             }
 
             @Override
             public void onFailure(WebSocket webSocket, Throwable t, @Nullable Response response) {
                 foregroundNotification("Error: " + t.getMessage());
-
+                Log.e("WebSocket failure", t);
                 if (response != null && response.code() >= 400 && response.code() <= 499) {
-                    showNotification(-2, "WS Bad Request", "Could not connect to WS: " + response.message());
                     preferences.edit().remove("@global:token").apply();
+                    showNotification(-2, "WebSocket Bad-Request", "Could not connect: " + response.message());
                     return;
                 }
 
@@ -151,7 +150,6 @@ public class PushService extends Service {
 
         NotificationCompat.Builder b = new NotificationCompat.Builder(this, "GOTIFY_CHANNEL");
 
-
         b.setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
@@ -163,10 +161,13 @@ public class PushService extends Service {
                 .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
                 .setContentIntent(contentIntent);
 
-
         NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-
         notificationManager.notify(id, b.build());
     }
 
+    @Override
+    public void onDestroy() {
+        Log.i("Destroying WebSocket-Service");
+        super.onDestroy();
+    }
 }
