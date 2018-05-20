@@ -1,11 +1,11 @@
 import AuthLoading from './src/AuthLoading'
-import Messages from './src/Messages'
 import Login from './src/Login'
 import { createSwitchNavigator } from 'react-navigation';
+import MainNavigation from "./src/MainNavigation";
 
 export default createSwitchNavigator({
-    Messages: {
-        screen: Messages,
+    MainNavigation: {
+        screen: MainNavigation,
     },
     Login: {
         screen: Login,
