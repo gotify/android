@@ -12,15 +12,20 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.annotation.Nullable;
 
+import de.gotify.model.Message;
+import de.gotify.model.PagedMessages;
+import de.gotify.model.Paging;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -32,12 +37,15 @@ public class PushService extends Service {
     private static final String TOKEN = "@global:token";
     private static final String URL = "@global:url";
     private static final List<String> UPDATE_ON_KEYS = Arrays.asList(TOKEN, URL);
-    
+    private static final int NO_MESSAGE = -1;
+
+    private final Object socketLock = new Object();
     private final OkHttpClient client = new OkHttpClient.Builder().readTimeout(0, TimeUnit.MILLISECONDS).pingInterval(1, TimeUnit.MINUTES).connectTimeout(10, TimeUnit.SECONDS).build();
+    private final AtomicLong lastError = new AtomicLong(0);
+    private final AtomicInteger lastReceivedMessage = new AtomicInteger(NO_MESSAGE);
     private Handler handler = null;
     private WebSocket socket = null;
     private Gson gson = null;
-    private long lastError = 0;
 
     private SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         @Override
@@ -45,13 +53,39 @@ public class PushService extends Service {
             if (!UPDATE_ON_KEYS.contains(key)) {
                 return;
             }
-            
-            if (socket != null) {
-                Log.i("Closing WebSocket (preference change)");
-                socket.close(1000, "client logout");
-                socket = null;
+            synchronized (socketLock) {
+                if (socket != null) {
+                    Log.i("Closing WebSocket (preference change)");
+                    socket.close(1000, "client logout");
+                    socket = null;
+                }
             }
-            start();
+            new Thread(pushService).start();
+        }
+    };
+
+    private final Runnable pushService = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                start(true);
+            } catch (Exception e) {
+                Log.e("Could not start service", e);
+            }
+        }
+    };
+
+    private final Runnable pushServiceAfterError = new Runnable() {
+        @Override
+        public void run() {
+            start(false);
+        }
+    };
+
+    private final Runnable pushServiceAfterErrorInNewThread = new Runnable() {
+        @Override
+        public void run() {
+            new Thread(pushServiceAfterError).start();
         }
     };
 
@@ -70,9 +104,9 @@ public class PushService extends Service {
     public void onCreate() {
         Log.i("Creating WebSocket-Service");
 
-        handler = new Handler();
         gson = new Gson();
-        start();
+        handler = new Handler();
+        new Thread(pushService).start();
         appPreferences().registerOnSharedPreferenceChangeListener(listener);
     }
 
@@ -93,14 +127,88 @@ public class PushService extends Service {
         startForeground(1337, notification);
     }
 
-    private void start() {
+    private void ensureAllMessagesArePublished(boolean firstStart, String url, String token) {
+        PagedMessages message = getMessages(url, token, 1, null);
+        List<Message> messages = message.getMessages();
+
+        if (firstStart) {
+            if (messages.isEmpty()) {
+                lastReceivedMessage.set(NO_MESSAGE);
+                Log.i("Last available message id: no stored messages on server");
+            } else {
+                lastReceivedMessage.set(messages.get(0).getId());
+                Log.i("Last available message id: " + lastReceivedMessage.get());
+            }
+        } else {
+            if (!messages.isEmpty() && message.getMessages().get(0).getId() > lastReceivedMessage.get()) {
+                Log.i("Missed messages while being disconnected from the WebSocket, publishing them now.");
+                if (lastReceivedMessage.get() == NO_MESSAGE) {
+                    notifyTill(url, token, 0);
+                } else {
+                    notifyTill(url, token, lastReceivedMessage.get());
+                }
+            } else {
+                Log.i("Missed no messages while being disconnected from the WebSocket.");
+            }
+        }
+    }
+
+    private void notifyTill(String url, String token, int till) {
+        Integer since = null;
+        while (true) {
+            PagedMessages messages = getMessages(url, token, 10, since);
+            for (Message message : messages.getMessages()) {
+                if (message.getId() > till) {
+                    notify(message);
+                } else {
+                    break;
+                }
+            }
+            since = messages.getPaging().getSince();
+            if (since <= 0) {
+                // no messages left
+                break;
+            }
+        }
+    }
+
+    private PagedMessages getMessages(String url, String token, int limit, @Nullable Integer since) {
+        HttpUrl.Builder builder = HttpUrl.parse(url).newBuilder()
+                .addPathSegment("message")
+                .addQueryParameter("token", token)
+                .addQueryParameter("limit", String.valueOf(limit));
+        if (since != null) {
+            builder.addQueryParameter("since", String.valueOf(since));
+        }
+        HttpUrl httpUrl = builder.build();
+        final Request request = new Request.Builder().url(httpUrl).get().build();
+        try {
+            Response execute = client.newCall(request).execute();
+            if (execute.isSuccessful()) {
+                return gson.fromJson(execute.body().string(), PagedMessages.class);
+            }
+        } catch (IOException e) {
+            Log.e("Could not request messages", e);
+        }
+        PagedMessages pagedMessages = new PagedMessages();
+        pagedMessages.setMessages(new ArrayList<Message>());
+        Paging paging = new Paging();
+        paging.setSince(0);
+        pagedMessages.setPaging(paging);
+        return pagedMessages;
+    }
+
+    private void start(boolean firstStart) {
         String url = appPreferences().getString(URL, null);
-        String token = appPreferences().getString(TOKEN,  null);
+        String token = appPreferences().getString(TOKEN, null);
 
         if (url == null || token == null) {
+            Log.i("url or token not configured; login required");
             foregroundNotification("login required");
             return;
         }
+
+        ensureAllMessagesArePublished(firstStart, url, token);
 
         HttpUrl httpUrl = HttpUrl.parse(url).newBuilder().addPathSegment("stream").addQueryParameter("token", token).build();
 
@@ -108,7 +216,8 @@ public class PushService extends Service {
 
         foregroundNotification("Initializing WebSocket");
         Log.i("Initializing WebSocket");
-        socket = client.newWebSocket(request, new WebSocketListener() {
+
+        final WebSocket newSocket = client.newWebSocket(request, new WebSocketListener() {
 
             @Override
             public void onOpen(WebSocket webSocket, Response response) {
@@ -118,9 +227,8 @@ public class PushService extends Service {
 
             @Override
             public void onMessage(WebSocket webSocket, String text) {
-                Map<String, String> hashMap = gson.fromJson(text, new TypeToken<Map<String, String>>() {
-                }.getType());
-                showNotification(Integer.parseInt(hashMap.get("id")), hashMap.get("title"), hashMap.get("message"));
+                Message message = gson.fromJson(text, Message.class);
+                PushService.this.notify(message);
             }
 
             @Override
@@ -141,29 +249,28 @@ public class PushService extends Service {
                 }
 
                 boolean recentErrored = recentErrored();
-                lastError = System.currentTimeMillis();
+                lastError.set(System.currentTimeMillis());
 
                 if (recentErrored) {
                     Log.i("Waiting one minute to reconnect to the WebSocket (because WebSocket failed recently)");
-                    showNotification(-3, "WebSocket connection failed", "The WebSocket connection failed, trying again in a minute: " + t.getMessage());
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            start();
-                        }
-                    }, TimeUnit.MINUTES.toMillis(1));
+                    foregroundNotification("WebSocket connected failed, trying to reconnect in one minute.");
+                    handler.postDelayed(pushServiceAfterErrorInNewThread, TimeUnit.MINUTES.toMillis(1));
                 } else {
                     Log.i("Trying to reconnect to WebSocket");
-                    start();
+                    start(false);
                 }
             }
         });
+
+        synchronized (socketLock) {
+            socket = newSocket;
+        }
     }
 
     private boolean recentErrored() {
-        return System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(1) < lastError;
-    }    
-    
+        return System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(1) < lastError.get();
+    }
+
     private void showNotification(int id, String title, String message) {
         Intent intent = new Intent(this, MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -184,10 +291,18 @@ public class PushService extends Service {
         NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(id, b.build());
     }
-    
+
     private SharedPreferences appPreferences() {
         // https://github.com/sriraman/react-native-shared-preferences/issues/12 for why wit_player_shared_preferences
         return this.getSharedPreferences("wit_player_shared_preferences", Context.MODE_PRIVATE);
+    }
+
+    private void notify(Message message) {
+        if (lastReceivedMessage.get() < message.getId()) {
+            lastReceivedMessage.set(message.getId());
+        }
+
+        showNotification(message.getId(), message.getTitle(), message.getMessage());
     }
 
     @Override
