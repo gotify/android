@@ -108,6 +108,8 @@ public class PushService extends Service {
         handler = new Handler();
         new Thread(pushService).start();
         appPreferences().registerOnSharedPreferenceChangeListener(listener);
+
+        UglyHackyOreoNotificationCompatibilitySupport.uglyInitializeNotificationChannel((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE));
     }
 
     private void foregroundNotification(String message) {
@@ -118,6 +120,7 @@ public class PushService extends Service {
         Notification notification = new NotificationCompat.Builder(this, "GOTIFY_CHANNEL")
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("Gotify")
+                .setChannelId(UglyHackyOreoNotificationCompatibilitySupport.CHANNEL_ID)
                 .setOngoing(true)
                 .setPriority(Notification.PRIORITY_MIN)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
@@ -286,6 +289,7 @@ public class PushService extends Service {
                 .setContentText(message)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                 .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
+                .setChannelId(UglyHackyOreoNotificationCompatibilitySupport.CHANNEL_ID)
                 .setContentIntent(contentIntent);
 
         NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
