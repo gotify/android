@@ -1,7 +1,6 @@
 import React from 'react';
 import {Button, Text, TextInput, ToastAndroid, View} from 'react-native';
 import SharedPreferences from 'react-native-shared-preferences';
-import Icon from 'react-native-vector-icons/Ionicons'
 import DeviceInfo from 'react-native-device-info';
 import * as axios from "axios";
 
@@ -115,8 +114,8 @@ export default class Login extends React.Component {
                             style={{alignSelf: 'stretch', flex: 1}}
                             keyboardType="url"
                             onChangeText={this.handleChange('url', {tryConnect: false, version: null})}/>
-                        <Icon.Button name="md-send" style={{alignSelf: 'flex-end'}} iconStyle={{marginRight: 0}}
-                                     onPress={this.checkUrl}/>
+                        <Button style={{alignSelf: 'flex-end'}} iconStyle={{marginRight: 0}}
+                                     onPress={this.checkUrl} title="Go"/>
                     </View>
                     {error && <Text style={{textAlign: 'center', color: 'red'}}>{error}</Text>}
                     {version && <Text style={{textAlign: 'center', color: 'green'}}>Gotify v{version.version}</Text>}
@@ -132,8 +131,8 @@ export default class Login extends React.Component {
                                            onChangeText={this.handleChange('pass', {loggedIn: null})}
                                            style={{alignSelf: 'stretch', flex: 1}}
                                 />
-                                <Icon.Button name="md-send" style={{alignSelf: 'flex-end'}} iconStyle={{marginRight: 0}}
-                                             onPress={this.checkUser}/>
+                                <Button style={{alignSelf: 'flex-end'}} iconStyle={{marginRight: 0}}
+                                             onPress={this.checkUser} title="Go"/>
                             </View>
                             {loggedIn === true && (
                                 <React.Fragment>

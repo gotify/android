@@ -24,7 +24,6 @@
     "react-native-device-info": "^0.21.5",
     "react-native-push-notification": "^3.0.2",
     "react-native-shared-preferences": "^1.0.0",
-    "react-native-vector-icons": "^4.6.0",
     "react-navigation": "^2.0.1"
   }
 }
