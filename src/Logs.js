@@ -1,21 +1,20 @@
 import React from "react";
-import {ScrollView, Text, ToastAndroid} from "react-native";
+import {Button, ScrollView, View, Text, ToastAndroid} from "react-native";
 import LogManager from "./native/LogManager";
-import Icon from 'react-native-vector-icons/Ionicons'
 
 export default class Logs extends React.Component {
     static navigationOptions = {
         headerTitle: <Text style={{fontSize: 25, marginLeft: 10}}>Logs</Text>,
         headerRight: (
-            <Icon.Button
-                name="md-trash"
-                onPress={() => {
-                    ToastAndroid.show('Clearing logs...', ToastAndroid.SHORT);
-                    LogManager.clear(() => ToastAndroid.show('Cleared logs.', ToastAndroid.SHORT));
-                }}
-                color="#000"
-                size={30}
-                backgroundColor="#fff"/>
+            <View style={{paddingRight: 10}}>
+                <Button
+                    style={{backgroundColor: "#fff", color: "#000"}}
+                    onPress={() => {
+                        ToastAndroid.show('Clearing logs...', ToastAndroid.SHORT);
+                        LogManager.clear(() => ToastAndroid.show('Cleared logs.', ToastAndroid.SHORT));
+                    }}
+                    title="Clear"/>
+            </View>
         ),
     };
 

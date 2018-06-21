@@ -1,7 +1,6 @@
 import React from 'react';
-import {Alert, Button, Image, ScrollView, Text} from "react-native";
+import {Alert, Button, Image, ScrollView, Text, View} from "react-native";
 import SharedPreferences from 'react-native-shared-preferences';
-import Icon from 'react-native-vector-icons/Ionicons'
 
 export default class Messages extends React.Component {
     static navigationOptions = ({navigation}) => {
@@ -13,30 +12,30 @@ export default class Messages extends React.Component {
                 </React.Fragment>
             ),
             headerRight: (
-                <Icon.Button
-                    name="md-exit"
-                    onPress={() => {
-                        Alert.alert(
-                            'Logout Confirmation',
-                            'Do you really want to log out?',
-                            [
-                                {
-                                    text: 'Cancel', onPress: () => {
-                                    }, style: 'cancel'
-                                },
-                                {
-                                    text: 'OK', onPress: () => {
-                                        SharedPreferences.removeItem("@global:token");
-                                        navigation.navigate('AuthLoading');
-                                    }
-                                },
-                            ],
-                            {cancelable: false}
-                        )
-                    }}
-                    color="#000"
-                    size={30}
-                    backgroundColor="#fff"/>
+                <View style={{paddingRight:10}}>
+                    <Button
+                        onPress={() => {
+                            Alert.alert(
+                                'Logout Confirmation',
+                                'Do you really want to log out?',
+                                [
+                                    {
+                                        text: 'Cancel', onPress: () => {
+                                        }, style: 'cancel'
+                                    },
+                                    {
+                                        text: 'OK', onPress: () => {
+                                            SharedPreferences.removeItem("@global:token");
+                                            navigation.navigate('AuthLoading');
+                                        }
+                                    },
+                                ],
+                                {cancelable: false}
+                            )
+                        }}
+                        style={{backgroundColor: "#fff", color: "#000"}}
+                        title="Logout"/>
+                </View>
             ),
         };
     };
