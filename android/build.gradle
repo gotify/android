@@ -27,11 +27,22 @@ allprojects {
 
 }
 
+ext {
+    compileSdkVersion = 27
+    buildToolsVersion = '27.0.3'
+}
+
 subprojects {
     afterEvaluate {
         android {
             lintOptions {
                 abortOnError false
+            }
+        }
+        if (project.plugins.hasPlugin('android') || project.plugins.hasPlugin('android-library')) {
+            android {
+                compileSdkVersion rootProject.ext.compileSdkVersion
+                buildToolsVersion rootProject.ext.buildToolsVersion
             }
         }
     }
