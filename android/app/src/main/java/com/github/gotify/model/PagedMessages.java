@@ -1,4 +1,4 @@
-package de.gotify.model;
+package com.github.gotify.model;
 
 import java.util.List;
 

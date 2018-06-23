@@ -1,4 +1,4 @@
-package de.gotify;
+package com.github.gotify;
 
 import android.app.Application;
 
