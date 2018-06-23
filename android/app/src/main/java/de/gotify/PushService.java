@@ -7,6 +7,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
@@ -109,7 +110,9 @@ public class PushService extends Service {
         new Thread(pushService).start();
         appPreferences().registerOnSharedPreferenceChangeListener(listener);
 
-        UglyHackyOreoNotificationCompatibilitySupport.uglyInitializeNotificationChannel((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            OreoNotificationSupport.createChannel((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE));
+        }
     }
 
     private void foregroundNotification(String message) {
@@ -120,7 +123,7 @@ public class PushService extends Service {
         Notification notification = new NotificationCompat.Builder(this, "GOTIFY_CHANNEL")
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("Gotify")
-                .setChannelId(UglyHackyOreoNotificationCompatibilitySupport.CHANNEL_ID)
+                .setChannelId(OreoNotificationSupport.CHANNEL_ID)
                 .setOngoing(true)
                 .setPriority(Notification.PRIORITY_MIN)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
@@ -289,7 +292,7 @@ public class PushService extends Service {
                 .setContentText(message)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                 .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
-                .setChannelId(UglyHackyOreoNotificationCompatibilitySupport.CHANNEL_ID)
+                .setChannelId(OreoNotificationSupport.CHANNEL_ID)
                 .setContentIntent(contentIntent);
 
         NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
