@@ -1,4 +1,4 @@
-package de.gotify;
+package com.github.gotify;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

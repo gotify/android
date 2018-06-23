@@ -1,4 +1,4 @@
-package de.gotify;
+package com.github.gotify;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -24,9 +24,10 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.annotation.Nullable;
 
-import de.gotify.model.Message;
-import de.gotify.model.PagedMessages;
-import de.gotify.model.Paging;
+import com.github.gotify.model.Message;
+import com.github.gotify.model.PagedMessages;
+import com.github.gotify.model.Paging;
+
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

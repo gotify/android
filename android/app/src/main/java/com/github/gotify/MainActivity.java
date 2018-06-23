@@ -1,4 +1,4 @@
-package de.gotify;
+package com.github.gotify;
 
 import android.content.Intent;
 

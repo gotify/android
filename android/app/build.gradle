@@ -106,7 +106,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        applicationId "de.gotify"
+        applicationId "com.github.gotify"
         minSdkVersion 16
         targetSdkVersion 27
         versionCode 1

@@ -1,4 +1,4 @@
-package de.gotify;
+package com.github.gotify;
 
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;
