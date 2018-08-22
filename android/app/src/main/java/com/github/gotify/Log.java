@@ -9,7 +9,7 @@ import java.util.Locale;
 
 public class Log {
     private static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH);
-    private static final List<String> LOG = Collections.synchronizedList(new ArrayList<String>());
+    private static List<String> LOG = Collections.synchronizedList(new ArrayList<String>());
     private static final String TAG = "gotify";
 
     public static void i(String message) {
@@ -39,6 +39,10 @@ public class Log {
             LOG.add(String.format("%s: %s - %s", type, FORMAT.format(new Date()), message));
         } else {
             LOG.add(String.format("%s: %s - %s%s%s", type, FORMAT.format(new Date()), message, "\n", android.util.Log.getStackTraceString(exception)));
+        }
+
+        if (LOG.size() >= 200) {
+            LOG = LOG.subList(100, LOG.size());
         }
     }
 }
