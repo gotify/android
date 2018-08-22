@@ -99,7 +99,7 @@ public class PushService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
-        return START_REDELIVER_INTENT;
+        return START_STICKY;
     }
 
     @Override
