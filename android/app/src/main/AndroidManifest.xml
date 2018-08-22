@@ -26,6 +26,15 @@
         <activity android:name="com.facebook.react.devsupport.DevSettingsActivity"/>
 
         <service android:name=".PushService"/>
+        <receiver
+            android:name=".RestartPushService"
+            android:enabled="true"
+            android:exported="true"
+            android:label="RestartServiceWhenStopped">
+            <intent-filter>
+                <action android:name="com.github.gotify.RestartPushService" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

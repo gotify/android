@@ -315,7 +315,16 @@ public class PushService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.i("Destroying WebSocket-Service");
         super.onDestroy();
+        Log.i("Destroying WebSocket-Service");
+
+        sendBroadcast(new Intent(RestartPushService.class.getName()));
+
+        synchronized (socketLock) {
+            if (socket != null) {
+                socket.close(1000, "service stopped");
+            }
+        }
+
     }
 }
