@@ -1,0 +1,71 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.2.1'
+        
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+plugins {
+    id 'org.hidetake.swagger.generator' version '2.14.0'
+}
+
+ext {
+    gotifyVersion = '1.1.7'
+    specLocation = "$buildDir/gotify.spec.json"
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+def download( String url, String filename ) {
+    new URL( url ).openConnection().with { conn ->
+        new File( filename ).withOutputStream { out ->
+            conn.inputStream.with { inp ->
+                out << inp
+                inp.close()
+            }
+        }
+    }
+}
+task downloadSpec {
+    inputs.property 'version', gotifyVersion
+    doFirst {
+        buildDir.mkdirs()
+        download("https://raw.githubusercontent.com/gotify/server/v${gotifyVersion}/docs/spec.json", specLocation)
+    }
+}
+
+swaggerSources {
+    gotify {
+        inputFile = specLocation as File
+        code {
+            configFile = "$projectDir/swagger.config.json" as File
+            language = 'java'
+            outputDir = "$projectDir/client" as File
+        }
+    }
+}
+
+dependencies {
+    swaggerCodegen 'io.swagger:swagger-codegen-cli:2.3.1'
+}
+
+generateSwaggerCode.dependsOn downloadSpec
