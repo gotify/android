@@ -1,7 +1,6 @@
 package com.github.gotify.api;
 
 import android.app.Activity;
-
 import com.github.gotify.client.ApiException;
 
 public class Callback<T> {

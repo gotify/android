@@ -8,7 +8,6 @@ import com.github.gotify.client.api.MessageApi;
 import com.github.gotify.client.model.Message;
 import com.github.gotify.client.model.PagedMessages;
 import com.github.gotify.log.Log;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

@@ -8,7 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
-
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
 import com.github.gotify.MissedMessageUtil;
 import com.github.gotify.NotificationSupport;
 import com.github.gotify.R;
@@ -19,13 +21,8 @@ import com.github.gotify.client.model.Message;
 import com.github.gotify.log.Log;
 import com.github.gotify.log.UncaughtExceptionHandler;
 import com.github.gotify.messages.MessagesActivity;
-
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.core.app.NotificationCompat;
 
 public class WebSocketService extends Service {
 

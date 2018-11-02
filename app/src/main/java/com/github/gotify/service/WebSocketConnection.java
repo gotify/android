@@ -1,15 +1,12 @@
 package com.github.gotify.service;
 
 import android.os.Handler;
-
 import com.github.gotify.Utils;
 import com.github.gotify.api.Callback;
 import com.github.gotify.client.JSON;
 import com.github.gotify.client.model.Message;
 import com.github.gotify.log.Log;
-
 import java.util.concurrent.TimeUnit;
-
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

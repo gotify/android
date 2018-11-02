@@ -6,11 +6,9 @@ import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-
-import com.github.gotify.R;
-
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import com.github.gotify.R;
 
 public class LogsActivity extends AppCompatActivity {
 

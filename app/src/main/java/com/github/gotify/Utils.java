@@ -7,14 +7,12 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.format.DateUtils;
 import android.view.View;
-
 import com.github.gotify.client.ApiClient;
 import com.github.gotify.client.JSON;
 import com.github.gotify.log.Log;
 import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
-
 import org.threeten.bp.OffsetDateTime;
 
 public class Utils {

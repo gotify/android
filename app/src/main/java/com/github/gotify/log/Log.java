@@ -2,9 +2,7 @@ package com.github.gotify.log;
 
 import android.content.Context;
 import android.text.TextUtils;
-
 import com.hypertrack.hyperlog.HyperLog;
-
 import java.util.Collections;
 import java.util.List;
 

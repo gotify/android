@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import com.github.gotify.NotificationSupport;
 import com.github.gotify.R;
 import com.github.gotify.Settings;
@@ -21,10 +23,6 @@ import com.github.gotify.log.UncaughtExceptionHandler;
 import com.github.gotify.login.LoginActivity;
 import com.github.gotify.messages.MessagesActivity;
 import com.github.gotify.service.WebSocketService;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
 public class InitializationActivity extends AppCompatActivity {
     private Settings settings;

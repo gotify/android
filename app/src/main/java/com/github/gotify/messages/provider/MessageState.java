@@ -1,7 +1,6 @@
 package com.github.gotify.messages.provider;
 
 import com.github.gotify.client.model.Message;
-
 import java.util.ArrayList;
 import java.util.List;
 

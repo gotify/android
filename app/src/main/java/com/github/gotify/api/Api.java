@@ -1,11 +1,9 @@
 package com.github.gotify.api;
 
 import android.app.Activity;
-
 import com.github.gotify.client.ApiCallback;
 import com.github.gotify.client.ApiException;
 import com.github.gotify.log.Log;
-
 import java.util.List;
 import java.util.Map;
 
