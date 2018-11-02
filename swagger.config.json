@@ -1,0 +1,4 @@
+{
+  "apiPackage": "com.github.gotify.client.api",
+  "modelPackage": "com.github.gotify.client.model"
+}
