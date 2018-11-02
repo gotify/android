@@ -1,0 +1,6 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:title="@string/delete_logs"
+        android:id="@+id/action_delete_logs"
+        android:orderInCategory="100"/>
+</menu>
