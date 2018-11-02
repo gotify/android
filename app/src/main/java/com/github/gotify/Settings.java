@@ -2,7 +2,6 @@ package com.github.gotify;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-
 import com.github.gotify.client.model.User;
 
 public class Settings {

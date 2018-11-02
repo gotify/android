@@ -1,14 +1,12 @@
 package com.github.gotify.messages.provider;
 
 import android.app.Activity;
-
 import com.github.gotify.Utils;
 import com.github.gotify.api.Api;
 import com.github.gotify.client.ApiClient;
 import com.github.gotify.client.ApiException;
 import com.github.gotify.client.api.TokenApi;
 import com.github.gotify.client.model.Application;
-
 import java.util.Collections;
 import java.util.List;
 

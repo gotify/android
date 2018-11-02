@@ -1,9 +1,7 @@
 package com.github.gotify.log;
 
 import android.content.Context;
-
 import com.hypertrack.hyperlog.LogFormat;
-
 import java.util.Locale;
 
 public class Format extends LogFormat {

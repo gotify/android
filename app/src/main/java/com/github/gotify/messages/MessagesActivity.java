@@ -14,7 +14,15 @@ import android.widget.AbsListView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
-
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.github.gotify.MissedMessageUtil;
 import com.github.gotify.R;
 import com.github.gotify.Settings;
@@ -40,20 +48,9 @@ import com.google.android.material.navigation.NavigationView;
 import com.squareup.okhttp.HttpUrl;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 import static java.util.Collections.emptyList;
 

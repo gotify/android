@@ -3,10 +3,8 @@ package com.github.gotify;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
-
-import com.github.gotify.log.Log;
-
 import androidx.annotation.RequiresApi;
+import com.github.gotify.log.Log;
 
 public class NotificationSupport {
     public static final class Group {

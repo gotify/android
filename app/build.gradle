@@ -51,5 +51,7 @@ spotless {
     java {
         target '**/*.java'
         googleJavaFormat().aosp()
+        removeUnusedImports()
+        importOrder('', 'static *')
     }
 }

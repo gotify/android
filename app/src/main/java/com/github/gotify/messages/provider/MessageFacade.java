@@ -3,7 +3,6 @@ package com.github.gotify.messages.provider;
 import com.github.gotify.client.api.MessageApi;
 import com.github.gotify.client.model.Message;
 import com.github.gotify.client.model.PagedMessages;
-
 import java.util.List;
 
 public class MessageFacade {
