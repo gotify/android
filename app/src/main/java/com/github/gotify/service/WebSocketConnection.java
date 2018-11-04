@@ -36,6 +36,7 @@ public class WebSocketConnection {
     private BadRequestRunnable onBadRequest;
     private OnFailureCallback onFailure;
     private Runnable onReconnected;
+    private boolean isClosed;
 
     WebSocketConnection(String baseUrl, String token) {
         this.baseUrl = baseUrl;
@@ -84,6 +85,7 @@ public class WebSocketConnection {
 
     public synchronized WebSocketConnection start() {
         close();
+        isClosed = false;
         Log.i("WebSocket: starting...");
 
         webSocket = client.newWebSocket(request(), new Listener());
@@ -92,6 +94,8 @@ public class WebSocketConnection {
 
     public synchronized void close() {
         if (webSocket != null) {
+            Log.i("WebSocket: closing existing connection.");
+            isClosed = true;
             webSocket.close(1000, "");
             webSocket = null;
         }
@@ -124,11 +128,13 @@ public class WebSocketConnection {
 
         @Override
         public void onClosed(WebSocket webSocket, int code, String reason) {
-            Log.w("WebSocket: closed");
-
             synchronized (this) {
-                onClose.run();
+                if (!isClosed) {
+                    Log.w("WebSocket: closed");
+                    onClose.run();
+                }
             }
+
             super.onClosed(webSocket, code, reason);
         }
 
