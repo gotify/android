@@ -58,6 +58,11 @@ public class WebSocketService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.init(this);
+
+        if (connection != null) {
+            connection.close();
+        }
+
         Log.i("Starting " + getClass().getSimpleName());
         super.onStartCommand(intent, flags, startId);
         new Thread(this::startPushService).run();
