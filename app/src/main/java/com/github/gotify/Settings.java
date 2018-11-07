@@ -34,6 +34,8 @@ public class Settings {
     public void clear() {
         url(null);
         token(null);
+        validateSSL(true);
+        cert(null);
     }
 
     public void user(String name, boolean admin) {
@@ -57,4 +59,13 @@ public class Settings {
     public void serverVersion(String version) {
         sharedPreferences.edit().putString("version", version).apply();
     }
+
+    // Default to always validating SSL.
+    public boolean validateSSL() { return sharedPreferences.getBoolean("validateSSL", true); }
+
+    public void validateSSL(boolean validateSSL) { sharedPreferences.edit().putBoolean("validateSSL", validateSSL).apply(); }
+
+    public String cert() { return sharedPreferences.getString("cert", null); }
+
+    public void cert(String cert) { sharedPreferences.edit().putString("cert", cert).apply(); }
 }

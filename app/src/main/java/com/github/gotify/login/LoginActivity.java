@@ -1,19 +1,17 @@
 package com.github.gotify.login;
 
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
+import android.widget.*;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.OnTextChanged;
+import butterknife.*;
 import com.github.gotify.R;
 import com.github.gotify.Settings;
 import com.github.gotify.Utils;
@@ -31,7 +29,14 @@ import com.github.gotify.log.Log;
 import com.github.gotify.log.UncaughtExceptionHandler;
 import com.squareup.okhttp.HttpUrl;
 
+import java.io.*;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+
 public class LoginActivity extends AppCompatActivity {
+
+    // return value from startActivityForResult when choosing a certificate
+    private final int FILE_SELECT_CODE = 1;
 
     @BindView(R.id.username)
     EditText usernameField;
@@ -41,6 +46,21 @@ public class LoginActivity extends AppCompatActivity {
 
     @BindView(R.id.password)
     EditText passwordField;
+
+    @BindView(R.id.showAdvanced)
+    Button toggleAdvanced;
+
+    @BindView(R.id.disableValidateSSL)
+    CheckBox disableSSLValidationCheckBox;
+
+    @BindView(R.id.or)
+    TextView orTextView;
+
+    @BindView(R.id.selectCACertificate)
+    Button selectCACertificate;
+
+    @BindView(R.id.caFile)
+    TextView caFileName;
 
     @BindView(R.id.checkurl)
     Button checkUrlButton;
@@ -54,7 +74,12 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.login_progress)
     ProgressBar loginProgress;
 
+    private boolean showAdvanced = false;
+
     private Settings settings;
+
+    private boolean disableSSLValidation;
+    private String caCertContents;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,9 +93,9 @@ public class LoginActivity extends AppCompatActivity {
 
     @OnTextChanged(R.id.gotify_url)
     public void onUrlChange() {
-        usernameField.setVisibility(View.INVISIBLE);
-        passwordField.setVisibility(View.INVISIBLE);
-        loginButton.setVisibility(View.INVISIBLE);
+        usernameField.setVisibility(View.GONE);
+        passwordField.setVisibility(View.GONE);
+        loginButton.setVisibility(View.GONE);
     }
 
     @OnClick(R.id.checkurl)
@@ -82,18 +107,81 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         checkUrlProgress.setVisibility(View.VISIBLE);
-        checkUrlButton.setVisibility(View.INVISIBLE);
+        checkUrlButton.setVisibility(View.GONE);
 
         final String fixedUrl = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
 
-        Api.withLogging(ClientFactory.versionApi(fixedUrl)::getVersionAsync)
+        Api.withLogging(ClientFactory.versionApi(fixedUrl, !disableSSLValidation, caCertContents)::getVersionAsync)
                 .handleInUIThread(this, onValidUrl(fixedUrl), onInvalidUrl(fixedUrl));
+    }
+
+    @OnClick(R.id.showAdvanced)
+    void doShowAdvanced() {
+        showAdvanced = !showAdvanced;
+        disableSSLValidationCheckBox.setVisibility(showAdvanced ? View.VISIBLE : View.GONE);
+        selectCACertificate.setVisibility(showAdvanced ? View.VISIBLE : View.GONE);
+        orTextView.setVisibility(showAdvanced ? View.VISIBLE : View.GONE);
+        caFileName.setVisibility(showAdvanced ? View.VISIBLE : View.GONE);
+    }
+
+    @OnCheckedChanged(R.id.disableValidateSSL)
+    void doChangeDisableValidateSSL(boolean disable) {
+        // temporarily set the ssl validation (don't store to settings until they decide to login)
+        disableSSLValidation = disable;
+    }
+
+    @OnClick(R.id.selectCACertificate)
+    void doSelectCACertificate() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        // we don't really care what kind of file it is as long as we can parse it
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        try {
+            startActivityForResult(Intent.createChooser(intent, getString(R.string.select_ca_file)), FILE_SELECT_CODE);
+        } catch (ActivityNotFoundException e) {
+            // case for user not having a file browser installed
+            Utils.showSnackBar(LoginActivity.this, getString(R.string.please_install_file_browser));
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        try {
+            if (requestCode == FILE_SELECT_CODE) {
+                if (resultCode != RESULT_OK) {
+                    throw new IllegalArgumentException(String.format("result was %d", resultCode));
+                } else if (data == null) {
+                    throw new IllegalArgumentException("file path was null");
+                }
+
+                Uri uri = data.getData();
+                if (uri == null) {
+                    throw new IllegalArgumentException("file path was null");
+                }
+
+                InputStream fileStream = getContentResolver().openInputStream(uri);
+                if (fileStream == null) {
+                    throw new IllegalArgumentException("file path was invalid");
+                }
+
+                String contents = Utils.readFileFromStream(fileStream);
+                Certificate ca = Utils.parseCertificate(contents);
+
+                caFileName.setText(((X509Certificate) ca).getSubjectDN().getName());
+                // temporarily set the contents (don't store to settings until they decide to login)
+                caCertContents = contents;
+            }
+        } catch (Exception e) {
+            Utils.showSnackBar(LoginActivity.this, getString(R.string.select_ca_failed, e.getMessage()));
+        }
     }
 
     private Callback.SuccessCallback<VersionInfo> onValidUrl(String url) {
         return (version) -> {
             settings.url(url);
-            checkUrlProgress.setVisibility(View.INVISIBLE);
+            checkUrlProgress.setVisibility(View.GONE);
             checkUrlButton.setVisibility(View.VISIBLE);
             checkUrlButton.setText(getString(R.string.found_gotify_version, version.getVersion()));
             usernameField.setVisibility(View.VISIBLE);
@@ -105,7 +193,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private Callback.ErrorCallback onInvalidUrl(String url) {
         return (exception) -> {
-            checkUrlProgress.setVisibility(View.INVISIBLE);
+            checkUrlProgress.setVisibility(View.GONE);
             checkUrlButton.setVisibility(View.VISIBLE);
             Utils.showSnackBar(LoginActivity.this, versionError(url, exception));
         };
@@ -116,17 +204,17 @@ public class LoginActivity extends AppCompatActivity {
         String username = usernameField.getText().toString();
         String password = passwordField.getText().toString();
 
-        loginButton.setVisibility(View.INVISIBLE);
+        loginButton.setVisibility(View.GONE);
         loginProgress.setVisibility(View.VISIBLE);
 
-        ApiClient client = ClientFactory.basicAuth(settings.url(), username, password);
+        ApiClient client = ClientFactory.basicAuth(settings.url(), !disableSSLValidation, caCertContents, username, password);
         Api.withLogging(new UserApi(client)::currentUserAsync)
                 .handleInUIThread(this, (user) -> newClientDialog(client), this::onInvalidLogin);
     }
 
     private void onInvalidLogin(ApiException e) {
         loginButton.setVisibility(View.VISIBLE);
-        loginProgress.setVisibility(View.INVISIBLE);
+        loginProgress.setVisibility(View.GONE);
         Utils.showSnackBar(this, getString(R.string.wronguserpw));
     }
 
@@ -153,6 +241,10 @@ public class LoginActivity extends AppCompatActivity {
 
     private void onCreatedClient(Client client) {
         settings.token(client.getToken());
+        // Set the final ssl validation status and / or cert
+        settings.validateSSL(!disableSSLValidation);
+        settings.cert(caCertContents);
+
         Utils.showSnackBar(this, getString(R.string.created_client));
         startActivity(new Intent(this, InitializationActivity.class));
         finish();
@@ -160,12 +252,12 @@ public class LoginActivity extends AppCompatActivity {
 
     private void onFailedToCreateClient(ApiException e) {
         Utils.showSnackBar(this, getString(R.string.create_client_failed));
-        loginProgress.setVisibility(View.INVISIBLE);
+        loginProgress.setVisibility(View.GONE);
         loginButton.setVisibility(View.VISIBLE);
     }
 
     private void onCancelClientDialog(DialogInterface dialog, int which) {
-        loginProgress.setVisibility(View.INVISIBLE);
+        loginProgress.setVisibility(View.GONE);
         loginButton.setVisibility(View.VISIBLE);
     }
 

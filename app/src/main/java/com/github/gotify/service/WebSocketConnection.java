@@ -15,14 +15,8 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
 public class WebSocketConnection {
+    private OkHttpClient client;
     private static final JSON gson = Utils.json();
-
-    private final OkHttpClient client =
-            new OkHttpClient.Builder()
-                    .readTimeout(0, TimeUnit.MILLISECONDS)
-                    .pingInterval(1, TimeUnit.MINUTES)
-                    .connectTimeout(10, TimeUnit.SECONDS)
-                    .build();
 
     private final Handler handler = new Handler();
     private int errorCount = 0;
@@ -38,7 +32,15 @@ public class WebSocketConnection {
     private Runnable onReconnected;
     private boolean isClosed;
 
-    WebSocketConnection(String baseUrl, String token) {
+    WebSocketConnection(String baseUrl, boolean validateSSL, String cert, String token) {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .readTimeout(0, TimeUnit.MILLISECONDS)
+                .pingInterval(1, TimeUnit.MINUTES)
+                .connectTimeout(10, TimeUnit.SECONDS);
+        Utils.applySslSettings(builder, new Utils.SSLSettings(validateSSL, cert));
+
+        client = builder.build();
+
         this.baseUrl = baseUrl;
         this.token = token;
     }
