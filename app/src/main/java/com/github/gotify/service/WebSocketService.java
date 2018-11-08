@@ -215,6 +215,7 @@ public class WebSocketService extends Service {
                 .setSmallIcon(R.drawable.ic_gotify)
                 .setTicker(getString(R.string.app_name))
                 .setGroup(NotificationSupport.Group.MESSAGES)
+                .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_CHILDREN)
                 .setContentTitle(getString(R.string.grouped_notification_text))
                 .setGroupSummary(true)
                 .setContentText(getString(R.string.grouped_notification_text))
