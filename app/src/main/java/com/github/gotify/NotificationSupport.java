@@ -24,16 +24,20 @@ public class NotificationSupport {
     @RequiresApi(Build.VERSION_CODES.O)
     public static void createChannels(NotificationManager notificationManager) {
         try {
+            // Low importance so that persistent notification can be sorted towards bottom of
+            // notification shade. Also prevents vibrations caused by persistent notification
             NotificationChannel foreground =
                     new NotificationChannel(
                             Channel.FOREGROUND,
                             "Gotify foreground notification",
-                            NotificationManager.IMPORTANCE_DEFAULT);
+                            NotificationManager.IMPORTANCE_LOW);
+            // High importance for message notifications so that they are shown as heads-up
+            // notifications and sorted towards the top of the notification shade
             NotificationChannel messages =
                     new NotificationChannel(
                             Channel.MESSAGES,
                             "Gotify messages",
-                            NotificationManager.IMPORTANCE_DEFAULT);
+                            NotificationManager.IMPORTANCE_HIGH);
             notificationManager.createNotificationChannel(foreground);
             notificationManager.createNotificationChannel(messages);
         } catch (Exception e) {
