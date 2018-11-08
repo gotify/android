@@ -2,6 +2,7 @@ package com.github.gotify;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.graphics.Color;
 import android.os.Build;
 import androidx.annotation.RequiresApi;
 import com.github.gotify.log.Log;
@@ -38,6 +39,8 @@ public class NotificationSupport {
                             Channel.MESSAGES,
                             "Gotify messages",
                             NotificationManager.IMPORTANCE_HIGH);
+            messages.enableLights(true);
+            messages.setLightColor(Color.CYAN);
             notificationManager.createNotificationChannel(foreground);
             notificationManager.createNotificationChannel(messages);
         } catch (Exception e) {
