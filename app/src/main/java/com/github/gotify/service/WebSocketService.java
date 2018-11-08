@@ -12,6 +12,7 @@ import android.os.IBinder;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import com.github.gotify.MissedMessageUtil;
 import com.github.gotify.NotificationSupport;
 import com.github.gotify.R;
@@ -191,6 +192,7 @@ public class WebSocketService extends Service {
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                 .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
                 .setLights(Color.CYAN, 1000, 5000)
+                .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary))
                 .setContentIntent(contentIntent);
 
         NotificationManager notificationManager =
@@ -216,6 +218,7 @@ public class WebSocketService extends Service {
                 .setContentTitle(getString(R.string.grouped_notification_text))
                 .setGroupSummary(true)
                 .setContentText(getString(R.string.grouped_notification_text))
+                .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary))
                 .setContentIntent(contentIntent);
 
         NotificationManager notificationManager =
