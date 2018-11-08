@@ -2,6 +2,7 @@ package com.github.gotify;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import com.github.gotify.api.CertUtils;
 import com.github.gotify.client.model.User;
 
 public class Settings {
@@ -60,12 +61,23 @@ public class Settings {
         sharedPreferences.edit().putString("version", version).apply();
     }
 
-    // Default to always validating SSL.
-    public boolean validateSSL() { return sharedPreferences.getBoolean("validateSSL", true); }
+    private boolean validateSSL() {
+        return sharedPreferences.getBoolean("validateSSL", true);
+    }
 
-    public void validateSSL(boolean validateSSL) { sharedPreferences.edit().putBoolean("validateSSL", validateSSL).apply(); }
+    public void validateSSL(boolean validateSSL) {
+        sharedPreferences.edit().putBoolean("validateSSL", validateSSL).apply();
+    }
 
-    public String cert() { return sharedPreferences.getString("cert", null); }
+    private String cert() {
+        return sharedPreferences.getString("cert", null);
+    }
 
-    public void cert(String cert) { sharedPreferences.edit().putString("cert", cert).apply(); }
+    public void cert(String cert) {
+        sharedPreferences.edit().putString("cert", cert).apply();
+    }
+
+    public CertUtils.SSLSettings sslSettings() {
+        return new CertUtils.SSLSettings(validateSSL(), cert());
+    }
 }

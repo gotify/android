@@ -107,7 +107,8 @@ public class MessagesActivity extends AppCompatActivity
         Log.i("Entering " + getClass().getSimpleName());
         settings = new Settings(this);
 
-        client = ClientFactory.clientToken(settings.url(), settings.validateSSL(), settings.cert(), settings.token());
+        client =
+                ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
         appsHolder = new ApplicationHolder(this, client);
         appsHolder.onUpdate(() -> onUpdateApps(appsHolder.get()));
         appsHolder.request();
@@ -401,7 +402,9 @@ public class MessagesActivity extends AppCompatActivity
         @Override
         protected Void doInBackground(Void... ignore) {
             TokenApi api =
-                    new TokenApi(ClientFactory.clientToken(settings.url(), settings.validateSSL(), settings.cert(), settings.token()));
+                    new TokenApi(
+                            ClientFactory.clientToken(
+                                    settings.url(), settings.sslSettings(), settings.token()));
             stopService(new Intent(MessagesActivity.this, WebSocketService.class));
             try {
                 List<Client> clients = api.getClients();

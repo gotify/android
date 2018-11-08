@@ -11,12 +11,17 @@ import android.widget.*;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import butterknife.*;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
+import butterknife.OnClick;
+import butterknife.OnTextChanged;
 import com.github.gotify.R;
 import com.github.gotify.Settings;
 import com.github.gotify.Utils;
 import com.github.gotify.api.Api;
 import com.github.gotify.api.Callback;
+import com.github.gotify.api.CertUtils;
 import com.github.gotify.api.ClientFactory;
 import com.github.gotify.client.ApiClient;
 import com.github.gotify.client.ApiException;
@@ -28,7 +33,6 @@ import com.github.gotify.init.InitializationActivity;
 import com.github.gotify.log.Log;
 import com.github.gotify.log.UncaughtExceptionHandler;
 import com.squareup.okhttp.HttpUrl;
-
 import java.io.*;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -46,6 +50,9 @@ public class LoginActivity extends AppCompatActivity {
 
     @BindView(R.id.password)
     EditText passwordField;
+
+    @BindView(R.id.sslGroup)
+    LinearLayout sslGroup;
 
     @BindView(R.id.showAdvanced)
     Button toggleAdvanced;
@@ -108,15 +115,21 @@ public class LoginActivity extends AppCompatActivity {
 
         checkUrlProgress.setVisibility(View.VISIBLE);
         checkUrlButton.setVisibility(View.GONE);
+        sslGroup.setVisibility(View.GONE);
 
         final String fixedUrl = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
 
-        Api.withLogging(ClientFactory.versionApi(fixedUrl, !disableSSLValidation, caCertContents)::getVersionAsync)
+        Api.withLogging(
+                        ClientFactory.versionApi(
+                                        fixedUrl,
+                                        new CertUtils.SSLSettings(
+                                                !disableSSLValidation, caCertContents))
+                                ::getVersionAsync)
                 .handleInUIThread(this, onValidUrl(fixedUrl), onInvalidUrl(fixedUrl));
     }
 
     @OnClick(R.id.showAdvanced)
-    void doShowAdvanced() {
+    void toggleShowAdvanced() {
         showAdvanced = !showAdvanced;
         disableSSLValidationCheckBox.setVisibility(showAdvanced ? View.VISIBLE : View.GONE);
         selectCACertificate.setVisibility(showAdvanced ? View.VISIBLE : View.GONE);
@@ -138,7 +151,9 @@ public class LoginActivity extends AppCompatActivity {
         intent.addCategory(Intent.CATEGORY_OPENABLE);
 
         try {
-            startActivityForResult(Intent.createChooser(intent, getString(R.string.select_ca_file)), FILE_SELECT_CODE);
+            startActivityForResult(
+                    Intent.createChooser(intent, getString(R.string.select_ca_file)),
+                    FILE_SELECT_CODE);
         } catch (ActivityNotFoundException e) {
             // case for user not having a file browser installed
             Utils.showSnackBar(LoginActivity.this, getString(R.string.please_install_file_browser));
@@ -167,14 +182,15 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 String contents = Utils.readFileFromStream(fileStream);
-                Certificate ca = Utils.parseCertificate(contents);
+                Certificate ca = CertUtils.parseCertificate(contents);
 
                 caFileName.setText(((X509Certificate) ca).getSubjectDN().getName());
                 // temporarily set the contents (don't store to settings until they decide to login)
                 caCertContents = contents;
             }
         } catch (Exception e) {
-            Utils.showSnackBar(LoginActivity.this, getString(R.string.select_ca_failed, e.getMessage()));
+            Utils.showSnackBar(
+                    LoginActivity.this, getString(R.string.select_ca_failed, e.getMessage()));
         }
     }
 
@@ -188,6 +204,7 @@ public class LoginActivity extends AppCompatActivity {
             usernameField.requestFocus();
             passwordField.setVisibility(View.VISIBLE);
             loginButton.setVisibility(View.VISIBLE);
+            sslGroup.setVisibility(View.VISIBLE);
         };
     }
 
@@ -195,6 +212,7 @@ public class LoginActivity extends AppCompatActivity {
         return (exception) -> {
             checkUrlProgress.setVisibility(View.GONE);
             checkUrlButton.setVisibility(View.VISIBLE);
+            sslGroup.setVisibility(View.VISIBLE);
             Utils.showSnackBar(LoginActivity.this, versionError(url, exception));
         };
     }
@@ -206,8 +224,14 @@ public class LoginActivity extends AppCompatActivity {
 
         loginButton.setVisibility(View.GONE);
         loginProgress.setVisibility(View.VISIBLE);
+        sslGroup.setVisibility(View.GONE);
 
-        ApiClient client = ClientFactory.basicAuth(settings.url(), !disableSSLValidation, caCertContents, username, password);
+        ApiClient client =
+                ClientFactory.basicAuth(
+                        settings.url(),
+                        new CertUtils.SSLSettings(!disableSSLValidation, caCertContents),
+                        username,
+                        password);
         Api.withLogging(new UserApi(client)::currentUserAsync)
                 .handleInUIThread(this, (user) -> newClientDialog(client), this::onInvalidLogin);
     }
@@ -215,6 +239,7 @@ public class LoginActivity extends AppCompatActivity {
     private void onInvalidLogin(ApiException e) {
         loginButton.setVisibility(View.VISIBLE);
         loginProgress.setVisibility(View.GONE);
+        sslGroup.setVisibility(View.VISIBLE);
         Utils.showSnackBar(this, getString(R.string.wronguserpw));
     }
 
@@ -241,7 +266,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private void onCreatedClient(Client client) {
         settings.token(client.getToken());
-        // Set the final ssl validation status and / or cert
         settings.validateSSL(!disableSSLValidation);
         settings.cert(caCertContents);
 
@@ -254,11 +278,13 @@ public class LoginActivity extends AppCompatActivity {
         Utils.showSnackBar(this, getString(R.string.create_client_failed));
         loginProgress.setVisibility(View.GONE);
         loginButton.setVisibility(View.VISIBLE);
+        sslGroup.setVisibility(View.VISIBLE);
     }
 
     private void onCancelClientDialog(DialogInterface dialog, int which) {
         loginProgress.setVisibility(View.GONE);
         loginButton.setVisibility(View.VISIBLE);
+        sslGroup.setVisibility(View.VISIBLE);
     }
 
     private String versionError(String url, ApiException exception) {
