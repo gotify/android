@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.IBinder;
 import androidx.annotation.Nullable;
@@ -189,6 +190,7 @@ public class WebSocketService extends Service {
                 .setContentText(message)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                 .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
+                .setLights(Color.CYAN, 1000, 5000)
                 .setContentIntent(contentIntent);
 
         NotificationManager notificationManager =
