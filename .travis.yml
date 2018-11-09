@@ -29,13 +29,13 @@ android:
 
 before_install:
 - yes | sdkmanager "platforms;android-28"
-- openssl aes-256-cbc -K $encrypted_f6e0f94759d3_key -iv $encrypted_f6e0f94759d3_iv
-  -in gotify-release-key.jks.enc -out gotify-release-key.jks -d
 
 script:
 - ./gradlew clean build --stacktrace
 
 before_deploy:
+- openssl aes-256-cbc -K $encrypted_f6e0f94759d3_key -iv $encrypted_f6e0f94759d3_iv
+  -in gotify-release-key.jks.enc -out gotify-release-key.jks -d
 - cp $TRAVIS_BUILD_DIR/gotify-release-key.jks $HOME
 - cd app/build/outputs/apk/release
 - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/gotify-release-key.jks
