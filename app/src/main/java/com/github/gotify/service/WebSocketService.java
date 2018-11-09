@@ -164,6 +164,9 @@ public class WebSocketService extends Service {
                         .setContentText(message)
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                         .setContentIntent(pendingIntent)
+                        .setColor(
+                                ContextCompat.getColor(
+                                        getApplicationContext(), R.color.colorPrimary))
                         .build();
 
         startForeground(NotificationSupport.ID.FOREGROUND, notification);
