@@ -17,6 +17,7 @@ import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import com.github.gotify.R;
+import com.github.gotify.SSLSettings;
 import com.github.gotify.Settings;
 import com.github.gotify.Utils;
 import com.github.gotify.api.Api;
@@ -122,7 +123,7 @@ public class LoginActivity extends AppCompatActivity {
         Api.withLogging(
                         ClientFactory.versionApi(
                                         fixedUrl,
-                                        new CertUtils.SSLSettings(
+                                        new SSLSettings(
                                                 !disableSSLValidation, caCertContents))
                                 ::getVersionAsync)
                 .handleInUIThread(this, onValidUrl(fixedUrl), onInvalidUrl(fixedUrl));
@@ -229,7 +230,7 @@ public class LoginActivity extends AppCompatActivity {
         ApiClient client =
                 ClientFactory.basicAuth(
                         settings.url(),
-                        new CertUtils.SSLSettings(!disableSSLValidation, caCertContents),
+                        new SSLSettings(!disableSSLValidation, caCertContents),
                         username,
                         password);
         Api.withLogging(new UserApi(client)::currentUserAsync)

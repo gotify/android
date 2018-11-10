@@ -27,6 +27,7 @@ import com.github.gotify.MissedMessageUtil;
 import com.github.gotify.R;
 import com.github.gotify.Settings;
 import com.github.gotify.Utils;
+import com.github.gotify.api.CertUtils;
 import com.github.gotify.api.ClientFactory;
 import com.github.gotify.client.ApiClient;
 import com.github.gotify.client.ApiException;
@@ -46,8 +47,11 @@ import com.github.gotify.messages.provider.MessageWithImage;
 import com.github.gotify.service.WebSocketService;
 import com.google.android.material.navigation.NavigationView;
 import com.squareup.okhttp.HttpUrl;
+import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+import okhttp3.OkHttpClient;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -106,6 +110,12 @@ public class MessagesActivity extends AppCompatActivity
         ButterKnife.bind(this);
         Log.i("Entering " + getClass().getSimpleName());
         settings = new Settings(this);
+
+        try {
+            Picasso.setSingletonInstance(makePicasso());
+        } catch (IllegalStateException e) {
+            // ignore, singleton has already been set
+        }
 
         client =
                 ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
@@ -166,6 +176,17 @@ public class MessagesActivity extends AppCompatActivity
                     .resize(100, 100)
                     .into(t);
         }
+    }
+
+    private Picasso makePicasso() {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        CertUtils.applySslSettings(builder, settings.sslSettings());
+
+        OkHttp3Downloader downloader = new OkHttp3Downloader(builder.build());
+
+        return new Picasso.Builder(this)
+                .downloader(downloader)
+                .build();
     }
 
     private void initDrawer() {

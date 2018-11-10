@@ -1,6 +1,7 @@
 package com.github.gotify.service;
 
 import android.os.Handler;
+import com.github.gotify.SSLSettings;
 import com.github.gotify.Utils;
 import com.github.gotify.api.Callback;
 import com.github.gotify.api.CertUtils;
@@ -33,11 +34,7 @@ public class WebSocketConnection {
     private Runnable onReconnected;
     private boolean isClosed;
 
-    WebSocketConnection(String baseUrl, CertUtils.SSLSettings settings, String token) {
-        //        client = new ApiClient()
-        //                .setVerifyingSsl(validateSSL)
-        //                .setSslCaCert(Utils.stringToInputStream(cert))
-        //                .getHttpClient();
+    WebSocketConnection(String baseUrl, SSLSettings settings, String token) {
         OkHttpClient.Builder builder =
                 new OkHttpClient.Builder()
                         .readTimeout(0, TimeUnit.MILLISECONDS)

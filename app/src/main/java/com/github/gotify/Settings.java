@@ -2,7 +2,6 @@ package com.github.gotify;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import com.github.gotify.api.CertUtils;
 import com.github.gotify.client.model.User;
 
 public class Settings {
@@ -77,7 +76,7 @@ public class Settings {
         sharedPreferences.edit().putString("cert", cert).apply();
     }
 
-    public CertUtils.SSLSettings sslSettings() {
-        return new CertUtils.SSLSettings(validateSSL(), cert());
+    public SSLSettings sslSettings() {
+        return new SSLSettings(validateSSL(), cert());
     }
 }

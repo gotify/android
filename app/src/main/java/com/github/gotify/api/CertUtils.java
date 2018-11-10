@@ -1,6 +1,7 @@
 package com.github.gotify.api;
 
 import android.annotation.SuppressLint;
+import com.github.gotify.SSLSettings;
 import com.github.gotify.Utils;
 import com.github.gotify.log.Log;
 import java.io.IOException;
@@ -19,16 +20,6 @@ import javax.net.ssl.X509TrustManager;
 import okhttp3.OkHttpClient;
 
 public class CertUtils {
-    public static class SSLSettings {
-        boolean validateSSL;
-        String cert;
-
-        public SSLSettings(boolean validateSSL, String cert) {
-            this.validateSSL = validateSSL;
-            this.cert = cert;
-        }
-    }
-
     private static final X509TrustManager trustAll =
             new X509TrustManager() {
                 @SuppressLint("TrustAllX509TrustManager")
