@@ -57,20 +57,20 @@ class AdvancedDialog {
 
         new AlertDialog.Builder(context)
                 .setView(dialogView)
-                .setTitle("Advanced Settings")
-                .setPositiveButton("Done", (ignored, ignored2) -> {})
+                .setTitle(R.string.advanced_settings)
+                .setPositiveButton(context.getString(R.string.done), (ignored, ignored2) -> {})
                 .show();
         return this;
     }
 
     private void showSelectCACertificate() {
-        holder.toggleCaCert.setText("Select CA Certificate");
+        holder.toggleCaCert.setText(R.string.select_ca_certificate);
         holder.toggleCaCert.setOnClickListener((a) -> onClickSelectCaCertificate.run());
-        holder.selectedCaCertificate.setText("No certificate selected");
+        holder.selectedCaCertificate.setText(R.string.no_certificate_selected);
     }
 
     void showRemoveCACertificate(String certificate) {
-        holder.toggleCaCert.setText("Remove CA Certificate");
+        holder.toggleCaCert.setText(R.string.remove_ca_certificate);
         holder.toggleCaCert.setOnClickListener(
                 (a) -> {
                     showSelectCACertificate();

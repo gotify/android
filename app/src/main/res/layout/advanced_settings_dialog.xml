@@ -8,17 +8,17 @@
         android:id="@+id/disableSSL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Disable SSL Validation" />
+        android:text="@string/disabled_validate_ssl" />
 
     <Button
         android:id="@+id/toggle_ca_cert"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Select CA Certificate" />
+        android:text="@string/select_ca_certificate" />
 
     <TextView
         android:id="@+id/seleceted_ca_cert"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="No Certificate selected" />
+        android:text="@string/no_certificate_selected" />
 </LinearLayout>

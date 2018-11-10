@@ -50,11 +50,10 @@ import com.squareup.okhttp.HttpUrl;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
-import okhttp3.OkHttpClient;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import okhttp3.OkHttpClient;
 
 import static java.util.Collections.emptyList;
 
@@ -184,9 +183,7 @@ public class MessagesActivity extends AppCompatActivity
 
         OkHttp3Downloader downloader = new OkHttp3Downloader(builder.build());
 
-        return new Picasso.Builder(this)
-                .downloader(downloader)
-                .build();
+        return new Picasso.Builder(this).downloader(downloader).build();
     }
 
     private void initDrawer() {

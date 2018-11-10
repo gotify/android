@@ -28,8 +28,7 @@ public class ClientFactory {
         return client;
     }
 
-    public static ApiClient clientToken(
-            String baseUrl, SSLSettings sslSettings, String token) {
+    public static ApiClient clientToken(String baseUrl, SSLSettings sslSettings, String token) {
         ApiClient client = unauthorized(baseUrl, sslSettings);
         ApiKeyAuth tokenAuth = (ApiKeyAuth) client.getAuthentication("clientTokenHeader");
         tokenAuth.setApiKey(token);
