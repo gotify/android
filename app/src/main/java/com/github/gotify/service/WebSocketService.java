@@ -6,11 +6,13 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.IBinder;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import com.github.gotify.MissedMessageUtil;
 import com.github.gotify.NotificationSupport;
 import com.github.gotify.R;
@@ -164,6 +166,9 @@ public class WebSocketService extends Service {
                         .setContentText(message)
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                         .setContentIntent(pendingIntent)
+                        .setColor(
+                                ContextCompat.getColor(
+                                        getApplicationContext(), R.color.colorPrimary))
                         .build();
 
         startForeground(NotificationSupport.ID.FOREGROUND, notification);
@@ -191,6 +196,8 @@ public class WebSocketService extends Service {
                 .setContentText(message)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                 .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
+                .setLights(Color.CYAN, 1000, 5000)
+                .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary))
                 .setContentIntent(contentIntent);
 
         NotificationManager notificationManager =
@@ -213,9 +220,11 @@ public class WebSocketService extends Service {
                 .setSmallIcon(R.drawable.ic_gotify)
                 .setTicker(getString(R.string.app_name))
                 .setGroup(NotificationSupport.Group.MESSAGES)
+                .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_CHILDREN)
                 .setContentTitle(getString(R.string.grouped_notification_text))
                 .setGroupSummary(true)
                 .setContentText(getString(R.string.grouped_notification_text))
+                .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary))
                 .setContentIntent(contentIntent);
 
         NotificationManager notificationManager =
