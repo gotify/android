@@ -7,7 +7,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,7 +40,7 @@ import com.github.gotify.init.InitializationActivity;
 import com.github.gotify.log.Log;
 import com.github.gotify.log.UncaughtExceptionHandler;
 import com.squareup.okhttp.HttpUrl;
-import java.io.*;
+import java.io.InputStream;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 
@@ -55,8 +61,8 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.sslGroup)
     LinearLayout sslGroup;
 
-    @BindView(R.id.showAdvanced)
-    Button toggleAdvanced;
+    @BindView(R.id.advanced_settings)
+    ImageView toggleAdvanced;
 
     @BindView(R.id.disableValidateSSL)
     CheckBox disableSSLValidationCheckBox;
@@ -88,6 +94,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean disableSSLValidation;
     private String caCertContents;
+    private AlertDialog advancedSettingsDialog;
+    private AdvancedDialog advancedDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +109,10 @@ public class LoginActivity extends AppCompatActivity {
 
     @OnTextChanged(R.id.gotify_url)
     public void onUrlChange() {
+        invalidateUrl();
+    }
+
+    private void invalidateUrl() {
         usernameField.setVisibility(View.GONE);
         passwordField.setVisibility(View.GONE);
         loginButton.setVisibility(View.GONE);
@@ -129,13 +141,29 @@ public class LoginActivity extends AppCompatActivity {
                 .handleInUIThread(this, onValidUrl(fixedUrl), onInvalidUrl(fixedUrl));
     }
 
-    @OnClick(R.id.showAdvanced)
+    @OnClick(R.id.advanced_settings)
     void toggleShowAdvanced() {
-        showAdvanced = !showAdvanced;
-        disableSSLValidationCheckBox.setVisibility(showAdvanced ? View.VISIBLE : View.GONE);
-        selectCACertificate.setVisibility(showAdvanced ? View.VISIBLE : View.GONE);
-        orTextView.setVisibility(showAdvanced ? View.VISIBLE : View.GONE);
-        caFileName.setVisibility(showAdvanced ? View.VISIBLE : View.GONE);
+        String selectedCertName =
+                caCertContents != null ? getNameOfCertContent(caCertContents) : null;
+
+        advancedDialog =
+                new AdvancedDialog(this)
+                        .onDisableSSLChanged(
+                                (ignored, disable) -> {
+                                    invalidateUrl();
+                                    disableSSLValidation = disable;
+                                })
+                        .onClickSelectCaCertificate(
+                                () -> {
+                                    invalidateUrl();
+                                    doSelectCACertificate();
+                                })
+                        .onClickRemoveCaCertificate(
+                                () -> {
+                                    invalidateUrl();
+                                    caCertContents = null;
+                                })
+                        .show(disableSSLValidation, selectedCertName);
     }
 
     @OnCheckedChanged(R.id.disableValidateSSL)
@@ -182,17 +210,22 @@ public class LoginActivity extends AppCompatActivity {
                     throw new IllegalArgumentException("file path was invalid");
                 }
 
-                String contents = Utils.readFileFromStream(fileStream);
-                Certificate ca = CertUtils.parseCertificate(contents);
+                String content = Utils.readFileFromStream(fileStream);
+                String name = getNameOfCertContent(content);
 
-                caFileName.setText(((X509Certificate) ca).getSubjectDN().getName());
                 // temporarily set the contents (don't store to settings until they decide to login)
-                caCertContents = contents;
+                caCertContents = content;
+                advancedDialog.showRemoveCACertificate(name);
             }
         } catch (Exception e) {
             Utils.showSnackBar(
                     LoginActivity.this, getString(R.string.select_ca_failed, e.getMessage()));
         }
+    }
+
+    private String getNameOfCertContent(String content) {
+        Certificate ca = CertUtils.parseCertificate(content);
+        return ((X509Certificate) ca).getSubjectDN().getName();
     }
 
     private Callback.SuccessCallback<VersionInfo> onValidUrl(String url) {

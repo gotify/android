@@ -202,17 +202,26 @@
             android:id="@+id/checkurl"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            app:layout_constraintWidth_max="280dp"
             android:background="@color/colorPrimaryDark"
             android:text="@string/check_url"
             android:textColor="@android:color/white"
             android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/gotify_url" />
+            app:layout_constraintEnd_toStartOf="@+id/advanced_settings"
+            app:layout_constraintStart_toStartOf="@+id/gotify_url"
+            app:layout_constraintTop_toBottomOf="@+id/gotify_url"
+            app:layout_constraintWidth_max="280dp" />
 
+        <ImageButton
+            android:id="@+id/advanced_settings"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:text="@string/check_url"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="@+id/gotify_url"
+            app:layout_constraintTop_toTopOf="@+id/checkurl"
+            app:srcCompat="@drawable/ic_settings" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
