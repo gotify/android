@@ -98,6 +98,8 @@ public class MessagesActivity extends AppCompatActivity
     private boolean isLoadMore = false;
     private Integer selectAppIdOnDrawerClose = null;
 
+    private Picasso picasso;
+
     // we need to keep the target references otherwise they get gc'ed before they can be called.
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private final List<Target> targetReferences = new ArrayList<>();
@@ -110,11 +112,7 @@ public class MessagesActivity extends AppCompatActivity
         Log.i("Entering " + getClass().getSimpleName());
         settings = new Settings(this);
 
-        try {
-            Picasso.setSingletonInstance(makePicasso());
-        } catch (IllegalStateException e) {
-            // ignore, singleton has already been set
-        }
+        picasso = makePicasso();
 
         client =
                 ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
@@ -126,7 +124,7 @@ public class MessagesActivity extends AppCompatActivity
         messages = new MessageFacade(new MessageApi(client), appsHolder);
 
         messagesView.setOnScrollListener(this);
-        messagesView.setAdapter(new ListMessageAdapter(this, emptyList(), this::delete));
+        messagesView.setAdapter(new ListMessageAdapter(this, picasso, emptyList(), this::delete));
 
         swipeRefreshLayout.setOnRefreshListener(this::onRefresh);
         drawer.addDrawerListener(
@@ -168,8 +166,7 @@ public class MessagesActivity extends AppCompatActivity
             item.setCheckable(true);
             Target t = Utils.toDrawable(getResources(), item::setIcon);
             targetReferences.add(t);
-            Picasso.get()
-                    .load(app.getImage())
+            picasso.load(app.getImage())
                     .error(R.drawable.ic_alarm)
                     .placeholder(R.drawable.ic_placeholder)
                     .resize(100, 100)
@@ -281,6 +278,12 @@ public class MessagesActivity extends AppCompatActivity
     protected void onPause() {
         unregisterReceiver(receiver);
         super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        picasso.shutdown();
     }
 
     @Override

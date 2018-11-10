@@ -21,12 +21,15 @@ import java.util.List;
 public class ListMessageAdapter extends BaseAdapter {
 
     private Context content;
+    private Picasso picasso;
     private List<MessageWithImage> items;
     private Delete delete;
 
-    ListMessageAdapter(Context context, List<MessageWithImage> items, Delete delete) {
+    ListMessageAdapter(
+            Context context, Picasso picasso, List<MessageWithImage> items, Delete delete) {
         super();
         this.content = context;
+        this.picasso = picasso;
         this.items = items;
         this.delete = delete;
     }
@@ -62,8 +65,7 @@ public class ListMessageAdapter extends BaseAdapter {
         final MessageWithImage message = items.get(position);
         holder.message.setText(message.message.getMessage());
         holder.title.setText(message.message.getTitle());
-        Picasso.get()
-                .load(message.image)
+        picasso.load(message.image)
                 .error(R.drawable.ic_alarm)
                 .placeholder(R.drawable.ic_placeholder)
                 .into(holder.image);
