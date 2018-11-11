@@ -40,19 +40,19 @@ public class NotificationSupport {
             NotificationChannel messagesImportanceMin =
                     new NotificationChannel(
                             Channel.MESSAGES_IMPORTANCE_MIN,
-                            "Min importance Gotify messages",
+                            "Min priority messages (<1)",
                             NotificationManager.IMPORTANCE_MIN);
 
             NotificationChannel messagesImportanceLow =
                     new NotificationChannel(
                             Channel.MESSAGES_IMPORTANCE_LOW,
-                            "Low importance Gotify messages",
+                            "Low priority messages (1-3)",
                             NotificationManager.IMPORTANCE_LOW);
 
             NotificationChannel messagesImportanceDefault =
                     new NotificationChannel(
                             Channel.MESSAGES_IMPORTANCE_DEFAULT,
-                            "Default importance Gotify messages",
+                            "Normal priority messages (4-7)",
                             NotificationManager.IMPORTANCE_DEFAULT);
             messagesImportanceDefault.enableLights(true);
             messagesImportanceDefault.setLightColor(Color.CYAN);
@@ -60,7 +60,7 @@ public class NotificationSupport {
             NotificationChannel messagesImportanceHigh =
                     new NotificationChannel(
                             Channel.MESSAGES_IMPORTANCE_HIGH,
-                            "High importance Gotify messages",
+                            "High priority messages (>7)",
                             NotificationManager.IMPORTANCE_HIGH);
             messagesImportanceHigh.enableLights(true);
             messagesImportanceHigh.setLightColor(Color.CYAN);
