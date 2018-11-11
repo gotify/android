@@ -1,8 +1,10 @@
 package com.github.gotify.service;
 
 import android.os.Handler;
+import com.github.gotify.SSLSettings;
 import com.github.gotify.Utils;
 import com.github.gotify.api.Callback;
+import com.github.gotify.api.CertUtils;
 import com.github.gotify.client.JSON;
 import com.github.gotify.client.model.Message;
 import com.github.gotify.log.Log;
@@ -15,14 +17,8 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
 public class WebSocketConnection {
+    private OkHttpClient client;
     private static final JSON gson = Utils.json();
-
-    private final OkHttpClient client =
-            new OkHttpClient.Builder()
-                    .readTimeout(0, TimeUnit.MILLISECONDS)
-                    .pingInterval(1, TimeUnit.MINUTES)
-                    .connectTimeout(10, TimeUnit.SECONDS)
-                    .build();
 
     private final Handler handler = new Handler();
     private int errorCount = 0;
@@ -38,7 +34,16 @@ public class WebSocketConnection {
     private Runnable onReconnected;
     private boolean isClosed;
 
-    WebSocketConnection(String baseUrl, String token) {
+    WebSocketConnection(String baseUrl, SSLSettings settings, String token) {
+        OkHttpClient.Builder builder =
+                new OkHttpClient.Builder()
+                        .readTimeout(0, TimeUnit.MILLISECONDS)
+                        .pingInterval(1, TimeUnit.MINUTES)
+                        .connectTimeout(10, TimeUnit.SECONDS);
+        CertUtils.applySslSettings(builder, settings);
+
+        client = builder.build();
+
         this.baseUrl = baseUrl;
         this.token = token;
     }

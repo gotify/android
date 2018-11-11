@@ -27,6 +27,7 @@ import com.github.gotify.MissedMessageUtil;
 import com.github.gotify.R;
 import com.github.gotify.Settings;
 import com.github.gotify.Utils;
+import com.github.gotify.api.CertUtils;
 import com.github.gotify.api.ClientFactory;
 import com.github.gotify.client.ApiClient;
 import com.github.gotify.client.ApiException;
@@ -46,11 +47,13 @@ import com.github.gotify.messages.provider.MessageWithImage;
 import com.github.gotify.service.WebSocketService;
 import com.google.android.material.navigation.NavigationView;
 import com.squareup.okhttp.HttpUrl;
+import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import okhttp3.OkHttpClient;
 
 import static java.util.Collections.emptyList;
 
@@ -95,6 +98,8 @@ public class MessagesActivity extends AppCompatActivity
     private boolean isLoadMore = false;
     private Integer selectAppIdOnDrawerClose = null;
 
+    private Picasso picasso;
+
     // we need to keep the target references otherwise they get gc'ed before they can be called.
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private final List<Target> targetReferences = new ArrayList<>();
@@ -107,7 +112,10 @@ public class MessagesActivity extends AppCompatActivity
         Log.i("Entering " + getClass().getSimpleName());
         settings = new Settings(this);
 
-        client = ClientFactory.clientToken(settings.url(), settings.token());
+        picasso = makePicasso();
+
+        client =
+                ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
         appsHolder = new ApplicationHolder(this, client);
         appsHolder.onUpdate(() -> onUpdateApps(appsHolder.get()));
         appsHolder.request();
@@ -116,7 +124,7 @@ public class MessagesActivity extends AppCompatActivity
         messages = new MessageFacade(new MessageApi(client), appsHolder);
 
         messagesView.setOnScrollListener(this);
-        messagesView.setAdapter(new ListMessageAdapter(this, emptyList(), this::delete));
+        messagesView.setAdapter(new ListMessageAdapter(this, picasso, emptyList(), this::delete));
 
         swipeRefreshLayout.setOnRefreshListener(this::onRefresh);
         drawer.addDrawerListener(
@@ -158,13 +166,21 @@ public class MessagesActivity extends AppCompatActivity
             item.setCheckable(true);
             Target t = Utils.toDrawable(getResources(), item::setIcon);
             targetReferences.add(t);
-            Picasso.get()
-                    .load(app.getImage())
+            picasso.load(app.getImage())
                     .error(R.drawable.ic_alarm)
                     .placeholder(R.drawable.ic_placeholder)
                     .resize(100, 100)
                     .into(t);
         }
+    }
+
+    private Picasso makePicasso() {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        CertUtils.applySslSettings(builder, settings.sslSettings());
+
+        OkHttp3Downloader downloader = new OkHttp3Downloader(builder.build());
+
+        return new Picasso.Builder(this).downloader(downloader).build();
     }
 
     private void initDrawer() {
@@ -262,6 +278,12 @@ public class MessagesActivity extends AppCompatActivity
     protected void onPause() {
         unregisterReceiver(receiver);
         super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        picasso.shutdown();
     }
 
     @Override
@@ -401,7 +423,9 @@ public class MessagesActivity extends AppCompatActivity
         @Override
         protected Void doInBackground(Void... ignore) {
             TokenApi api =
-                    new TokenApi(ClientFactory.clientToken(settings.url(), settings.token()));
+                    new TokenApi(
+                            ClientFactory.clientToken(
+                                    settings.url(), settings.sslSettings(), settings.token()));
             stopService(new Intent(MessagesActivity.this, WebSocketService.class));
             try {
                 List<Client> clients = api.getClients();

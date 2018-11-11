@@ -44,7 +44,9 @@ public class WebSocketService extends Service {
         super.onCreate();
         settings = new Settings(this);
         missingMessageUtil =
-                new MissedMessageUtil(ClientFactory.clientToken(settings.url(), settings.token()));
+                new MissedMessageUtil(
+                        ClientFactory.clientToken(
+                                settings.url(), settings.sslSettings(), settings.token()));
         Log.i("Create " + getClass().getSimpleName());
     }
 
@@ -81,7 +83,7 @@ public class WebSocketService extends Service {
         }
 
         connection =
-                new WebSocketConnection(settings.url(), settings.token())
+                new WebSocketConnection(settings.url(), settings.sslSettings(), settings.token())
                         .onOpen(this::onOpen)
                         .onClose(() -> foreground(getString(R.string.websocket_closed)))
                         .onBadRequest(this::onBadRequest)

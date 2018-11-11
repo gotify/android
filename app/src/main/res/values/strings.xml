@@ -31,6 +31,12 @@
     <string name="gotify_url">Gotify URL</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
+    <string name="show_advanced">Show Advanced Options</string>
+    <string name="disabled_validate_ssl">Disable SSL Validation</string>
+    <string name="select_ca_certificate">Select CA Certificate</string>
+    <string name="select_ca_file">Select a Certificate File</string>
+    <string name="please_install_file_browser">Please install a file browser</string>
+    <string name="select_ca_failed">Failed to read CA: %s</string>
     <string name="login">Login</string>
     <string name="check_url">Check URL</string>
     <string name="gotify_logo">gotify logo</string>
@@ -44,4 +50,8 @@
     <string name="websocket_init">Initializing</string>
     <string name="connection">%s@%s</string>
     <string name="server_version">Gotify-Server v%s</string>
+    <string name="advanced_settings">Advanced Settings</string>
+    <string name="done">Done</string>
+    <string name="no_certificate_selected">No certificate selected</string>
+    <string name="remove_ca_certificate">Remove CA Certificate</string>
 </resources>

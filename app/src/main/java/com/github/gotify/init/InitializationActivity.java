@@ -116,7 +116,7 @@ public class InitializationActivity extends AppCompatActivity {
     private void requestVersion(
             final Callback.SuccessCallback<VersionInfo> callback,
             final Callback.ErrorCallback errorCallback) {
-        VersionApi versionApi = ClientFactory.versionApi(settings.url());
+        VersionApi versionApi = ClientFactory.versionApi(settings.url(), settings.sslSettings());
         Api.withLogging(versionApi::getVersionAsync)
                 .handleInUIThread(this, callback, errorCallback);
     }
