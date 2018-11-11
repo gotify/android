@@ -119,9 +119,11 @@ public class WebSocketService extends Service {
     }
 
     private void onGroupedMessages(List<Message> messages) {
+        long highestPriority = 0;
         for (Message message : messages) {
             if (lastReceivedMessage.get() < message.getId()) {
                 lastReceivedMessage.set(message.getId());
+                highestPriority = Math.max(highestPriority, message.getPriority());
             }
             broadcast(message);
         }
@@ -129,7 +131,8 @@ public class WebSocketService extends Service {
         showNotification(
                 NotificationSupport.ID.GROUPED,
                 getString(R.string.missed_messages),
-                getString(R.string.grouped_message, size));
+                getString(R.string.grouped_message, size),
+                highestPriority);
     }
 
     private void onMessage(Message message) {
@@ -137,7 +140,8 @@ public class WebSocketService extends Service {
             lastReceivedMessage.set(message.getId());
         }
         broadcast(message);
-        showNotification(message.getId(), message.getTitle(), message.getMessage());
+        showNotification(
+                message.getId(), message.getTitle(), message.getMessage(), message.getPriority());
     }
 
     private void broadcast(Message message) {
@@ -174,16 +178,17 @@ public class WebSocketService extends Service {
         startForeground(NotificationSupport.ID.FOREGROUND, notification);
     }
 
-    private void showNotification(int id, String title, String message) {
+    private void showNotification(int id, String title, String message, long priority) {
         Intent intent = new Intent(this, MessagesActivity.class);
         PendingIntent contentIntent =
                 PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder b =
-                new NotificationCompat.Builder(this, NotificationSupport.Channel.MESSAGES);
+                new NotificationCompat.Builder(
+                        this, NotificationSupport.convertPriorityToChannel(priority));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            showNotificationGroup();
+            showNotificationGroup(priority);
         }
 
         b.setAutoCancel(true)
@@ -206,13 +211,14 @@ public class WebSocketService extends Service {
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    public void showNotificationGroup() {
+    public void showNotificationGroup(long priority) {
         Intent intent = new Intent(this, MessagesActivity.class);
         PendingIntent contentIntent =
                 PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder b =
-                new NotificationCompat.Builder(this, NotificationSupport.Channel.MESSAGES);
+                new NotificationCompat.Builder(
+                        this, NotificationSupport.convertPriorityToChannel(priority));
 
         b.setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
