@@ -56,6 +56,7 @@ public class NotificationSupport {
                             NotificationManager.IMPORTANCE_DEFAULT);
             messagesImportanceDefault.enableLights(true);
             messagesImportanceDefault.setLightColor(Color.CYAN);
+            messagesImportanceDefault.enableVibration(true);
 
             NotificationChannel messagesImportanceHigh =
                     new NotificationChannel(
@@ -64,6 +65,7 @@ public class NotificationSupport {
                             NotificationManager.IMPORTANCE_HIGH);
             messagesImportanceHigh.enableLights(true);
             messagesImportanceHigh.setLightColor(Color.CYAN);
+            messagesImportanceHigh.enableVibration(true);
 
             notificationManager.createNotificationChannel(foreground);
             notificationManager.createNotificationChannel(messagesImportanceMin);
