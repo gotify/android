@@ -16,7 +16,8 @@ public class NotificationSupport {
         public static final String FOREGROUND = "gotify_foreground";
         public static final String MESSAGES_IMPORTANCE_MIN = "gotify_messages_min_importance";
         public static final String MESSAGES_IMPORTANCE_LOW = "gotify_messages_low_importance";
-        public static final String MESSAGES_IMPORTANCE_DEFAULT = "gotify_messages_default_importance";
+        public static final String MESSAGES_IMPORTANCE_DEFAULT =
+                "gotify_messages_default_importance";
         public static final String MESSAGES_IMPORTANCE_HIGH = "gotify_messages_high_importance";
     }
 
@@ -75,8 +76,8 @@ public class NotificationSupport {
     }
 
     /**
-     * Map {@link com.github.gotify.client.model.Message#getPriority() Gotify message priorities}
-     * to Android channels.
+     * Map {@link com.github.gotify.client.model.Message#getPriority() Gotify message priorities to
+     * Android channels.
      *
      * <pre>
      * Gotify Priority  | Android Importance

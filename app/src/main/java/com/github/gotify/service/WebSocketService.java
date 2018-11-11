@@ -138,7 +138,8 @@ public class WebSocketService extends Service {
             lastReceivedMessage.set(message.getId());
         }
         broadcast(message);
-        showNotification(message.getId(), message.getTitle(), message.getMessage(), message.getPriority());
+        showNotification(
+                message.getId(), message.getTitle(), message.getMessage(), message.getPriority());
     }
 
     private void broadcast(Message message) {
@@ -181,7 +182,8 @@ public class WebSocketService extends Service {
                 PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder b =
-                new NotificationCompat.Builder(this, NotificationSupport.convertPriorityToChannel(priority));
+                new NotificationCompat.Builder(
+                        this, NotificationSupport.convertPriorityToChannel(priority));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             showNotificationGroup(priority);
@@ -213,7 +215,8 @@ public class WebSocketService extends Service {
                 PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder b =
-                new NotificationCompat.Builder(this, NotificationSupport.convertPriorityToChannel(priority));
+                new NotificationCompat.Builder(
+                        this, NotificationSupport.convertPriorityToChannel(priority));
 
         b.setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
