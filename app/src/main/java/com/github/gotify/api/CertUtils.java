@@ -67,7 +67,6 @@ public class CertUtils {
                     context.init(new KeyManager[] {}, trustManagers, new SecureRandom());
                     builder.sslSocketFactory(
                             context.getSocketFactory(), (X509TrustManager) trustManagers[0]);
-                    builder.hostnameVerifier((a, b) -> true);
                 }
             }
         } catch (Exception e) {
