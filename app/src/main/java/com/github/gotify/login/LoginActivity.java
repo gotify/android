@@ -34,6 +34,7 @@ import com.github.gotify.client.model.Client;
 import com.github.gotify.client.model.VersionInfo;
 import com.github.gotify.init.InitializationActivity;
 import com.github.gotify.log.Log;
+import com.github.gotify.log.LogsActivity;
 import com.github.gotify.log.UncaughtExceptionHandler;
 import com.squareup.okhttp.HttpUrl;
 import java.io.InputStream;
@@ -116,6 +117,11 @@ public class LoginActivity extends AppCompatActivity {
                                         new SSLSettings(!disableSSLValidation, caCertContents))
                                 ::getVersionAsync)
                 .handleInUIThread(this, onValidUrl(fixedUrl), onInvalidUrl(fixedUrl));
+    }
+
+    @OnClick(R.id.open_logs)
+    public void openLogs() {
+        startActivity(new Intent(this, LogsActivity.class));
     }
 
     @OnClick(R.id.advanced_settings)
