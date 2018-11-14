@@ -5,7 +5,6 @@ import com.github.gotify.SSLSettings;
 import com.github.gotify.Utils;
 import com.github.gotify.api.Callback;
 import com.github.gotify.api.CertUtils;
-import com.github.gotify.client.JSON;
 import com.github.gotify.client.model.Message;
 import com.github.gotify.log.Log;
 import java.util.concurrent.TimeUnit;
@@ -18,7 +17,6 @@ import okhttp3.WebSocketListener;
 
 public class WebSocketConnection {
     private OkHttpClient client;
-    private static final JSON gson = Utils.json();
 
     private final Handler handler = new Handler();
     private int errorCount = 0;
@@ -125,7 +123,7 @@ public class WebSocketConnection {
         public void onMessage(WebSocket webSocket, String text) {
             Log.i("WebSocket: received message " + text);
             synchronized (this) {
-                Message message = gson.deserialize(text, Message.class);
+                Message message = Utils.JSON.fromJson(text, Message.class);
                 onMessage.onSuccess(message);
             }
             super.onMessage(webSocket, text);

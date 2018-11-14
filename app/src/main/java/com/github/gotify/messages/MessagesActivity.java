@@ -27,10 +27,11 @@ import com.github.gotify.MissedMessageUtil;
 import com.github.gotify.R;
 import com.github.gotify.Settings;
 import com.github.gotify.Utils;
+import com.github.gotify.api.Api;
+import com.github.gotify.api.ApiException;
 import com.github.gotify.api.CertUtils;
 import com.github.gotify.api.ClientFactory;
 import com.github.gotify.client.ApiClient;
-import com.github.gotify.client.ApiException;
 import com.github.gotify.client.api.MessageApi;
 import com.github.gotify.client.api.TokenApi;
 import com.github.gotify.client.model.Application;
@@ -46,13 +47,13 @@ import com.github.gotify.messages.provider.MessageState;
 import com.github.gotify.messages.provider.MessageWithImage;
 import com.github.gotify.service.WebSocketService;
 import com.google.android.material.navigation.NavigationView;
-import com.squareup.okhttp.HttpUrl;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 
 import static java.util.Collections.emptyList;
@@ -65,7 +66,7 @@ public class MessagesActivity extends AppCompatActivity
                 @Override
                 public void onReceive(Context context, Intent intent) {
                     String messageJson = intent.getStringExtra("message");
-                    Message message = Utils.json().deserialize(messageJson, Message.class);
+                    Message message = Utils.JSON.fromJson(messageJson, Message.class);
                     new NewSingleMessage().execute(message);
                 }
             };
@@ -121,7 +122,7 @@ public class MessagesActivity extends AppCompatActivity
         appsHolder.request();
         initDrawer();
 
-        messages = new MessageFacade(new MessageApi(client), appsHolder);
+        messages = new MessageFacade(client.createService(MessageApi.class), appsHolder);
 
         messagesView.setOnScrollListener(this);
         messagesView.setAdapter(new ListMessageAdapter(this, picasso, emptyList(), this::delete));
@@ -310,7 +311,9 @@ public class MessagesActivity extends AppCompatActivity
                 return false;
             }
 
-            List<Message> newMessages = new MissedMessageUtil(client).missingMessages(id);
+            List<Message> newMessages =
+                    new MissedMessageUtil(client.createService(MessageApi.class))
+                            .missingMessages(id);
             messages.addMessages(newMessages);
             return !newMessages.isEmpty();
         }
@@ -423,12 +426,12 @@ public class MessagesActivity extends AppCompatActivity
         @Override
         protected Void doInBackground(Void... ignore) {
             TokenApi api =
-                    new TokenApi(
-                            ClientFactory.clientToken(
-                                    settings.url(), settings.sslSettings(), settings.token()));
+                    ClientFactory.clientToken(
+                                    settings.url(), settings.sslSettings(), settings.token())
+                            .createService(TokenApi.class);
             stopService(new Intent(MessagesActivity.this, WebSocketService.class));
             try {
-                List<Client> clients = api.getClients();
+                List<Client> clients = Api.execute(api.getClients());
 
                 Client currentClient = null;
                 for (Client client : clients) {
