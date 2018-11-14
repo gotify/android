@@ -26,6 +26,7 @@ android {
     }
     lintOptions {
         disable 'GoogleAppIndexingWarning'
+        lintConfig file('../lint.xml')
     }
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
@@ -48,6 +49,12 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0-rc1'
     implementation 'com.hypertrack:hyperlog:0.0.10'
     implementation 'com.squareup.picasso:picasso:2.71828'
+}
+
+configurations {
+    all {
+        exclude group: 'org.json', module: 'json'
+    }
 }
 
 spotless {
