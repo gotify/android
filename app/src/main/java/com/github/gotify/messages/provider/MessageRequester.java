@@ -1,7 +1,8 @@
 package com.github.gotify.messages.provider;
 
 import com.github.gotify.api.Api;
-import com.github.gotify.client.ApiException;
+import com.github.gotify.api.ApiException;
+import com.github.gotify.api.Callback;
 import com.github.gotify.client.api.MessageApi;
 import com.github.gotify.client.model.Message;
 import com.github.gotify.client.model.PagedMessages;
@@ -19,9 +20,9 @@ class MessageRequester {
         try {
             Log.i("Loading more messages for " + state.appId);
             if (MessageState.ALL_MESSAGES == state.appId) {
-                return messageApi.getMessages(LIMIT, state.nextSince);
+                return Api.execute(messageApi.getMessages(LIMIT, state.nextSince));
             } else {
-                return messageApi.getAppMessages(state.appId, LIMIT, state.nextSince);
+                return Api.execute(messageApi.getAppMessages(state.appId, LIMIT, state.nextSince));
             }
         } catch (ApiException apiException) {
             Log.e("failed requesting messages", apiException);
@@ -31,17 +32,16 @@ class MessageRequester {
 
     void asyncRemoveMessage(Message message) {
         Log.i("Removing message with id " + message.getId());
-        Api.<Void>withLogging((cb) -> messageApi.deleteMessageAsync(message.getId(), cb))
-                .handle((a) -> {}, (e) -> {});
+        messageApi.deleteMessage(message.getId()).enqueue(Callback.call());
     }
 
     boolean deleteAll(Integer appId) {
         try {
             Log.i("Deleting all messages for " + appId);
             if (MessageState.ALL_MESSAGES == appId) {
-                messageApi.deleteMessages();
+                Api.execute(messageApi.deleteMessages());
             } else {
-                messageApi.deleteAppMessages(appId);
+                Api.execute(messageApi.deleteAppMessages(appId));
             }
             return true;
         } catch (ApiException e) {

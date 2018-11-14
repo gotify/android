@@ -11,11 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.github.gotify.NotificationSupport;
 import com.github.gotify.R;
 import com.github.gotify.Settings;
-import com.github.gotify.api.Api;
+import com.github.gotify.api.ApiException;
 import com.github.gotify.api.Callback;
 import com.github.gotify.api.ClientFactory;
-import com.github.gotify.client.ApiException;
-import com.github.gotify.client.api.VersionApi;
 import com.github.gotify.client.model.User;
 import com.github.gotify.client.model.VersionInfo;
 import com.github.gotify.log.Log;
@@ -23,6 +21,8 @@ import com.github.gotify.log.UncaughtExceptionHandler;
 import com.github.gotify.login.LoginActivity;
 import com.github.gotify.messages.MessagesActivity;
 import com.github.gotify.service.WebSocketService;
+
+import static com.github.gotify.api.Callback.callInUI;
 
 public class InitializationActivity extends AppCompatActivity {
     private Settings settings;
@@ -55,24 +55,25 @@ public class InitializationActivity extends AppCompatActivity {
     }
 
     private void tryAuthenticate() {
-        Api.withLogging(ClientFactory.userApiWithToken(settings)::currentUserAsync)
-                .handleInUIThread(this, this::authenticated, this::failed);
+        ClientFactory.userApiWithToken(settings)
+                .currentUser()
+                .enqueue(callInUI(this, this::authenticated, this::failed));
     }
 
     private void failed(ApiException exception) {
-        if (exception.getCode() == 0) {
+        if (exception.code() == 0) {
             dialog(getString(R.string.not_available, settings.url()));
             return;
         }
 
-        if (exception.getCode() == 401) {
+        if (exception.code() == 401) {
             dialog(getString(R.string.auth_failed));
             return;
         }
 
-        String response = exception.getResponseBody();
+        String response = exception.body();
         response = response.substring(0, Math.min(200, response.length()));
-        dialog(getString(R.string.other_error, settings.url(), exception.getCode(), response));
+        dialog(getString(R.string.other_error, settings.url(), exception.code(), response));
     }
 
     private void dialog(String message) {
@@ -116,8 +117,8 @@ public class InitializationActivity extends AppCompatActivity {
     private void requestVersion(
             final Callback.SuccessCallback<VersionInfo> callback,
             final Callback.ErrorCallback errorCallback) {
-        VersionApi versionApi = ClientFactory.versionApi(settings.url(), settings.sslSettings());
-        Api.withLogging(versionApi::getVersionAsync)
-                .handleInUIThread(this, callback, errorCallback);
+        ClientFactory.versionApi(settings.url(), settings.sslSettings())
+                .getVersion()
+                .enqueue(callInUI(this, callback, errorCallback));
     }
 }

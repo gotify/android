@@ -22,12 +22,11 @@ import com.github.gotify.R;
 import com.github.gotify.SSLSettings;
 import com.github.gotify.Settings;
 import com.github.gotify.Utils;
-import com.github.gotify.api.Api;
+import com.github.gotify.api.ApiException;
 import com.github.gotify.api.Callback;
 import com.github.gotify.api.CertUtils;
 import com.github.gotify.api.ClientFactory;
 import com.github.gotify.client.ApiClient;
-import com.github.gotify.client.ApiException;
 import com.github.gotify.client.api.TokenApi;
 import com.github.gotify.client.api.UserApi;
 import com.github.gotify.client.model.Client;
@@ -36,10 +35,12 @@ import com.github.gotify.init.InitializationActivity;
 import com.github.gotify.log.Log;
 import com.github.gotify.log.LogsActivity;
 import com.github.gotify.log.UncaughtExceptionHandler;
-import com.squareup.okhttp.HttpUrl;
 import java.io.InputStream;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import okhttp3.HttpUrl;
+
+import static com.github.gotify.api.Callback.callInUI;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -111,12 +112,9 @@ public class LoginActivity extends AppCompatActivity {
 
         final String fixedUrl = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
 
-        Api.withLogging(
-                        ClientFactory.versionApi(
-                                        fixedUrl,
-                                        new SSLSettings(!disableSSLValidation, caCertContents))
-                                ::getVersionAsync)
-                .handleInUIThread(this, onValidUrl(fixedUrl), onInvalidUrl(fixedUrl));
+        ClientFactory.versionApi(fixedUrl, tempSSLSettings())
+                .getVersion()
+                .enqueue(callInUI(this, onValidUrl(fixedUrl), onInvalidUrl(fixedUrl)));
     }
 
     @OnClick(R.id.open_logs)
@@ -161,7 +159,7 @@ public class LoginActivity extends AppCompatActivity {
                     FILE_SELECT_CODE);
         } catch (ActivityNotFoundException e) {
             // case for user not having a file browser installed
-            Utils.showSnackBar(LoginActivity.this, getString(R.string.please_install_file_browser));
+            Utils.showSnackBar(this, getString(R.string.please_install_file_browser));
         }
     }
 
@@ -194,8 +192,7 @@ public class LoginActivity extends AppCompatActivity {
                 advancedDialog.showRemoveCACertificate(name);
             }
         } catch (Exception e) {
-            Utils.showSnackBar(
-                    LoginActivity.this, getString(R.string.select_ca_failed, e.getMessage()));
+            Utils.showSnackBar(this, getString(R.string.select_ca_failed, e.getMessage()));
         }
     }
 
@@ -234,13 +231,10 @@ public class LoginActivity extends AppCompatActivity {
         loginProgress.setVisibility(View.VISIBLE);
 
         ApiClient client =
-                ClientFactory.basicAuth(
-                        settings.url(),
-                        new SSLSettings(!disableSSLValidation, caCertContents),
-                        username,
-                        password);
-        Api.withLogging(new UserApi(client)::currentUserAsync)
-                .handleInUIThread(this, (user) -> newClientDialog(client), this::onInvalidLogin);
+                ClientFactory.basicAuth(settings.url(), tempSSLSettings(), username, password);
+        client.createService(UserApi.class)
+                .currentUser()
+                .enqueue(callInUI(this, (user) -> newClientDialog(client), this::onInvalidLogin));
     }
 
     private void onInvalidLogin(ApiException e) {
@@ -265,8 +259,9 @@ public class LoginActivity extends AppCompatActivity {
     public DialogInterface.OnClickListener doCreateClient(ApiClient client, EditText nameProvider) {
         return (a, b) -> {
             Client newClient = new Client().name(nameProvider.getText().toString());
-            Api.<Client>withLogging((cb) -> new TokenApi(client).createClientAsync(newClient, cb))
-                    .handleInUIThread(this, this::onCreatedClient, this::onFailedToCreateClient);
+            client.createService(TokenApi.class)
+                    .createClient(newClient)
+                    .enqueue(callInUI(this, this::onCreatedClient, this::onFailedToCreateClient));
         };
     }
 
@@ -292,6 +287,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private String versionError(String url, ApiException exception) {
-        return getString(R.string.version_failed, url + "/version", exception.getCode());
+        return getString(R.string.version_failed, url + "/version", exception.code());
+    }
+
+    private SSLSettings tempSSLSettings() {
+        return new SSLSettings(!disableSSLValidation, caCertContents);
     }
 }

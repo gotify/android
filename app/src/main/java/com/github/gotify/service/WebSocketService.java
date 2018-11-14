@@ -19,6 +19,7 @@ import com.github.gotify.R;
 import com.github.gotify.Settings;
 import com.github.gotify.Utils;
 import com.github.gotify.api.ClientFactory;
+import com.github.gotify.client.api.MessageApi;
 import com.github.gotify.client.model.Message;
 import com.github.gotify.log.Log;
 import com.github.gotify.log.UncaughtExceptionHandler;
@@ -46,7 +47,8 @@ public class WebSocketService extends Service {
         missingMessageUtil =
                 new MissedMessageUtil(
                         ClientFactory.clientToken(
-                                settings.url(), settings.sslSettings(), settings.token()));
+                                        settings.url(), settings.sslSettings(), settings.token())
+                                .createService(MessageApi.class));
         Log.i("Create " + getClass().getSimpleName());
     }
 
@@ -147,7 +149,7 @@ public class WebSocketService extends Service {
     private void broadcast(Message message) {
         Intent intent = new Intent();
         intent.setAction(NEW_MESSAGE_BROADCAST);
-        intent.putExtra("message", Utils.json().serialize(message));
+        intent.putExtra("message", Utils.JSON.toJson(message));
         sendBroadcast(intent);
     }
 

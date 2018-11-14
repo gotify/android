@@ -8,10 +8,10 @@ import android.graphics.drawable.Drawable;
 import android.text.format.DateUtils;
 import android.view.View;
 import androidx.annotation.NonNull;
-import com.github.gotify.client.ApiClient;
 import com.github.gotify.client.JSON;
 import com.github.gotify.log.Log;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import java.io.BufferedReader;
@@ -22,6 +22,8 @@ import okio.Buffer;
 import org.threeten.bp.OffsetDateTime;
 
 public class Utils {
+    public static final Gson JSON = new JSON().getGson();
+
     public static void showSnackBar(Activity activity, String message) {
         View rootView = activity.getWindow().getDecorView().findViewById(android.R.id.content);
         Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT).show();
@@ -49,10 +51,6 @@ public class Utils {
             @Override
             public void onPrepareLoad(Drawable placeHolderDrawable) {}
         };
-    }
-
-    public static JSON json() {
-        return new ApiClient().getJSON();
     }
 
     public static String readFileFromStream(@NonNull InputStream inputStream) {
