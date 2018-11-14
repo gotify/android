@@ -4,13 +4,13 @@ All URIs are relative to *http://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**createMessage**](MessageApi.md#createMessage) | **POST** /message | Create a message.
-[**deleteAppMessages**](MessageApi.md#deleteAppMessages) | **DELETE** /application/{id}/message | Delete all messages from a specific application.
-[**deleteMessage**](MessageApi.md#deleteMessage) | **DELETE** /message/{id} | Deletes a message with an id.
-[**deleteMessages**](MessageApi.md#deleteMessages) | **DELETE** /message | Delete all messages.
-[**getAppMessages**](MessageApi.md#getAppMessages) | **GET** /application/{id}/message | Return all messages from a specific application.
-[**getMessages**](MessageApi.md#getMessages) | **GET** /message | Return all messages.
-[**streamMessages**](MessageApi.md#streamMessages) | **GET** /stream | Websocket, return newly created messages.
+[**createMessage**](MessageApi.md#createMessage) | **POST** message | Create a message.
+[**deleteAppMessages**](MessageApi.md#deleteAppMessages) | **DELETE** application/{id}/message | Delete all messages from a specific application.
+[**deleteMessage**](MessageApi.md#deleteMessage) | **DELETE** message/{id} | Deletes a message with an id.
+[**deleteMessages**](MessageApi.md#deleteMessages) | **DELETE** message | Delete all messages.
+[**getAppMessages**](MessageApi.md#getAppMessages) | **GET** application/{id}/message | Return all messages from a specific application.
+[**getMessages**](MessageApi.md#getMessages) | **GET** message | Return all messages.
+[**streamMessages**](MessageApi.md#streamMessages) | **GET** stream | Websocket, return newly created messages.
 
 
 <a name="createMessage"></a>
@@ -76,7 +76,7 @@ Name | Type | Description  | Notes
 
 <a name="deleteAppMessages"></a>
 # **deleteAppMessages**
-> deleteAppMessages(id)
+> Void deleteAppMessages(id)
 
 Delete all messages from a specific application.
 
@@ -111,7 +111,8 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 MessageApi apiInstance = new MessageApi();
 Integer id = 56; // Integer | the application id
 try {
-    apiInstance.deleteAppMessages(id);
+    Void result = apiInstance.deleteAppMessages(id);
+    System.out.println(result);
 } catch (ApiException e) {
     System.err.println("Exception when calling MessageApi#deleteAppMessages");
     e.printStackTrace();
@@ -126,7 +127,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-null (empty response body)
+[**Void**](.md)
 
 ### Authorization
 
@@ -139,7 +140,7 @@ null (empty response body)
 
 <a name="deleteMessage"></a>
 # **deleteMessage**
-> deleteMessage(id)
+> Void deleteMessage(id)
 
 Deletes a message with an id.
 
@@ -174,7 +175,8 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 MessageApi apiInstance = new MessageApi();
 Integer id = 56; // Integer | the message id
 try {
-    apiInstance.deleteMessage(id);
+    Void result = apiInstance.deleteMessage(id);
+    System.out.println(result);
 } catch (ApiException e) {
     System.err.println("Exception when calling MessageApi#deleteMessage");
     e.printStackTrace();
@@ -189,7 +191,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-null (empty response body)
+[**Void**](.md)
 
 ### Authorization
 
@@ -202,7 +204,7 @@ null (empty response body)
 
 <a name="deleteMessages"></a>
 # **deleteMessages**
-> deleteMessages()
+> Void deleteMessages()
 
 Delete all messages.
 
@@ -236,7 +238,8 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 
 MessageApi apiInstance = new MessageApi();
 try {
-    apiInstance.deleteMessages();
+    Void result = apiInstance.deleteMessages();
+    System.out.println(result);
 } catch (ApiException e) {
     System.err.println("Exception when calling MessageApi#deleteMessages");
     e.printStackTrace();
@@ -248,7 +251,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-null (empty response body)
+[**Void**](.md)
 
 ### Authorization
 

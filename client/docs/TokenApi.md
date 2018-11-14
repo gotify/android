@@ -4,13 +4,13 @@ All URIs are relative to *http://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**createApp**](TokenApi.md#createApp) | **POST** /application | Create an application.
-[**createClient**](TokenApi.md#createClient) | **POST** /client | Create a client.
-[**deleteApp**](TokenApi.md#deleteApp) | **DELETE** /application/{id} | Delete an application.
-[**deleteClient**](TokenApi.md#deleteClient) | **DELETE** /client/{id} | Delete a client.
-[**getApps**](TokenApi.md#getApps) | **GET** /application | Return all applications.
-[**getClients**](TokenApi.md#getClients) | **GET** /client | Return all clients.
-[**uploadAppImage**](TokenApi.md#uploadAppImage) | **POST** /application/{id}/image | 
+[**createApp**](TokenApi.md#createApp) | **POST** application | Create an application.
+[**createClient**](TokenApi.md#createClient) | **POST** client | Create a client.
+[**deleteApp**](TokenApi.md#deleteApp) | **DELETE** application/{id} | Delete an application.
+[**deleteClient**](TokenApi.md#deleteClient) | **DELETE** client/{id} | Delete a client.
+[**getApps**](TokenApi.md#getApps) | **GET** application | Return all applications.
+[**getClients**](TokenApi.md#getClients) | **GET** client | Return all clients.
+[**uploadAppImage**](TokenApi.md#uploadAppImage) | **POST** application/{id}/image | 
 
 
 <a name="createApp"></a>
@@ -143,7 +143,7 @@ Name | Type | Description  | Notes
 
 <a name="deleteApp"></a>
 # **deleteApp**
-> deleteApp(id)
+> Void deleteApp(id)
 
 Delete an application.
 
@@ -178,7 +178,8 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 TokenApi apiInstance = new TokenApi();
 Integer id = 56; // Integer | the application id
 try {
-    apiInstance.deleteApp(id);
+    Void result = apiInstance.deleteApp(id);
+    System.out.println(result);
 } catch (ApiException e) {
     System.err.println("Exception when calling TokenApi#deleteApp");
     e.printStackTrace();
@@ -193,7 +194,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-null (empty response body)
+[**Void**](.md)
 
 ### Authorization
 
@@ -206,7 +207,7 @@ null (empty response body)
 
 <a name="deleteClient"></a>
 # **deleteClient**
-> deleteClient(id)
+> Void deleteClient(id)
 
 Delete a client.
 
@@ -241,7 +242,8 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 TokenApi apiInstance = new TokenApi();
 Integer id = 56; // Integer | the client id
 try {
-    apiInstance.deleteClient(id);
+    Void result = apiInstance.deleteClient(id);
+    System.out.println(result);
 } catch (ApiException e) {
     System.err.println("Exception when calling TokenApi#deleteClient");
     e.printStackTrace();
@@ -256,7 +258,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-null (empty response body)
+[**Void**](.md)
 
 ### Authorization
 

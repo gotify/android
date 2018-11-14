@@ -27,6 +27,9 @@ android {
     lintOptions {
         disable 'GoogleAppIndexingWarning'
     }
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+    }
 }
 
 dependencies {
