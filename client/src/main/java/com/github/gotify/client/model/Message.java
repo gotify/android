@@ -28,7 +28,7 @@ import org.threeten.bp.OffsetDateTime;
  * The Message holds information about a message which was sent by an Application.
  */
 @ApiModel(description = "The Message holds information about a message which was sent by an Application.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2018-10-27T16:51:12.097+02:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2018-11-12T21:00:23.670+01:00")
 public class Message {
   @SerializedName("appid")
   private Integer appid = null;

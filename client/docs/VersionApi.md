@@ -4,7 +4,7 @@ All URIs are relative to *http://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**getVersion**](VersionApi.md#getVersion) | **GET** /version | Get version information.
+[**getVersion**](VersionApi.md#getVersion) | **GET** version | Get version information.
 
 
 <a name="getVersion"></a>

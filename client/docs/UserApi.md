@@ -4,13 +4,13 @@ All URIs are relative to *http://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**createUser**](UserApi.md#createUser) | **POST** /user | Create a user.
-[**currentUser**](UserApi.md#currentUser) | **GET** /current/user | Return the current user.
-[**deleteUser**](UserApi.md#deleteUser) | **DELETE** /user/{id} | Deletes a user.
-[**getUser**](UserApi.md#getUser) | **GET** /user/{id} | Get a user.
-[**getUsers**](UserApi.md#getUsers) | **GET** /user | Return all users.
-[**updateCurrentUser**](UserApi.md#updateCurrentUser) | **POST** /current/user/password | Update the password of the current user.
-[**updateUser**](UserApi.md#updateUser) | **POST** /user/{id} | Update a user.
+[**createUser**](UserApi.md#createUser) | **POST** user | Create a user.
+[**currentUser**](UserApi.md#currentUser) | **GET** current/user | Return the current user.
+[**deleteUser**](UserApi.md#deleteUser) | **DELETE** user/{id} | Deletes a user.
+[**getUser**](UserApi.md#getUser) | **GET** user/{id} | Get a user.
+[**getUsers**](UserApi.md#getUsers) | **GET** user | Return all users.
+[**updateCurrentUser**](UserApi.md#updateCurrentUser) | **POST** current/user/password | Update the password of the current user.
+[**updateUser**](UserApi.md#updateUser) | **POST** user/{id} | Update a user.
 
 
 <a name="createUser"></a>
@@ -139,7 +139,7 @@ This endpoint does not need any parameter.
 
 <a name="deleteUser"></a>
 # **deleteUser**
-> deleteUser(id)
+> Void deleteUser(id)
 
 Deletes a user.
 
@@ -174,7 +174,8 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 UserApi apiInstance = new UserApi();
 Integer id = 56; // Integer | the user id
 try {
-    apiInstance.deleteUser(id);
+    Void result = apiInstance.deleteUser(id);
+    System.out.println(result);
 } catch (ApiException e) {
     System.err.println("Exception when calling UserApi#deleteUser");
     e.printStackTrace();
@@ -189,7 +190,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-null (empty response body)
+[**Void**](.md)
 
 ### Authorization
 
@@ -326,7 +327,7 @@ This endpoint does not need any parameter.
 
 <a name="updateCurrentUser"></a>
 # **updateCurrentUser**
-> updateCurrentUser(body)
+> Void updateCurrentUser(body)
 
 Update the password of the current user.
 
@@ -361,7 +362,8 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 UserApi apiInstance = new UserApi();
 UserPass body = new UserPass(); // UserPass | the user
 try {
-    apiInstance.updateCurrentUser(body);
+    Void result = apiInstance.updateCurrentUser(body);
+    System.out.println(result);
 } catch (ApiException e) {
     System.err.println("Exception when calling UserApi#updateCurrentUser");
     e.printStackTrace();
@@ -376,7 +378,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-null (empty response body)
+[**Void**](.md)
 
 ### Authorization
 
