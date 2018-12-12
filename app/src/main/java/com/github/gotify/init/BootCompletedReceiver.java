@@ -9,11 +9,9 @@ import com.github.gotify.service.WebSocketService;
 
 public class BootCompletedReceiver extends BroadcastReceiver {
 
-    private Settings settings;
-
     @Override
     public void onReceive(Context context, Intent intent) {
-        settings = new Settings(context);
+        Settings settings = new Settings(context);
 
         if (!settings.tokenExists()) {
             return;
