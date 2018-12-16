@@ -36,6 +36,7 @@ public class NotificationSupport {
                             Channel.FOREGROUND,
                             "Gotify foreground notification",
                             NotificationManager.IMPORTANCE_LOW);
+            foreground.setShowBadge(false);
 
             NotificationChannel messagesImportanceMin =
                     new NotificationChannel(
