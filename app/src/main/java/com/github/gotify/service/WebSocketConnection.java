@@ -153,7 +153,7 @@ public class WebSocketConnection {
                     return;
                 }
 
-                int minutes = errorCount * 5 + 1;
+                int minutes = Math.min(errorCount * 2 + 1, 20);
 
                 Log.i("WebSocket: trying to restart in " + minutes + " minute(s)");
 
