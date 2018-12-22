@@ -19,6 +19,28 @@ Download the apk or get the app via F-Droid or Google Play.
 
 Google Play and the Google Play logo are trademarks of Google LLC.
 
+### Disable battery optimiation
+
+By default Android kills long running apps as they drain the battery. With enabled battery optimization, Gotify will be killed and you wont receive any notifications.
+
+Here is one way to disable battery optimization for Gotify.
+
+* Open "Settings"
+* Search for "Battery Optimization"
+* Find "Gotify" and disable battery optimization
+
+### Minimize the Gotify foreground notification
+
+*Only possible for Android version >= 8*
+
+The foreground notification with content like `Listening to https://push.yourdomain.eu` can be manually minimized to be less intrusive:
+
+* Open Settings -> Apps -> Gotify
+* Click Notifications
+* Click on `Gotify foreground notification`
+* Select a different "Behavior" or "Importance" (depends on your android version)
+* Restart Gotify
+
 ## Building
 
 Execute the following command to build the apk.
