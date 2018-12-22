@@ -102,9 +102,14 @@ public class LoginActivity extends AppCompatActivity {
     @OnClick(R.id.checkurl)
     public void doCheckUrl() {
         String url = urlField.getText().toString();
-        if (HttpUrl.parse(url) == null) {
+        HttpUrl parsedUrl = HttpUrl.parse(url);
+        if (parsedUrl == null) {
             Utils.showSnackBar(LoginActivity.this, "Invalid URL (include http:// or https://)");
             return;
+        }
+
+        if ("http".equals(parsedUrl.scheme())) {
+            showHttpWarning();
         }
 
         checkUrlProgress.setVisibility(View.VISIBLE);
@@ -115,6 +120,15 @@ public class LoginActivity extends AppCompatActivity {
         ClientFactory.versionApi(fixedUrl, tempSSLSettings())
                 .getVersion()
                 .enqueue(callInUI(this, onValidUrl(fixedUrl), onInvalidUrl(fixedUrl)));
+    }
+
+    public void showHttpWarning() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.warning)
+                .setCancelable(true)
+                .setMessage(R.string.http_warning)
+                .setPositiveButton(R.string.i_understand, (a, b) -> {})
+                .show();
     }
 
     @OnClick(R.id.open_logs)

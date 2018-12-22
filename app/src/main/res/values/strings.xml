@@ -54,4 +54,7 @@
     <string name="done">Done</string>
     <string name="no_certificate_selected">No certificate selected</string>
     <string name="remove_ca_certificate">Remove CA Certificate</string>
+    <string name="warning">Warning</string>
+    <string name="http_warning">Using http is insecure and it\'s recommend to use https instead. Use your favorite search engine to get more information about this topic.</string>
+    <string name="i_understand">I Understand</string>
 </resources>
