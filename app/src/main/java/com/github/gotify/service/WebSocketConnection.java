@@ -1,5 +1,7 @@
 package com.github.gotify.service;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import com.github.gotify.SSLSettings;
 import com.github.gotify.Utils;
@@ -16,6 +18,7 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
 public class WebSocketConnection {
+    private final ConnectivityManager connectivityManager;
     private OkHttpClient client;
 
     private final Handler handler = new Handler();
@@ -31,8 +34,14 @@ public class WebSocketConnection {
     private OnFailureCallback onFailure;
     private Runnable onReconnected;
     private boolean isClosed;
+    private Runnable onDisconnect;
 
-    WebSocketConnection(String baseUrl, SSLSettings settings, String token) {
+    WebSocketConnection(
+            String baseUrl,
+            SSLSettings settings,
+            String token,
+            ConnectivityManager connectivityManager) {
+        this.connectivityManager = connectivityManager;
         OkHttpClient.Builder builder =
                 new OkHttpClient.Builder()
                         .readTimeout(0, TimeUnit.MILLISECONDS)
@@ -63,6 +72,11 @@ public class WebSocketConnection {
 
     synchronized WebSocketConnection onBadRequest(BadRequestRunnable onBadRequest) {
         this.onBadRequest = onBadRequest;
+        return this;
+    }
+
+    synchronized WebSocketConnection onDisconnect(Runnable onDisconnect) {
+        this.onDisconnect = onDisconnect;
         return this;
     }
 
@@ -150,6 +164,13 @@ public class WebSocketConnection {
                 if (response != null && response.code() >= 400 && response.code() <= 499) {
                     onBadRequest.execute(message);
                     close();
+                    return;
+                }
+
+                NetworkInfo network = connectivityManager.getActiveNetworkInfo();
+                if (network == null || !network.isConnected()) {
+                    Log.i("WebSocket: Network not connected");
+                    onDisconnect.run();
                     return;
                 }
 

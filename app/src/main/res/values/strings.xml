@@ -57,4 +57,5 @@
     <string name="warning">Warning</string>
     <string name="http_warning">Using http is insecure and it\'s recommend to use https instead. Use your favorite search engine to get more information about this topic.</string>
     <string name="i_understand">I Understand</string>
+    <string name="websocket_no_network">Waiting for network</string>
 </resources>
