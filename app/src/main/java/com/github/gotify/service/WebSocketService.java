@@ -10,7 +10,6 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.Build;
-import android.os.Handler;
 import android.os.IBinder;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -97,7 +96,8 @@ public class WebSocketService extends Service {
                         .onOpen(this::onOpen)
                         .onClose(() -> foreground(getString(R.string.websocket_closed)))
                         .onBadRequest(this::onBadRequest)
-                        .onFailure((min) -> foreground(getString(R.string.websocket_failed, min)))
+                        .onNetworkFailure(
+                                (min) -> foreground(getString(R.string.websocket_failed, min)))
                         .onDisconnect(this::onDisconnect)
                         .onMessage(this::onMessage)
                         .onReconnected(this::notifyMissedNotifications)
@@ -118,15 +118,7 @@ public class WebSocketService extends Service {
             return;
         }
 
-        new Handler()
-                .postDelayed(
-                        () -> new Thread(this::notifyAndStart).start(),
-                        TimeUnit.SECONDS.toMillis(5));
-    }
-
-    private void notifyAndStart() {
-        notifyMissedNotifications();
-        connection.start();
+        connection.scheduleReconnect(TimeUnit.SECONDS.toMillis(5));
     }
 
     private void onBadRequest(String message) {
