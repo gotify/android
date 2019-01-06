@@ -1,5 +1,7 @@
 package com.github.gotify.service;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import com.github.gotify.SSLSettings;
 import com.github.gotify.Utils;
@@ -16,9 +18,11 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
 public class WebSocketConnection {
+    private final ConnectivityManager connectivityManager;
     private OkHttpClient client;
 
-    private final Handler handler = new Handler();
+    private final Handler reconnectHandler = new Handler();
+    private Runnable reconnectCallback = this::start;
     private int errorCount = 0;
 
     private final String baseUrl;
@@ -28,11 +32,17 @@ public class WebSocketConnection {
     private Runnable onClose;
     private Runnable onOpen;
     private BadRequestRunnable onBadRequest;
-    private OnFailureCallback onFailure;
+    private OnNetworkFailureRunnable onNetworkFailure;
     private Runnable onReconnected;
     private boolean isClosed;
+    private Runnable onDisconnect;
 
-    WebSocketConnection(String baseUrl, SSLSettings settings, String token) {
+    WebSocketConnection(
+            String baseUrl,
+            SSLSettings settings,
+            String token,
+            ConnectivityManager connectivityManager) {
+        this.connectivityManager = connectivityManager;
         OkHttpClient.Builder builder =
                 new OkHttpClient.Builder()
                         .readTimeout(0, TimeUnit.MILLISECONDS)
@@ -66,8 +76,13 @@ public class WebSocketConnection {
         return this;
     }
 
-    synchronized WebSocketConnection onFailure(OnFailureCallback onFailure) {
-        this.onFailure = onFailure;
+    synchronized WebSocketConnection onDisconnect(Runnable onDisconnect) {
+        this.onDisconnect = onDisconnect;
+        return this;
+    }
+
+    synchronized WebSocketConnection onNetworkFailure(OnNetworkFailureRunnable onNetworkFailure) {
+        this.onNetworkFailure = onNetworkFailure;
         return this;
     }
 
@@ -104,7 +119,18 @@ public class WebSocketConnection {
         }
     }
 
+    public synchronized void scheduleReconnect(long millis) {
+        reconnectHandler.removeCallbacks(reconnectCallback);
+
+        Log.i(
+                "WebSocket: scheduling a restart in "
+                        + TimeUnit.SECONDS.convert(millis, TimeUnit.MILLISECONDS)
+                        + " second(s)");
+        reconnectHandler.postDelayed(reconnectCallback, millis);
+    }
+
     private class Listener extends WebSocketListener {
+
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
             Log.i("WebSocket: opened");
@@ -153,14 +179,19 @@ public class WebSocketConnection {
                     return;
                 }
 
-                int minutes = Math.min(errorCount * 2 + 1, 20);
-
-                Log.i("WebSocket: trying to restart in " + minutes + " minute(s)");
-
                 errorCount++;
-                handler.postDelayed(
-                        WebSocketConnection.this::start, TimeUnit.MINUTES.toMillis(minutes));
-                onFailure.execute(minutes);
+
+                NetworkInfo network = connectivityManager.getActiveNetworkInfo();
+                if (network == null || !network.isConnected()) {
+                    Log.i("WebSocket: Network not connected");
+                    onDisconnect.run();
+                    return;
+                }
+
+                int minutes = Math.min(errorCount * 2 - 1, 20);
+
+                onNetworkFailure.execute(minutes);
+                scheduleReconnect(TimeUnit.MINUTES.toMillis(minutes));
             }
 
             super.onFailure(webSocket, t, response);
@@ -171,7 +202,7 @@ public class WebSocketConnection {
         void execute(String message);
     }
 
-    interface OnFailureCallback {
-        void execute(int minutesToTryAgain);
+    interface OnNetworkFailureRunnable {
+        void execute(long millis);
     }
 }

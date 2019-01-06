@@ -6,7 +6,9 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.IBinder;
 import androidx.annotation.Nullable;
@@ -25,6 +27,7 @@ import com.github.gotify.log.Log;
 import com.github.gotify.log.UncaughtExceptionHandler;
 import com.github.gotify.messages.MessagesActivity;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class WebSocketService extends Service {
@@ -84,15 +87,38 @@ public class WebSocketService extends Service {
             missingMessageUtil.lastReceivedMessage(lastReceivedMessage::set);
         }
 
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
         connection =
-                new WebSocketConnection(settings.url(), settings.sslSettings(), settings.token())
+                new WebSocketConnection(
+                                settings.url(), settings.sslSettings(), settings.token(), cm)
                         .onOpen(this::onOpen)
                         .onClose(() -> foreground(getString(R.string.websocket_closed)))
                         .onBadRequest(this::onBadRequest)
-                        .onFailure((min) -> foreground(getString(R.string.websocket_failed, min)))
+                        .onNetworkFailure(
+                                (min) -> foreground(getString(R.string.websocket_failed, min)))
+                        .onDisconnect(this::onDisconnect)
                         .onMessage(this::onMessage)
                         .onReconnected(this::notifyMissedNotifications)
                         .start();
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        ReconnectListener receiver = new ReconnectListener(this::doReconnect);
+        registerReceiver(receiver, intentFilter);
+    }
+
+    private void onDisconnect() {
+        foreground(getString(R.string.websocket_no_network));
+    }
+
+    private void doReconnect() {
+        if (connection == null) {
+            return;
+        }
+
+        connection.scheduleReconnect(TimeUnit.SECONDS.toMillis(5));
     }
 
     private void onBadRequest(String message) {
