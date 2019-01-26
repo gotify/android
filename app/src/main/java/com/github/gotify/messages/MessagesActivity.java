@@ -71,6 +71,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.github.gotify.Utils.first;
 import static java.util.Collections.emptyList;
 
 public class MessagesActivity extends AppCompatActivity
@@ -694,13 +695,5 @@ public class MessagesActivity extends AppCompatActivity
         ListMessageAdapter adapter = (ListMessageAdapter) messagesView.getAdapter();
         adapter.setItems(messageWithImages);
         adapter.notifyDataSetChanged();
-    }
-
-    private <T> T first(T[] data) {
-        if (data.length != 1) {
-            throw new IllegalArgumentException("must be one element");
-        }
-
-        return data[0];
     }
 }
