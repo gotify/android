@@ -56,6 +56,7 @@ import java.util.List;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 
+import static com.github.gotify.Utils.first;
 import static java.util.Collections.emptyList;
 
 public class MessagesActivity extends AppCompatActivity
@@ -469,13 +470,5 @@ public class MessagesActivity extends AppCompatActivity
         ListMessageAdapter adapter = (ListMessageAdapter) messagesView.getAdapter();
         adapter.items(messageWithImages);
         adapter.notifyDataSetChanged();
-    }
-
-    private <T> T first(T[] data) {
-        if (data.length != 1) {
-            throw new IllegalArgumentException("must be one element");
-        }
-
-        return data[0];
     }
 }
