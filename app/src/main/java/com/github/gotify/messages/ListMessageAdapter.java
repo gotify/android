@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.github.gotify.R;
+import com.github.gotify.Settings;
 import com.github.gotify.Utils;
 import com.github.gotify.client.model.Message;
 import com.github.gotify.messages.provider.MessageWithImage;
@@ -24,11 +25,17 @@ public class ListMessageAdapter extends BaseAdapter {
     private Picasso picasso;
     private List<MessageWithImage> items;
     private Delete delete;
+    private Settings settings;
 
     ListMessageAdapter(
-            Context context, Picasso picasso, List<MessageWithImage> items, Delete delete) {
+            Context context,
+            Settings settings,
+            Picasso picasso,
+            List<MessageWithImage> items,
+            Delete delete) {
         super();
         this.content = context;
+        this.settings = settings;
         this.picasso = picasso;
         this.items = items;
         this.delete = delete;
@@ -65,7 +72,7 @@ public class ListMessageAdapter extends BaseAdapter {
         final MessageWithImage message = items.get(position);
         holder.message.setText(message.message.getMessage());
         holder.title.setText(message.message.getTitle());
-        picasso.load(message.image)
+        picasso.load(Utils.resolveAbsoluteUrl(settings.url() + "/", message.image))
                 .error(R.drawable.ic_alarm)
                 .placeholder(R.drawable.ic_placeholder)
                 .into(holder.image);

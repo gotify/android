@@ -125,7 +125,8 @@ public class MessagesActivity extends AppCompatActivity
         messages = new MessageFacade(client.createService(MessageApi.class), appsHolder);
 
         messagesView.setOnScrollListener(this);
-        messagesView.setAdapter(new ListMessageAdapter(this, picasso, emptyList(), this::delete));
+        messagesView.setAdapter(
+                new ListMessageAdapter(this, settings, picasso, emptyList(), this::delete));
 
         swipeRefreshLayout.setOnRefreshListener(this::onRefresh);
         drawer.addDrawerListener(
@@ -167,7 +168,7 @@ public class MessagesActivity extends AppCompatActivity
             item.setCheckable(true);
             Target t = Utils.toDrawable(getResources(), item::setIcon);
             targetReferences.add(t);
-            picasso.load(app.getImage())
+            picasso.load(Utils.resolveAbsoluteUrl(settings.url() + "/", app.getImage()))
                     .error(R.drawable.ic_alarm)
                     .placeholder(R.drawable.ic_placeholder)
                     .resize(100, 100)
