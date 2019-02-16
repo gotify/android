@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import okio.Buffer;
 import org.threeten.bp.OffsetDateTime;
@@ -39,23 +41,19 @@ public class Utils {
     }
 
     public static String resolveAbsoluteUrl(String baseURL, String target) {
-        URL base = null;
-        try {
-            base = new URL(baseURL);
-        } catch (MalformedURLException e) {
-        }
-        URL result = null;
-        if (base == null) {
-            return target;
+        if (target == null) {
+            return null;
         }
         try {
-            result = new URL(base, target);
-        } catch (MalformedURLException e) {
-        }
-        if (result == null) {
+            URI targetUri = new URI(target);
+            if (targetUri.isAbsolute()) {
+                return target;
+            }
+            return new URL(new URL(baseURL), target).toString();
+        } catch (MalformedURLException | URISyntaxException e) {
+            Log.e("Could not resolve absolute url", e);
             return target;
         }
-        return result.toString();
     }
 
     public static Target toDrawable(Resources resources, DrawableReceiver drawableReceiver) {
