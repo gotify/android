@@ -354,8 +354,7 @@ public class MessagesActivity extends AppCompatActivity
         }
     }
 
-    private class SelectApplicationAndUpdateMessages
-            extends AsyncTask<Integer, Void, List<MessageWithImage>> {
+    private class SelectApplicationAndUpdateMessages extends AsyncTask<Integer, Void, Integer> {
 
         private SelectApplicationAndUpdateMessages(boolean withLoadingSpinner) {
             if (withLoadingSpinner) {
@@ -364,13 +363,15 @@ public class MessagesActivity extends AppCompatActivity
         }
 
         @Override
-        protected List<MessageWithImage> doInBackground(Integer... appIds) {
-            return messages.getOrLoadMore(appIds[0]);
+        protected Integer doInBackground(Integer... appIds) {
+            Integer appId = first(appIds);
+            messages.loadMoreIfNotPresent(appId);
+            return appId;
         }
 
         @Override
-        protected void onPostExecute(List<MessageWithImage> messageWithImages) {
-            updateMessagesAndStopLoading(messageWithImages);
+        protected void onPostExecute(Integer appId) {
+            updateMessagesAndStopLoading(messages.get(appId));
         }
     }
 

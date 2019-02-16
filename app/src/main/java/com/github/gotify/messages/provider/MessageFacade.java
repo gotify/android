@@ -37,12 +37,11 @@ public class MessageFacade {
         return get(appId);
     }
 
-    public List<MessageWithImage> getOrLoadMore(Integer appId) {
+    public void loadMoreIfNotPresent(Integer appId) {
         MessageState state = this.state.state(appId);
-        if (state.loaded) {
-            return get(appId);
+        if (!state.loaded) {
+            loadMore(appId);
         }
-        return loadMore(appId);
     }
 
     public void clear() {
