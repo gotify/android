@@ -11,12 +11,12 @@ import com.github.gotify.client.auth.HttpBasicAuth;
 public class ClientFactory {
     public static com.github.gotify.client.ApiClient unauthorized(
             String baseUrl, SSLSettings sslSettings) {
-        return defaultClient(new String[0], baseUrl, sslSettings);
+        return defaultClient(new String[0], baseUrl + "/", sslSettings);
     }
 
     public static ApiClient basicAuth(
             String baseUrl, SSLSettings sslSettings, String username, String password) {
-        ApiClient client = defaultClient(new String[] {"basicAuth"}, baseUrl, sslSettings);
+        ApiClient client = defaultClient(new String[] {"basicAuth"}, baseUrl + "/", sslSettings);
         HttpBasicAuth auth = (HttpBasicAuth) client.getApiAuthorizations().get("basicAuth");
         auth.setUsername(username);
         auth.setPassword(password);
@@ -24,7 +24,8 @@ public class ClientFactory {
     }
 
     public static ApiClient clientToken(String baseUrl, SSLSettings sslSettings, String token) {
-        ApiClient client = defaultClient(new String[] {"clientTokenHeader"}, baseUrl, sslSettings);
+        ApiClient client =
+                defaultClient(new String[] {"clientTokenHeader"}, baseUrl + "/", sslSettings);
         ApiKeyAuth tokenAuth = (ApiKeyAuth) client.getApiAuthorizations().get("clientTokenHeader");
         tokenAuth.setApiKey(token);
         return client;

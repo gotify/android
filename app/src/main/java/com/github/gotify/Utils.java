@@ -18,6 +18,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import okio.Buffer;
 import org.threeten.bp.OffsetDateTime;
 
@@ -34,6 +38,22 @@ public class Utils {
         long now = System.currentTimeMillis();
         return DateUtils.getRelativeTimeSpanString(time, now, DateUtils.MINUTE_IN_MILLIS)
                 .toString();
+    }
+
+    public static String resolveAbsoluteUrl(String baseURL, String target) {
+        if (target == null) {
+            return null;
+        }
+        try {
+            URI targetUri = new URI(target);
+            if (targetUri.isAbsolute()) {
+                return target;
+            }
+            return new URL(new URL(baseURL), target).toString();
+        } catch (MalformedURLException | URISyntaxException e) {
+            Log.e("Could not resolve absolute url", e);
+            return target;
+        }
     }
 
     public static Target toDrawable(Resources resources, DrawableReceiver drawableReceiver) {
