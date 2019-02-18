@@ -9,7 +9,6 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 
 import com.github.gotify.client.model.Application;
-import com.github.gotify.client.model.Client;
 import com.github.gotify.client.model.Error;
 import java.io.File;
 
@@ -18,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public interface TokenApi {
+public interface ApplicationApi {
   /**
    * Create an application.
    * 
@@ -31,20 +30,6 @@ public interface TokenApi {
   @POST("application")
   Call<Application> createApp(
     @retrofit2.http.Body Application body
-  );
-
-  /**
-   * Create a client.
-   * 
-   * @param body the client to add (required)
-   * @return Call&lt;Client&gt;
-   */
-  @Headers({
-    "Content-Type:application/json"
-  })
-  @POST("client")
-  Call<Client> createClient(
-    @retrofit2.http.Body Client body
   );
 
   /**
@@ -62,20 +47,6 @@ public interface TokenApi {
   );
 
   /**
-   * Delete a client.
-   * 
-   * @param id the client id (required)
-   * @return Call&lt;Void&gt;
-   */
-  @Headers({
-    "Content-Type:application/json"
-  })
-  @DELETE("client/{id}")
-  Call<Void> deleteClient(
-    @retrofit2.http.Path("id") Integer id
-  );
-
-  /**
    * Return all applications.
    * 
    * @return Call&lt;List&lt;Application&gt;&gt;
@@ -88,20 +59,23 @@ public interface TokenApi {
     
 
   /**
-   * Return all clients.
+   * Update an application.
    * 
-   * @return Call&lt;List&lt;Client&gt;&gt;
+   * @param body the application to update (required)
+   * @param id the application id (required)
+   * @return Call&lt;Application&gt;
    */
   @Headers({
     "Content-Type:application/json"
   })
-  @GET("client")
-  Call<List<Client>> getClients();
-    
+  @PUT("application/{id}")
+  Call<Application> updateApplication(
+    @retrofit2.http.Body Application body, @retrofit2.http.Path("id") Integer id
+  );
 
   /**
+   * Upload an image for an application.
    * 
-   * Upload an image for an application
    * @param file the application image (required)
    * @param id the application id (required)
    * @return Call&lt;Application&gt;
