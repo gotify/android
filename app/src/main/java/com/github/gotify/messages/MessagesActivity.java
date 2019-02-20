@@ -32,8 +32,8 @@ import com.github.gotify.api.ApiException;
 import com.github.gotify.api.CertUtils;
 import com.github.gotify.api.ClientFactory;
 import com.github.gotify.client.ApiClient;
+import com.github.gotify.client.api.ClientApi;
 import com.github.gotify.client.api.MessageApi;
-import com.github.gotify.client.api.TokenApi;
 import com.github.gotify.client.model.Application;
 import com.github.gotify.client.model.Client;
 import com.github.gotify.client.model.Message;
@@ -427,10 +427,10 @@ public class MessagesActivity extends AppCompatActivity
 
         @Override
         protected Void doInBackground(Void... ignore) {
-            TokenApi api =
+            ClientApi api =
                     ClientFactory.clientToken(
                                     settings.url(), settings.sslSettings(), settings.token())
-                            .createService(TokenApi.class);
+                            .createService(ClientApi.class);
             stopService(new Intent(MessagesActivity.this, WebSocketService.class));
             try {
                 List<Client> clients = Api.execute(api.getClients());

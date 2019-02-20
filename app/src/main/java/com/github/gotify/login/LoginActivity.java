@@ -27,7 +27,7 @@ import com.github.gotify.api.Callback;
 import com.github.gotify.api.CertUtils;
 import com.github.gotify.api.ClientFactory;
 import com.github.gotify.client.ApiClient;
-import com.github.gotify.client.api.TokenApi;
+import com.github.gotify.client.api.ClientApi;
 import com.github.gotify.client.api.UserApi;
 import com.github.gotify.client.model.Client;
 import com.github.gotify.client.model.VersionInfo;
@@ -273,7 +273,7 @@ public class LoginActivity extends AppCompatActivity {
     public DialogInterface.OnClickListener doCreateClient(ApiClient client, EditText nameProvider) {
         return (a, b) -> {
             Client newClient = new Client().name(nameProvider.getText().toString());
-            client.createService(TokenApi.class)
+            client.createService(ClientApi.class)
                     .createClient(newClient)
                     .enqueue(callInUI(this, this::onCreatedClient, this::onFailedToCreateClient));
         };
