@@ -26,6 +26,7 @@
         android:maxLength="30"
         android:singleLine="true"
         android:text=""
+        android:textStyle="bold"
         android:textSize="16sp"
         app:layout_constraintEnd_toStartOf="@+id/message_date"
         app:layout_constraintStart_toEndOf="@+id/message_image"
