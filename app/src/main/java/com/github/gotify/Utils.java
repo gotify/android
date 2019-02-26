@@ -9,7 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import com.github.gotify.client.JSON;
 import com.github.gotify.log.Log;
