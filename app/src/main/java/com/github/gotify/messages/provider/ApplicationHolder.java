@@ -5,7 +5,7 @@ import com.github.gotify.Utils;
 import com.github.gotify.api.ApiException;
 import com.github.gotify.api.Callback;
 import com.github.gotify.client.ApiClient;
-import com.github.gotify.client.api.TokenApi;
+import com.github.gotify.client.api.ApplicationApi;
 import com.github.gotify.client.model.Application;
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +28,7 @@ public class ApplicationHolder {
     }
 
     public void request() {
-        client.createService(TokenApi.class)
+        client.createService(ApplicationApi.class)
                 .getApps()
                 .enqueue(Callback.callInUI(activity, this::onReceiveApps, this::onFailedApps));
     }

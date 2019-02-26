@@ -2,7 +2,6 @@ package com.github.gotify.client.api;
 
 import com.github.gotify.client.ApiClient;
 import com.github.gotify.client.model.Application;
-import com.github.gotify.client.model.Client;
 import com.github.gotify.client.model.Error;
 import java.io.File;
 import org.junit.Before;
@@ -14,15 +13,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * API tests for TokenApi
+ * API tests for ApplicationApi
  */
-public class TokenApiTest {
+public class ApplicationApiTest {
 
-    private TokenApi api;
+    private ApplicationApi api;
 
     @Before
     public void setup() {
-        api = new ApiClient().createService(TokenApi.class);
+        api = new ApiClient().createService(ApplicationApi.class);
     }
 
     /**
@@ -34,18 +33,6 @@ public class TokenApiTest {
     public void createAppTest() {
         Application body = null;
         // Application response = api.createApp(body);
-
-        // TODO: test validations
-    }
-    /**
-     * Create a client.
-     *
-     * 
-     */
-    @Test
-    public void createClientTest() {
-        Client body = null;
-        // Client response = api.createClient(body);
 
         // TODO: test validations
     }
@@ -62,18 +49,6 @@ public class TokenApiTest {
         // TODO: test validations
     }
     /**
-     * Delete a client.
-     *
-     * 
-     */
-    @Test
-    public void deleteClientTest() {
-        Integer id = null;
-        // Void response = api.deleteClient(id);
-
-        // TODO: test validations
-    }
-    /**
      * Return all applications.
      *
      * 
@@ -85,20 +60,22 @@ public class TokenApiTest {
         // TODO: test validations
     }
     /**
-     * Return all clients.
+     * Update an application.
      *
      * 
      */
     @Test
-    public void getClientsTest() {
-        // List<Client> response = api.getClients();
+    public void updateApplicationTest() {
+        Application body = null;
+        Integer id = null;
+        // Application response = api.updateApplication(body, id);
 
         // TODO: test validations
     }
     /**
-     * 
+     * Upload an image for an application.
      *
-     * Upload an image for an application
+     * 
      */
     @Test
     public void uploadAppImageTest() {

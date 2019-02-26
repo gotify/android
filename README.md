@@ -48,6 +48,14 @@ Execute the following command to build the apk.
 $ ./gradlew build
 ```
 
+## Update client
+
+* Run `./gradlew generateSwaggerCode`
+* Discard changes to `client/build.gradle` (newer versions of dependencies)
+* Fix compile error in `client/src/main/java/com/github/gotify/client/auth/OAuthOkHttpClient.java` (caused by an updated dependency)
+* Delete `client/settings.gradle` (client is a gradle sub project and must not have a settings.gradle)
+* Commit changes
+
 ## Versioning
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the
 [tags on this repository](https://github.com/gotify/android/tags).

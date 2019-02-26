@@ -1,23 +1,22 @@
-# TokenApi
+# PluginApi
 
 All URIs are relative to *http://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**createApp**](TokenApi.md#createApp) | **POST** application | Create an application.
-[**createClient**](TokenApi.md#createClient) | **POST** client | Create a client.
-[**deleteApp**](TokenApi.md#deleteApp) | **DELETE** application/{id} | Delete an application.
-[**deleteClient**](TokenApi.md#deleteClient) | **DELETE** client/{id} | Delete a client.
-[**getApps**](TokenApi.md#getApps) | **GET** application | Return all applications.
-[**getClients**](TokenApi.md#getClients) | **GET** client | Return all clients.
-[**uploadAppImage**](TokenApi.md#uploadAppImage) | **POST** application/{id}/image | 
+[**disablePlugin**](PluginApi.md#disablePlugin) | **POST** plugin/{id}/disable | Disable a plugin.
+[**enablePlugin**](PluginApi.md#enablePlugin) | **POST** plugin/{id}/enable | Enable a plugin.
+[**getPluginConfig**](PluginApi.md#getPluginConfig) | **GET** plugin/{id}/config | Get YAML configuration for Configurer plugin.
+[**getPluginDisplay**](PluginApi.md#getPluginDisplay) | **GET** plugin/{id}/display | Get display info for a Displayer plugin.
+[**getPlugins**](PluginApi.md#getPlugins) | **GET** plugin | Return all plugins.
+[**updatePluginConfig**](PluginApi.md#updatePluginConfig) | **POST** plugin/{id}/config | Update YAML configuration for Configurer plugin.
 
 
-<a name="createApp"></a>
-# **createApp**
-> Application createApp(body)
+<a name="disablePlugin"></a>
+# **disablePlugin**
+> Void disablePlugin(id)
 
-Create an application.
+Disable a plugin.
 
 ### Example
 ```java
@@ -26,7 +25,7 @@ Create an application.
 //import com.github.gotify.client.ApiException;
 //import com.github.gotify.client.Configuration;
 //import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.TokenApi;
+//import com.github.gotify.client.api.PluginApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -47,13 +46,13 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 // Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
 //clientTokenQuery.setApiKeyPrefix("Token");
 
-TokenApi apiInstance = new TokenApi();
-Application body = new Application(); // Application | the application to add
+PluginApi apiInstance = new PluginApi();
+Integer id = 56; // Integer | the plugin id
 try {
-    Application result = apiInstance.createApp(body);
+    Void result = apiInstance.disablePlugin(id);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling TokenApi#createApp");
+    System.err.println("Exception when calling PluginApi#disablePlugin");
     e.printStackTrace();
 }
 ```
@@ -62,135 +61,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **body** | [**Application**](Application.md)| the application to add |
-
-### Return type
-
-[**Application**](Application.md)
-
-### Authorization
-
-[basicAuth](../README.md#basicAuth), [clientTokenHeader](../README.md#clientTokenHeader), [clientTokenQuery](../README.md#clientTokenQuery)
-
-### HTTP request headers
-
- - **Content-Type**: application/json
- - **Accept**: application/json
-
-<a name="createClient"></a>
-# **createClient**
-> Client createClient(body)
-
-Create a client.
-
-### Example
-```java
-// Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.TokenApi;
-
-ApiClient defaultClient = Configuration.getDefaultApiClient();
-
-// Configure HTTP basic authorization: basicAuth
-HttpBasicAuth basicAuth = (HttpBasicAuth) defaultClient.getAuthentication("basicAuth");
-basicAuth.setUsername("YOUR USERNAME");
-basicAuth.setPassword("YOUR PASSWORD");
-
-// Configure API key authorization: clientTokenHeader
-ApiKeyAuth clientTokenHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenHeader");
-clientTokenHeader.setApiKey("YOUR API KEY");
-// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-//clientTokenHeader.setApiKeyPrefix("Token");
-
-// Configure API key authorization: clientTokenQuery
-ApiKeyAuth clientTokenQuery = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenQuery");
-clientTokenQuery.setApiKey("YOUR API KEY");
-// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-//clientTokenQuery.setApiKeyPrefix("Token");
-
-TokenApi apiInstance = new TokenApi();
-Client body = new Client(); // Client | the client to add
-try {
-    Client result = apiInstance.createClient(body);
-    System.out.println(result);
-} catch (ApiException e) {
-    System.err.println("Exception when calling TokenApi#createClient");
-    e.printStackTrace();
-}
-```
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **body** | [**Client**](Client.md)| the client to add |
-
-### Return type
-
-[**Client**](Client.md)
-
-### Authorization
-
-[basicAuth](../README.md#basicAuth), [clientTokenHeader](../README.md#clientTokenHeader), [clientTokenQuery](../README.md#clientTokenQuery)
-
-### HTTP request headers
-
- - **Content-Type**: application/json
- - **Accept**: application/json
-
-<a name="deleteApp"></a>
-# **deleteApp**
-> Void deleteApp(id)
-
-Delete an application.
-
-### Example
-```java
-// Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.TokenApi;
-
-ApiClient defaultClient = Configuration.getDefaultApiClient();
-
-// Configure HTTP basic authorization: basicAuth
-HttpBasicAuth basicAuth = (HttpBasicAuth) defaultClient.getAuthentication("basicAuth");
-basicAuth.setUsername("YOUR USERNAME");
-basicAuth.setPassword("YOUR PASSWORD");
-
-// Configure API key authorization: clientTokenHeader
-ApiKeyAuth clientTokenHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenHeader");
-clientTokenHeader.setApiKey("YOUR API KEY");
-// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-//clientTokenHeader.setApiKeyPrefix("Token");
-
-// Configure API key authorization: clientTokenQuery
-ApiKeyAuth clientTokenQuery = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenQuery");
-clientTokenQuery.setApiKey("YOUR API KEY");
-// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-//clientTokenQuery.setApiKeyPrefix("Token");
-
-TokenApi apiInstance = new TokenApi();
-Integer id = 56; // Integer | the application id
-try {
-    Void result = apiInstance.deleteApp(id);
-    System.out.println(result);
-} catch (ApiException e) {
-    System.err.println("Exception when calling TokenApi#deleteApp");
-    e.printStackTrace();
-}
-```
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **id** | **Integer**| the application id |
+ **id** | **Integer**| the plugin id |
 
 ### Return type
 
@@ -205,11 +76,11 @@ Name | Type | Description  | Notes
  - **Content-Type**: application/json
  - **Accept**: application/json
 
-<a name="deleteClient"></a>
-# **deleteClient**
-> Void deleteClient(id)
+<a name="enablePlugin"></a>
+# **enablePlugin**
+> Void enablePlugin(id)
 
-Delete a client.
+Enable a plugin.
 
 ### Example
 ```java
@@ -218,7 +89,7 @@ Delete a client.
 //import com.github.gotify.client.ApiException;
 //import com.github.gotify.client.Configuration;
 //import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.TokenApi;
+//import com.github.gotify.client.api.PluginApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -239,13 +110,13 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 // Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
 //clientTokenQuery.setApiKeyPrefix("Token");
 
-TokenApi apiInstance = new TokenApi();
-Integer id = 56; // Integer | the client id
+PluginApi apiInstance = new PluginApi();
+Integer id = 56; // Integer | the plugin id
 try {
-    Void result = apiInstance.deleteClient(id);
+    Void result = apiInstance.enablePlugin(id);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling TokenApi#deleteClient");
+    System.err.println("Exception when calling PluginApi#enablePlugin");
     e.printStackTrace();
 }
 ```
@@ -254,7 +125,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **id** | **Integer**| the client id |
+ **id** | **Integer**| the plugin id |
 
 ### Return type
 
@@ -269,11 +140,11 @@ Name | Type | Description  | Notes
  - **Content-Type**: application/json
  - **Accept**: application/json
 
-<a name="getApps"></a>
-# **getApps**
-> List&lt;Application&gt; getApps()
+<a name="getPluginConfig"></a>
+# **getPluginConfig**
+> Object getPluginConfig(id)
 
-Return all applications.
+Get YAML configuration for Configurer plugin.
 
 ### Example
 ```java
@@ -282,7 +153,7 @@ Return all applications.
 //import com.github.gotify.client.ApiException;
 //import com.github.gotify.client.Configuration;
 //import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.TokenApi;
+//import com.github.gotify.client.api.PluginApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -303,136 +174,13 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 // Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
 //clientTokenQuery.setApiKeyPrefix("Token");
 
-TokenApi apiInstance = new TokenApi();
+PluginApi apiInstance = new PluginApi();
+Integer id = 56; // Integer | the plugin id
 try {
-    List<Application> result = apiInstance.getApps();
+    Object result = apiInstance.getPluginConfig(id);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling TokenApi#getApps");
-    e.printStackTrace();
-}
-```
-
-### Parameters
-This endpoint does not need any parameter.
-
-### Return type
-
-[**List&lt;Application&gt;**](Application.md)
-
-### Authorization
-
-[basicAuth](../README.md#basicAuth), [clientTokenHeader](../README.md#clientTokenHeader), [clientTokenQuery](../README.md#clientTokenQuery)
-
-### HTTP request headers
-
- - **Content-Type**: application/json
- - **Accept**: application/json
-
-<a name="getClients"></a>
-# **getClients**
-> List&lt;Client&gt; getClients()
-
-Return all clients.
-
-### Example
-```java
-// Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.TokenApi;
-
-ApiClient defaultClient = Configuration.getDefaultApiClient();
-
-// Configure HTTP basic authorization: basicAuth
-HttpBasicAuth basicAuth = (HttpBasicAuth) defaultClient.getAuthentication("basicAuth");
-basicAuth.setUsername("YOUR USERNAME");
-basicAuth.setPassword("YOUR PASSWORD");
-
-// Configure API key authorization: clientTokenHeader
-ApiKeyAuth clientTokenHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenHeader");
-clientTokenHeader.setApiKey("YOUR API KEY");
-// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-//clientTokenHeader.setApiKeyPrefix("Token");
-
-// Configure API key authorization: clientTokenQuery
-ApiKeyAuth clientTokenQuery = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenQuery");
-clientTokenQuery.setApiKey("YOUR API KEY");
-// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-//clientTokenQuery.setApiKeyPrefix("Token");
-
-TokenApi apiInstance = new TokenApi();
-try {
-    List<Client> result = apiInstance.getClients();
-    System.out.println(result);
-} catch (ApiException e) {
-    System.err.println("Exception when calling TokenApi#getClients");
-    e.printStackTrace();
-}
-```
-
-### Parameters
-This endpoint does not need any parameter.
-
-### Return type
-
-[**List&lt;Client&gt;**](Client.md)
-
-### Authorization
-
-[basicAuth](../README.md#basicAuth), [clientTokenHeader](../README.md#clientTokenHeader), [clientTokenQuery](../README.md#clientTokenQuery)
-
-### HTTP request headers
-
- - **Content-Type**: application/json
- - **Accept**: application/json
-
-<a name="uploadAppImage"></a>
-# **uploadAppImage**
-> Application uploadAppImage(file, id)
-
-
-
-Upload an image for an application
-
-### Example
-```java
-// Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.TokenApi;
-
-ApiClient defaultClient = Configuration.getDefaultApiClient();
-
-// Configure HTTP basic authorization: basicAuth
-HttpBasicAuth basicAuth = (HttpBasicAuth) defaultClient.getAuthentication("basicAuth");
-basicAuth.setUsername("YOUR USERNAME");
-basicAuth.setPassword("YOUR PASSWORD");
-
-// Configure API key authorization: clientTokenHeader
-ApiKeyAuth clientTokenHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenHeader");
-clientTokenHeader.setApiKey("YOUR API KEY");
-// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-//clientTokenHeader.setApiKeyPrefix("Token");
-
-// Configure API key authorization: clientTokenQuery
-ApiKeyAuth clientTokenQuery = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenQuery");
-clientTokenQuery.setApiKey("YOUR API KEY");
-// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-//clientTokenQuery.setApiKeyPrefix("Token");
-
-TokenApi apiInstance = new TokenApi();
-File file = new File("/path/to/file.txt"); // File | the application image
-Integer id = 56; // Integer | the application id
-try {
-    Application result = apiInstance.uploadAppImage(file, id);
-    System.out.println(result);
-} catch (ApiException e) {
-    System.err.println("Exception when calling TokenApi#uploadAppImage");
+    System.err.println("Exception when calling PluginApi#getPluginConfig");
     e.printStackTrace();
 }
 ```
@@ -441,12 +189,11 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **file** | **File**| the application image |
- **id** | **Integer**| the application id |
+ **id** | **Integer**| the plugin id |
 
 ### Return type
 
-[**Application**](Application.md)
+**Object**
 
 ### Authorization
 
@@ -454,6 +201,194 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: multipart/form-data
+ - **Content-Type**: application/json
+ - **Accept**: application/x-yaml
+
+<a name="getPluginDisplay"></a>
+# **getPluginDisplay**
+> String getPluginDisplay(id)
+
+Get display info for a Displayer plugin.
+
+### Example
+```java
+// Import classes:
+//import com.github.gotify.client.ApiClient;
+//import com.github.gotify.client.ApiException;
+//import com.github.gotify.client.Configuration;
+//import com.github.gotify.client.auth.*;
+//import com.github.gotify.client.api.PluginApi;
+
+ApiClient defaultClient = Configuration.getDefaultApiClient();
+
+// Configure HTTP basic authorization: basicAuth
+HttpBasicAuth basicAuth = (HttpBasicAuth) defaultClient.getAuthentication("basicAuth");
+basicAuth.setUsername("YOUR USERNAME");
+basicAuth.setPassword("YOUR PASSWORD");
+
+// Configure API key authorization: clientTokenHeader
+ApiKeyAuth clientTokenHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenHeader");
+clientTokenHeader.setApiKey("YOUR API KEY");
+// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+//clientTokenHeader.setApiKeyPrefix("Token");
+
+// Configure API key authorization: clientTokenQuery
+ApiKeyAuth clientTokenQuery = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenQuery");
+clientTokenQuery.setApiKey("YOUR API KEY");
+// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+//clientTokenQuery.setApiKeyPrefix("Token");
+
+PluginApi apiInstance = new PluginApi();
+Integer id = 56; // Integer | the plugin id
+try {
+    String result = apiInstance.getPluginDisplay(id);
+    System.out.println(result);
+} catch (ApiException e) {
+    System.err.println("Exception when calling PluginApi#getPluginDisplay");
+    e.printStackTrace();
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **Integer**| the plugin id |
+
+### Return type
+
+**String**
+
+### Authorization
+
+[basicAuth](../README.md#basicAuth), [clientTokenHeader](../README.md#clientTokenHeader), [clientTokenQuery](../README.md#clientTokenQuery)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+<a name="getPlugins"></a>
+# **getPlugins**
+> List&lt;PluginConf&gt; getPlugins()
+
+Return all plugins.
+
+### Example
+```java
+// Import classes:
+//import com.github.gotify.client.ApiClient;
+//import com.github.gotify.client.ApiException;
+//import com.github.gotify.client.Configuration;
+//import com.github.gotify.client.auth.*;
+//import com.github.gotify.client.api.PluginApi;
+
+ApiClient defaultClient = Configuration.getDefaultApiClient();
+
+// Configure HTTP basic authorization: basicAuth
+HttpBasicAuth basicAuth = (HttpBasicAuth) defaultClient.getAuthentication("basicAuth");
+basicAuth.setUsername("YOUR USERNAME");
+basicAuth.setPassword("YOUR PASSWORD");
+
+// Configure API key authorization: clientTokenHeader
+ApiKeyAuth clientTokenHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenHeader");
+clientTokenHeader.setApiKey("YOUR API KEY");
+// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+//clientTokenHeader.setApiKeyPrefix("Token");
+
+// Configure API key authorization: clientTokenQuery
+ApiKeyAuth clientTokenQuery = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenQuery");
+clientTokenQuery.setApiKey("YOUR API KEY");
+// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+//clientTokenQuery.setApiKeyPrefix("Token");
+
+PluginApi apiInstance = new PluginApi();
+try {
+    List<PluginConf> result = apiInstance.getPlugins();
+    System.out.println(result);
+} catch (ApiException e) {
+    System.err.println("Exception when calling PluginApi#getPlugins");
+    e.printStackTrace();
+}
+```
+
+### Parameters
+This endpoint does not need any parameter.
+
+### Return type
+
+[**List&lt;PluginConf&gt;**](PluginConf.md)
+
+### Authorization
+
+[basicAuth](../README.md#basicAuth), [clientTokenHeader](../README.md#clientTokenHeader), [clientTokenQuery](../README.md#clientTokenQuery)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+<a name="updatePluginConfig"></a>
+# **updatePluginConfig**
+> Void updatePluginConfig(id)
+
+Update YAML configuration for Configurer plugin.
+
+### Example
+```java
+// Import classes:
+//import com.github.gotify.client.ApiClient;
+//import com.github.gotify.client.ApiException;
+//import com.github.gotify.client.Configuration;
+//import com.github.gotify.client.auth.*;
+//import com.github.gotify.client.api.PluginApi;
+
+ApiClient defaultClient = Configuration.getDefaultApiClient();
+
+// Configure HTTP basic authorization: basicAuth
+HttpBasicAuth basicAuth = (HttpBasicAuth) defaultClient.getAuthentication("basicAuth");
+basicAuth.setUsername("YOUR USERNAME");
+basicAuth.setPassword("YOUR PASSWORD");
+
+// Configure API key authorization: clientTokenHeader
+ApiKeyAuth clientTokenHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenHeader");
+clientTokenHeader.setApiKey("YOUR API KEY");
+// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+//clientTokenHeader.setApiKeyPrefix("Token");
+
+// Configure API key authorization: clientTokenQuery
+ApiKeyAuth clientTokenQuery = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenQuery");
+clientTokenQuery.setApiKey("YOUR API KEY");
+// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+//clientTokenQuery.setApiKeyPrefix("Token");
+
+PluginApi apiInstance = new PluginApi();
+Integer id = 56; // Integer | the plugin id
+try {
+    Void result = apiInstance.updatePluginConfig(id);
+    System.out.println(result);
+} catch (ApiException e) {
+    System.err.println("Exception when calling PluginApi#updatePluginConfig");
+    e.printStackTrace();
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **Integer**| the plugin id |
+
+### Return type
+
+[**Void**](.md)
+
+### Authorization
+
+[basicAuth](../README.md#basicAuth), [clientTokenHeader](../README.md#clientTokenHeader), [clientTokenQuery](../README.md#clientTokenQuery)
+
+### HTTP request headers
+
+ - **Content-Type**: application/x-yaml
  - **Accept**: application/json
 

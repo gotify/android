@@ -20,7 +20,7 @@ plugins {
 }
 
 ext {
-    gotifyVersion = '1.1.7'
+    gotifyVersion = 'master'
     specLocation = "$buildDir/gotify.spec.json"
 }
 
@@ -49,7 +49,7 @@ task downloadSpec {
     inputs.property 'version', gotifyVersion
     doFirst {
         buildDir.mkdirs()
-        download("https://raw.githubusercontent.com/gotify/server/v${gotifyVersion}/docs/spec.json", specLocation)
+        download("https://raw.githubusercontent.com/gotify/server/${gotifyVersion}/docs/spec.json", specLocation)
     }
 }
 

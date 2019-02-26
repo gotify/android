@@ -32,8 +32,8 @@ import com.github.gotify.api.ApiException;
 import com.github.gotify.api.CertUtils;
 import com.github.gotify.api.ClientFactory;
 import com.github.gotify.client.ApiClient;
+import com.github.gotify.client.api.ClientApi;
 import com.github.gotify.client.api.MessageApi;
-import com.github.gotify.client.api.TokenApi;
 import com.github.gotify.client.model.Application;
 import com.github.gotify.client.model.Client;
 import com.github.gotify.client.model.Message;
@@ -126,7 +126,8 @@ public class MessagesActivity extends AppCompatActivity
         messages = new MessageFacade(client.createService(MessageApi.class), appsHolder);
 
         messagesView.setOnScrollListener(this);
-        messagesView.setAdapter(new ListMessageAdapter(this, picasso, emptyList(), this::delete));
+        messagesView.setAdapter(
+                new ListMessageAdapter(this, settings, picasso, emptyList(), this::delete));
 
         swipeRefreshLayout.setOnRefreshListener(this::onRefresh);
         drawer.addDrawerListener(
@@ -168,7 +169,7 @@ public class MessagesActivity extends AppCompatActivity
             item.setCheckable(true);
             Target t = Utils.toDrawable(getResources(), item::setIcon);
             targetReferences.add(t);
-            picasso.load(app.getImage())
+            picasso.load(Utils.resolveAbsoluteUrl(settings.url() + "/", app.getImage()))
                     .error(R.drawable.ic_alarm)
                     .placeholder(R.drawable.ic_placeholder)
                     .resize(100, 100)
@@ -354,8 +355,7 @@ public class MessagesActivity extends AppCompatActivity
         }
     }
 
-    private class SelectApplicationAndUpdateMessages
-            extends AsyncTask<Integer, Void, List<MessageWithImage>> {
+    private class SelectApplicationAndUpdateMessages extends AsyncTask<Integer, Void, Integer> {
 
         private SelectApplicationAndUpdateMessages(boolean withLoadingSpinner) {
             if (withLoadingSpinner) {
@@ -364,13 +364,15 @@ public class MessagesActivity extends AppCompatActivity
         }
 
         @Override
-        protected List<MessageWithImage> doInBackground(Integer... appIds) {
-            return messages.getOrLoadMore(appIds[0]);
+        protected Integer doInBackground(Integer... appIds) {
+            Integer appId = first(appIds);
+            messages.loadMoreIfNotPresent(appId);
+            return appId;
         }
 
         @Override
-        protected void onPostExecute(List<MessageWithImage> messageWithImages) {
-            updateMessagesAndStopLoading(messageWithImages);
+        protected void onPostExecute(Integer appId) {
+            updateMessagesAndStopLoading(messages.get(appId));
         }
     }
 
@@ -426,10 +428,10 @@ public class MessagesActivity extends AppCompatActivity
 
         @Override
         protected Void doInBackground(Void... ignore) {
-            TokenApi api =
+            ClientApi api =
                     ClientFactory.clientToken(
                                     settings.url(), settings.sslSettings(), settings.token())
-                            .createService(TokenApi.class);
+                            .createService(ClientApi.class);
             stopService(new Intent(MessagesActivity.this, WebSocketService.class));
             try {
                 List<Client> clients = Api.execute(api.getClients());
