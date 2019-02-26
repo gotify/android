@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.github.gotify.Settings;
 import com.github.gotify.Utils;
@@ -13,7 +12,7 @@ import com.github.gotify.api.ApiException;
 import com.github.gotify.api.ClientFactory;
 import com.github.gotify.client.ApiClient;
 import com.github.gotify.client.api.MessageApi;
-import com.github.gotify.client.api.TokenApi;
+import com.github.gotify.client.api.ApplicationApi;
 import com.github.gotify.client.model.Application;
 import com.github.gotify.client.model.Message;
 import com.github.gotify.log.Log;
@@ -62,8 +61,8 @@ public class ShareActivity extends Activity {
         @Override
         protected Void doInBackground(Message... messages) {
             try {
-                TokenApi tokenApi = client.createService(TokenApi.class);
-                List<Application> apps = Api.execute(tokenApi.getApps());
+                ApplicationApi applicationApi = client.createService(ApplicationApi.class);
+                List<Application> apps = Api.execute(applicationApi.getApps());
                 client = ClientFactory.clientToken(settings.url(), settings.sslSettings(),
                         apps.get(0).getToken());
                 new SendSharedContent().execute(first(messages));
