@@ -4,14 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:minHeight="75dp"
-    android:padding="5dp">
+    android:padding="10dp">
 
     <TextView
         android:id="@+id/message_date"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
         android:text=""
         app:layout_constraintEnd_toStartOf="@+id/message_delete"
         app:layout_constraintTop_toTopOf="parent" />
@@ -19,17 +18,14 @@
     <TextView
         android:id="@+id/message_title"
         android:layout_width="0dp"
-        android:layout_height="23dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:maxLength="30"
-        android:singleLine="true"
+        android:layout_marginEnd="8dp"
         android:text=""
-        android:textStyle="bold"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/message_date"
-        app:layout_constraintStart_toEndOf="@+id/message_image"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
@@ -40,7 +36,7 @@
         android:layout_marginTop="8dp"
         android:contentDescription="@string/message_image_desc"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/message_title" />
 
 
     <TextView
@@ -48,7 +44,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:autoLink="web"
         app:layout_constraintEnd_toEndOf="parent"
@@ -61,6 +57,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:contentDescription="@string/delete_message"
+        app:layout_constraintBottom_toBottomOf="@+id/message_date"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_delete" />
