@@ -19,7 +19,7 @@ Download the apk or get the app via F-Droid or Google Play.
 
 Google Play and the Google Play logo are trademarks of Google LLC.
 
-### Disable battery optimiation
+### Disable battery optimization
 
 By default Android kills long running apps as they drain the battery. With enabled battery optimization, Gotify will be killed and you wont receive any notifications.
 
