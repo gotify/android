@@ -23,6 +23,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.github.gotify.BuildConfig;
 import com.github.gotify.MissedMessageUtil;
 import com.github.gotify.R;
 import com.github.gotify.Settings;
@@ -53,7 +54,6 @@ import com.squareup.picasso.Target;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 
 import static java.util.Collections.emptyList;
@@ -200,12 +200,18 @@ public class MessagesActivity extends AppCompatActivity
 
         navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);
-        TextView header = headerView.findViewById(R.id.header_username);
-        String host = HttpUrl.parse(settings.url()).host();
-        header.setText(getString(R.string.connection, settings.user().getName(), host));
 
-        TextView version = headerView.findViewById(R.id.header_versions);
-        version.setText(getString(R.string.server_version, settings.serverVersion()));
+        TextView user = headerView.findViewById(R.id.header_user);
+        user.setText(settings.user().getName());
+
+        TextView connection = headerView.findViewById(R.id.header_connection);
+        connection.setText(
+                getString(R.string.connection, settings.user().getName(), settings.url()));
+
+        TextView version = headerView.findViewById(R.id.header_version);
+        version.setText(
+                getString(R.string.versions, BuildConfig.VERSION_NAME, settings.serverVersion()));
+
         ImageButton refreshAll = headerView.findViewById(R.id.refresh_all);
         refreshAll.setOnClickListener(this::onRefreshAll);
     }
