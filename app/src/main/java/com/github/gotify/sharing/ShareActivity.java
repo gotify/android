@@ -22,12 +22,10 @@ import static com.github.gotify.Utils.first;
 public class ShareActivity extends Activity {
     private ApiClient client;
     private Settings settings;
-    private ShareActivity shareActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        shareActivity = this;
         settings = new Settings(this);
         handleShareIntent();
     }
@@ -89,8 +87,8 @@ public class ShareActivity extends Activity {
 
         @Override
         protected void onPostExecute(String message) {
-            Utils.showLongToast(shareActivity, message);
-            shareActivity.finish();
+            Utils.showLongToast(ShareActivity.this, message);
+            ShareActivity.this.finish();
         }
     }
 }
