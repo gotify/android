@@ -49,6 +49,7 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0-rc1'
     implementation 'com.hypertrack:hyperlog:0.0.10'
     implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'ru.noties.markwon:core:3.0.0'
 }
 
 configurations {
