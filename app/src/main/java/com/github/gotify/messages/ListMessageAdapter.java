@@ -18,6 +18,8 @@ import com.github.gotify.client.model.Message;
 import com.github.gotify.messages.provider.MessageWithImage;
 import com.squareup.picasso.Picasso;
 import java.util.List;
+import ru.noties.markwon.Markwon;
+import ru.noties.markwon.core.CorePlugin;
 
 public class ListMessageAdapter extends BaseAdapter {
 
@@ -26,6 +28,7 @@ public class ListMessageAdapter extends BaseAdapter {
     private List<MessageWithImage> items;
     private Delete delete;
     private Settings settings;
+    private Markwon markwon;
 
     ListMessageAdapter(
             Context context,
@@ -39,6 +42,7 @@ public class ListMessageAdapter extends BaseAdapter {
         this.picasso = picasso;
         this.items = items;
         this.delete = delete;
+        this.markwon = Markwon.builder(context).usePlugin(CorePlugin.create()).build();
     }
 
     void items(List<MessageWithImage> items) {
@@ -70,7 +74,7 @@ public class ListMessageAdapter extends BaseAdapter {
         }
         ViewHolder holder = new ViewHolder(view);
         final MessageWithImage message = items.get(position);
-        holder.message.setText(message.message.getMessage());
+        markwon.setMarkdown(holder.message, message.message.getMessage());
         holder.title.setText(message.message.getTitle());
         picasso.load(Utils.resolveAbsoluteUrl(settings.url() + "/", message.image))
                 .error(R.drawable.ic_alarm)
