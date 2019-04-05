@@ -74,7 +74,11 @@ public class ListMessageAdapter extends BaseAdapter {
         }
         ViewHolder holder = new ViewHolder(view);
         final MessageWithImage message = items.get(position);
-        markwon.setMarkdown(holder.message, message.message.getMessage());
+        if (Extras.useMarkdown(message.message)) {
+            markwon.setMarkdown(holder.message, message.message.getMessage());
+        } else {
+            holder.message.setText(message.message.getMessage());
+        }
         holder.title.setText(message.message.getTitle());
         picasso.load(Utils.resolveAbsoluteUrl(settings.url() + "/", message.image))
                 .error(R.drawable.ic_alarm)
