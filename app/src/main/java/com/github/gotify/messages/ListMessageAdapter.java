@@ -21,7 +21,9 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 import ru.noties.markwon.Markwon;
 import ru.noties.markwon.core.CorePlugin;
+import ru.noties.markwon.ext.tables.TablePlugin;
 import ru.noties.markwon.image.ImagesPlugin;
+import ru.noties.markwon.image.gif.GifPlugin;
 import ru.noties.markwon.movement.MovementMethodPlugin;
 
 public class ListMessageAdapter extends BaseAdapter {
@@ -45,11 +47,14 @@ public class ListMessageAdapter extends BaseAdapter {
         this.picasso = picasso;
         this.items = items;
         this.delete = delete;
+
         this.markwon =
                 Markwon.builder(context)
                         .usePlugin(CorePlugin.create())
                         .usePlugin(MovementMethodPlugin.create())
                         .usePlugin(ImagesPlugin.create(context))
+                        .usePlugin(TablePlugin.create(context))
+                        .usePlugin(GifPlugin.create())
                         .build();
     }
 

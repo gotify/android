@@ -50,6 +50,8 @@ dependencies {
     implementation 'com.hypertrack:hyperlog:0.0.10'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'ru.noties.markwon:core:3.0.0'
+    implementation 'ru.noties.markwon:image-gif:3.0.0'
+    implementation 'ru.noties.markwon:ext-tables:3.0.0'
 }
 
 configurations {
