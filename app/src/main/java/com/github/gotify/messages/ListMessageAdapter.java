@@ -75,8 +75,10 @@ public class ListMessageAdapter extends BaseAdapter {
         ViewHolder holder = new ViewHolder(view);
         final MessageWithImage message = items.get(position);
         if (Extras.useMarkdown(message.message)) {
+            holder.message.setAutoLinkMask(0);
             markwon.setMarkdown(holder.message, message.message.getMessage());
         } else {
+            holder.message.setAutoLinkMask(Linkify.WEB_URLS);
             holder.message.setText(message.message.getMessage());
         }
         holder.title.setText(message.message.getTitle());
