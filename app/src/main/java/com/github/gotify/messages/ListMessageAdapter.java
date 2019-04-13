@@ -1,6 +1,7 @@
 package com.github.gotify.messages;
 
 import android.content.Context;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 import ru.noties.markwon.Markwon;
 import ru.noties.markwon.core.CorePlugin;
+import ru.noties.markwon.movement.MovementMethodPlugin;
 
 public class ListMessageAdapter extends BaseAdapter {
 
@@ -42,7 +44,11 @@ public class ListMessageAdapter extends BaseAdapter {
         this.picasso = picasso;
         this.items = items;
         this.delete = delete;
-        this.markwon = Markwon.builder(context).usePlugin(CorePlugin.create()).build();
+        this.markwon =
+                Markwon.builder(context)
+                        .usePlugin(CorePlugin.create())
+                        .usePlugin(MovementMethodPlugin.create())
+                        .build();
     }
 
     void items(List<MessageWithImage> items) {
