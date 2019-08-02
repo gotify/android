@@ -1,6 +1,7 @@
 package com.github.gotify.service;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -160,7 +161,7 @@ public class WebSocketService extends Service {
                 NotificationSupport.ID.GROUPED,
                 getString(R.string.missed_messages),
                 getString(R.string.grouped_message, size),
-                highestPriority);
+                NotificationSupport.Channel.MESSAGES_IMPORTANCE_HIGH);
     }
 
     private void onMessage(Message message) {
@@ -168,8 +169,17 @@ public class WebSocketService extends Service {
             lastReceivedMessage.set(message.getId());
         }
         broadcast(message);
+        String channel = String.format("gotify_%d", message.getAppid());
+        NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+                notificationManager.getNotificationChannel(channel) == null) {
+            NotificationSupport.createChannel(
+                    notificationManager,
+                    String.format("App %d", message.getAppid()),
+                    channel);
+        }
         showNotification(
-                message.getId(), message.getTitle(), message.getMessage(), message.getPriority());
+                message.getId(), message.getTitle(), message.getMessage(), channel);
     }
 
     private void broadcast(Message message) {
@@ -209,17 +219,17 @@ public class WebSocketService extends Service {
         startForeground(NotificationSupport.ID.FOREGROUND, notification);
     }
 
-    private void showNotification(int id, String title, String message, long priority) {
+    private void showNotification(int id, String title, String message, String channel) {
         Intent intent = new Intent(this, MessagesActivity.class);
         PendingIntent contentIntent =
                 PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder b =
                 new NotificationCompat.Builder(
-                        this, NotificationSupport.convertPriorityToChannel(priority));
+                        this, channel);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            showNotificationGroup(priority);
+            showNotificationGroup(channel);
         }
 
         b.setAutoCancel(true)
@@ -242,14 +252,14 @@ public class WebSocketService extends Service {
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    public void showNotificationGroup(long priority) {
+    public void showNotificationGroup(String channel) {
         Intent intent = new Intent(this, MessagesActivity.class);
         PendingIntent contentIntent =
                 PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder b =
                 new NotificationCompat.Builder(
-                        this, NotificationSupport.convertPriorityToChannel(priority));
+                        this, channel);
 
         b.setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
