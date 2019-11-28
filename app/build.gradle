@@ -49,9 +49,10 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0-rc1'
     implementation 'com.hypertrack:hyperlog:0.0.10'
     implementation 'com.squareup.picasso:picasso:2.71828'
-    implementation 'ru.noties.markwon:core:3.0.0'
-    implementation 'ru.noties.markwon:image-gif:3.0.0'
-    implementation 'ru.noties.markwon:ext-tables:3.0.0'
+    implementation 'io.noties.markwon:core:4.2.0'
+    implementation 'io.noties.markwon:image-picasso:4.2.0'
+    implementation 'io.noties.markwon:image:4.2.0'
+    implementation 'io.noties.markwon:ext-tables:4.2.0'
 }
 
 configurations {
