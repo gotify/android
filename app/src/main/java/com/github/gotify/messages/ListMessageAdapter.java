@@ -18,13 +18,12 @@ import com.github.gotify.Utils;
 import com.github.gotify.client.model.Message;
 import com.github.gotify.messages.provider.MessageWithImage;
 import com.squareup.picasso.Picasso;
+import io.noties.markwon.Markwon;
+import io.noties.markwon.core.CorePlugin;
+import io.noties.markwon.ext.tables.TablePlugin;
+import io.noties.markwon.image.picasso.PicassoImagesPlugin;
+import io.noties.markwon.movement.MovementMethodPlugin;
 import java.util.List;
-import ru.noties.markwon.Markwon;
-import ru.noties.markwon.core.CorePlugin;
-import ru.noties.markwon.ext.tables.TablePlugin;
-import ru.noties.markwon.image.ImagesPlugin;
-import ru.noties.markwon.image.gif.GifPlugin;
-import ru.noties.markwon.movement.MovementMethodPlugin;
 
 public class ListMessageAdapter extends BaseAdapter {
 
@@ -52,9 +51,8 @@ public class ListMessageAdapter extends BaseAdapter {
                 Markwon.builder(context)
                         .usePlugin(CorePlugin.create())
                         .usePlugin(MovementMethodPlugin.create())
-                        .usePlugin(ImagesPlugin.create(context))
+                        .usePlugin(PicassoImagesPlugin.create(picasso))
                         .usePlugin(TablePlugin.create(context))
-                        .usePlugin(GifPlugin.create())
                         .build();
     }
 
