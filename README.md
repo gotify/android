@@ -41,6 +41,15 @@ The foreground notification with content like `Listening to https://push.yourdom
 * Select a different "Behavior" or "Importance" (depends on your android version)
 * Restart Gotify
 
+## Message Priorities
+
+| Notification | Gotify Priority|
+|- |-|
+| - | 0 |
+| Icon in notification bar | 1 - 3 |
+| Icon in notification bar + Sound | 4 - 7 |
+| Icon in notification bar + Sound + Vibration | 8 - 10 |
+
 ## Building
 
 Execute the following command to build the apk.
