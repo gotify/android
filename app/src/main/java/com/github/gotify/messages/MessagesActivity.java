@@ -51,9 +51,11 @@ import com.google.android.material.navigation.NavigationView;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 
 import static java.util.Collections.emptyList;
@@ -178,6 +180,11 @@ public class MessagesActivity extends AppCompatActivity
 
     private Picasso makePicasso() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        int CACHE_SIZE = 10 * 1024 * 1024; // 10 MB
+        builder.cache(
+                new Cache(
+                        new File(getApplicationContext().getCacheDir(), "http-cache"), CACHE_SIZE));
+
         CertUtils.applySslSettings(builder, settings.sslSettings());
 
         OkHttp3Downloader downloader = new OkHttp3Downloader(builder.build());
