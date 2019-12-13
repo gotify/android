@@ -52,6 +52,7 @@ import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -101,6 +102,8 @@ public class MessagesActivity extends AppCompatActivity
     private boolean isLoadMore = false;
     private Integer selectAppIdOnDrawerClose = null;
 
+    int PICASSO_CACHE_SIZE = 50 * 1024 * 1024; // 50 MB
+    private Cache picassoCache;
     private Picasso picasso;
 
     // we need to keep the target references otherwise they get gc'ed before they can be called.
@@ -115,6 +118,7 @@ public class MessagesActivity extends AppCompatActivity
         Log.i("Entering " + getClass().getSimpleName());
         settings = new Settings(this);
 
+        picassoCache = new Cache(new File(getCacheDir(), "picasso-cache"), PICASSO_CACHE_SIZE);
         picasso = makePicasso();
 
         client =
@@ -147,6 +151,11 @@ public class MessagesActivity extends AppCompatActivity
     }
 
     public void onRefreshAll(View view) {
+        try {
+            picassoCache.evictAll();
+        } catch (IOException e) {
+            Log.e("Problem evicting Picasso cache", e);
+        }
         startActivity(new Intent(this, InitializationActivity.class));
         finish();
     }
@@ -180,10 +189,7 @@ public class MessagesActivity extends AppCompatActivity
 
     private Picasso makePicasso() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        int CACHE_SIZE = 10 * 1024 * 1024; // 10 MB
-        builder.cache(
-                new Cache(
-                        new File(getApplicationContext().getCacheDir(), "http-cache"), CACHE_SIZE));
+        builder.cache(picassoCache);
 
         CertUtils.applySslSettings(builder, settings.sslSettings());
 
