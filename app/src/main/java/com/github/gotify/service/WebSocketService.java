@@ -26,6 +26,7 @@ import com.github.gotify.client.api.MessageApi;
 import com.github.gotify.client.model.Message;
 import com.github.gotify.log.Log;
 import com.github.gotify.log.UncaughtExceptionHandler;
+import com.github.gotify.messages.Extras;
 import com.github.gotify.messages.MessagesActivity;
 import java.util.List;
 import java.util.Map;
@@ -216,21 +217,12 @@ public class WebSocketService extends Service {
         startForeground(NotificationSupport.ID.FOREGROUND, notification);
     }
 
-    private static <T> T getNestedValue(Map<String, Object> extras, String... keys) {
-        Object value = extras;
-        for (String key : keys) {
-            if ((Map) value == null) return null;
-            value = ((Map) value).get(key);
-        }
-        return (T) value;
-    }
-
     private void showNotification(
             int id, String title, String message, long priority, Map<String, Object> extras) {
 
         Intent intent;
 
-        String url = getNestedValue(extras, "client::notification", "click", "url");
+        String url = Extras.getNestedValue(extras, "client::notification", "click", "url");
         if (url != null) {
             intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse(url));

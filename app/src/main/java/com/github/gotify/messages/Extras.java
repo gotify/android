@@ -18,4 +18,17 @@ public final class Extras {
 
         return "text/markdown".equals(((Map) display).get("contentType"));
     }
+
+    public static <T> T getNestedValue(Message message, String... keys) {
+        return getNestedValue(message.getExtras(), keys);
+    }
+
+    public static <T> T getNestedValue(Map<String, Object> extras, String... keys) {
+        Object value = extras;
+        for (String key : keys) {
+            if ((Map) value == null) return null;
+            value = ((Map) value).get(key);
+        }
+        return (T) value;
+    }
 }
