@@ -222,11 +222,15 @@ public class WebSocketService extends Service {
 
         Intent intent;
 
-        String url = Extras.getNestedValue(extras, "client::notification", "click", "url");
+        String url =
+                Extras.getNestedValue(String.class, extras, "client::notification", "click", "url");
+
         if (url != null) {
             intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse(url));
-        } else intent = new Intent(this, MessagesActivity.class);
+        } else {
+            intent = new Intent(this, MessagesActivity.class);
+        }
 
         PendingIntent contentIntent =
                 PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
