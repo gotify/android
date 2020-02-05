@@ -18,4 +18,30 @@ public final class Extras {
 
         return "text/markdown".equals(((Map) display).get("contentType"));
     }
+
+    public static <T> T getNestedValue(Class<T> clazz, Message message, String... keys) {
+        return getNestedValue(clazz, message.getExtras(), keys);
+    }
+
+    public static <T> T getNestedValue(Class<T> clazz, Map<String, Object> extras, String... keys) {
+        Object value = extras;
+
+        for (String key : keys) {
+            if (value == null) {
+                return null;
+            }
+
+            if (!(value instanceof Map<?, ?>)) {
+                return null;
+            }
+
+            value = ((Map<?, ?>) value).get(key);
+        }
+
+        if (!clazz.isInstance(value)) {
+            return null;
+        }
+
+        return clazz.cast(value);
+    }
 }

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
 import androidx.annotation.Nullable;
@@ -25,8 +26,10 @@ import com.github.gotify.client.api.MessageApi;
 import com.github.gotify.client.model.Message;
 import com.github.gotify.log.Log;
 import com.github.gotify.log.UncaughtExceptionHandler;
+import com.github.gotify.messages.Extras;
 import com.github.gotify.messages.MessagesActivity;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -160,7 +163,8 @@ public class WebSocketService extends Service {
                 NotificationSupport.ID.GROUPED,
                 getString(R.string.missed_messages),
                 getString(R.string.grouped_message, size),
-                highestPriority);
+                highestPriority,
+                null);
     }
 
     private void onMessage(Message message) {
@@ -169,7 +173,11 @@ public class WebSocketService extends Service {
         }
         broadcast(message);
         showNotification(
-                message.getId(), message.getTitle(), message.getMessage(), message.getPriority());
+                message.getId(),
+                message.getTitle(),
+                message.getMessage(),
+                message.getPriority(),
+                message.getExtras());
     }
 
     private void broadcast(Message message) {
@@ -209,8 +217,21 @@ public class WebSocketService extends Service {
         startForeground(NotificationSupport.ID.FOREGROUND, notification);
     }
 
-    private void showNotification(int id, String title, String message, long priority) {
-        Intent intent = new Intent(this, MessagesActivity.class);
+    private void showNotification(
+            int id, String title, String message, long priority, Map<String, Object> extras) {
+
+        Intent intent;
+
+        String url =
+                Extras.getNestedValue(String.class, extras, "client::notification", "click", "url");
+
+        if (url != null) {
+            intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(url));
+        } else {
+            intent = new Intent(this, MessagesActivity.class);
+        }
+
         PendingIntent contentIntent =
                 PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
