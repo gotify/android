@@ -1,5 +1,6 @@
 package com.github.gotify.messages;
 
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -284,6 +285,12 @@ public class MessagesActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
+
+        Context context = getApplicationContext();
+        NotificationManager nManager =
+                ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE));
+        nManager.cancelAll();
+
         IntentFilter filter = new IntentFilter();
         filter.addAction(WebSocketService.NEW_MESSAGE_BROADCAST);
         registerReceiver(receiver, filter);
