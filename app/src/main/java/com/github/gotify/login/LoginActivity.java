@@ -115,11 +115,23 @@ public class LoginActivity extends AppCompatActivity {
         checkUrlProgress.setVisibility(View.VISIBLE);
         checkUrlButton.setVisibility(View.GONE);
 
-        final String fixedUrl = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
+        final String trimmedUrl = url.trim();
+        final String fixedUrl =
+                trimmedUrl.endsWith("/")
+                        ? trimmedUrl.substring(0, trimmedUrl.length() - 1)
+                        : trimmedUrl;
 
-        ClientFactory.versionApi(fixedUrl, tempSSLSettings())
-                .getVersion()
-                .enqueue(callInUI(this, onValidUrl(fixedUrl), onInvalidUrl(fixedUrl)));
+        try {
+            ClientFactory.versionApi(fixedUrl, tempSSLSettings())
+                    .getVersion()
+                    .enqueue(callInUI(this, onValidUrl(fixedUrl), onInvalidUrl(fixedUrl)));
+        } catch (Exception e) {
+            checkUrlProgress.setVisibility(View.GONE);
+            checkUrlButton.setVisibility(View.VISIBLE);
+            String errorMsg =
+                    getString(R.string.version_failed, fixedUrl + "/version", e.getMessage());
+            Utils.showSnackBar(LoginActivity.this, errorMsg);
+        }
     }
 
     public void showHttpWarning() {
@@ -301,7 +313,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private String versionError(String url, ApiException exception) {
-        return getString(R.string.version_failed, url + "/version", exception.code());
+        return getString(R.string.version_failed_status_code, url + "/version", exception.code());
     }
 
     private SSLSettings tempSSLSettings() {

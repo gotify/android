@@ -4,7 +4,8 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="found_gotify_version">Found Gotify v%s</string>
-    <string name="version_failed">Request to \'%s\' failed with status code %d</string>
+    <string name="version_failed_status_code">Request to \'%s\' failed with status code %d</string>
+    <string name="version_failed">Request to \'%s\' failed. %s.</string>
     <string name="wronguserpw">There is no user with this username and password</string>
     <string name="create_client_title">Client Name</string>
     <string name="create_client_message">Chose a name for your session</string>
