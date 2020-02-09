@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -15,6 +16,7 @@ import android.widget.AbsListView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +26,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.github.gotify.BuildConfig;
 import com.github.gotify.MissedMessageUtil;
 import com.github.gotify.R;
@@ -91,6 +94,9 @@ public class MessagesActivity extends AppCompatActivity
 
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout swipeRefreshLayout;
+
+    @BindView(R.id.flipper)
+    ViewFlipper flipper;
 
     private MessageFacade messages;
 
@@ -164,6 +170,13 @@ public class MessagesActivity extends AppCompatActivity
     private void onRefresh() {
         messages.clear();
         new LoadMore().execute(appId);
+    }
+
+    @OnClick(R.id.learn_gotify)
+    public void openDocumentation() {
+        Intent browserIntent =
+                new Intent(Intent.ACTION_VIEW, Uri.parse("https://gotify.net/docs/pushmsg"));
+        startActivity(browserIntent);
     }
 
     public void delete(Message message) {
@@ -494,6 +507,13 @@ public class MessagesActivity extends AppCompatActivity
     private void updateMessagesAndStopLoading(List<MessageWithImage> messageWithImages) {
         isLoadMore = false;
         stopLoading();
+
+        if (messageWithImages.isEmpty()) {
+            flipper.setDisplayedChild(1);
+        } else {
+            flipper.setDisplayedChild(0);
+        }
+
         ListMessageAdapter adapter = (ListMessageAdapter) messagesView.getAdapter();
         adapter.items(messageWithImages);
         adapter.notifyDataSetChanged();
