@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Canvas;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,6 +23,8 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -357,11 +362,26 @@ public class MessagesActivity extends AppCompatActivity
     }
 
     private class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback {
-        ListMessageAdapter adapter;
+        private ListMessageAdapter adapter;
+        private Drawable icon;
+        private final ColorDrawable background;
 
         public SwipeToDeleteCallback(ListMessageAdapter adapter) {
             super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
             this.adapter = adapter;
+
+            int backgroundColorId =
+                    ContextCompat.getColor(MessagesActivity.this, R.color.swipeBackground);
+            int iconColorId = ContextCompat.getColor(MessagesActivity.this, R.color.swipeIcon);
+
+            Drawable drawable =
+                    ContextCompat.getDrawable(MessagesActivity.this, R.drawable.ic_delete);
+            if (drawable != null) {
+                icon = DrawableCompat.wrap(drawable.mutate());
+                DrawableCompat.setTint(icon, iconColorId);
+            }
+
+            background = new ColorDrawable(backgroundColorId);
         }
 
         @Override
@@ -377,6 +397,60 @@ public class MessagesActivity extends AppCompatActivity
             int position = viewHolder.getAdapterPosition();
             Message message = adapter.getItem(position).message;
             MessagesActivity.this.delete(message);
+        }
+
+        @Override
+        public void onChildDraw(
+                @NonNull Canvas c,
+                @NonNull RecyclerView recyclerView,
+                @NonNull RecyclerView.ViewHolder viewHolder,
+                float dX,
+                float dY,
+                int actionState,
+                boolean isCurrentlyActive) {
+            View itemView = viewHolder.itemView;
+
+            int iconHeight = itemView.getHeight() / 3;
+            double scale = iconHeight / (double) icon.getIntrinsicHeight();
+            int iconWidth = (int) (icon.getIntrinsicWidth() * scale);
+
+            int iconMarginLeftRight = 50;
+            int iconMarginTopBottom = (itemView.getHeight() - iconHeight) / 2;
+            int iconTop = itemView.getTop() + iconMarginTopBottom;
+            int iconBottom = itemView.getBottom() - iconMarginTopBottom;
+
+            if (dX > 0) {
+                // Swiping to the right
+                int iconLeft = itemView.getLeft() + iconMarginLeftRight;
+                int iconRight = itemView.getLeft() + iconMarginLeftRight + iconWidth;
+                icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+
+                background.setBounds(
+                        itemView.getLeft(),
+                        itemView.getTop(),
+                        itemView.getLeft() + ((int) dX),
+                        itemView.getBottom());
+            } else if (dX < 0) {
+                // Swiping to the left
+                int iconLeft = itemView.getRight() - iconMarginLeftRight - iconWidth;
+                int iconRight = itemView.getRight() - iconMarginLeftRight;
+                icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+
+                background.setBounds(
+                        itemView.getRight() + ((int) dX),
+                        itemView.getTop(),
+                        itemView.getRight(),
+                        itemView.getBottom());
+            } else {
+                // View is unswiped
+                icon.setBounds(0, 0, 0, 0);
+                background.setBounds(0, 0, 0, 0);
+            }
+
+            background.draw(c);
+            icon.draw(c);
+
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
         }
     }
 
