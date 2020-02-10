@@ -154,6 +154,20 @@ public class MessagesActivity extends AppCompatActivity
                         }
                     }
                 });
+
+        swipeRefreshLayout.setEnabled(false);
+        messagesView
+                .getViewTreeObserver()
+                .addOnScrollChangedListener(
+                        () -> {
+                            View topChild = messagesView.getChildAt(0);
+                            if (topChild != null) {
+                                swipeRefreshLayout.setEnabled(topChild.getTop() == 0);
+                            } else {
+                                swipeRefreshLayout.setEnabled(true);
+                            }
+                        });
+
         new SelectApplicationAndUpdateMessages(true).execute(appId);
     }
 
