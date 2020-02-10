@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +23,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -142,12 +144,17 @@ public class MessagesActivity extends AppCompatActivity
         DividerItemDecoration dividerItemDecoration =
                 new DividerItemDecoration(
                         messagesView.getContext(), layoutManager.getOrientation());
+        ListMessageAdapter adapter =
+                new ListMessageAdapter(this, settings, picasso, emptyList(), this::delete);
+
         messagesView.addItemDecoration(dividerItemDecoration);
         messagesView.setHasFixedSize(true);
         messagesView.setLayoutManager(layoutManager);
         messagesView.addOnScrollListener(new MessageListOnScrollListener());
-        messagesView.setAdapter(
-                new ListMessageAdapter(this, settings, picasso, emptyList(), this::delete));
+        messagesView.setAdapter(adapter);
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(adapter));
+        itemTouchHelper.attachToRecyclerView(messagesView);
 
         swipeRefreshLayout.setOnRefreshListener(this::onRefresh);
         drawer.addDrawerListener(
@@ -347,6 +354,30 @@ public class MessagesActivity extends AppCompatActivity
     protected void onDestroy() {
         super.onDestroy();
         picasso.shutdown();
+    }
+
+    private class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback {
+        ListMessageAdapter adapter;
+
+        public SwipeToDeleteCallback(ListMessageAdapter adapter) {
+            super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
+            this.adapter = adapter;
+        }
+
+        @Override
+        public boolean onMove(
+                @NonNull RecyclerView recyclerView,
+                @NonNull RecyclerView.ViewHolder viewHolder,
+                @NonNull RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            int position = viewHolder.getAdapterPosition();
+            Message message = adapter.getItem(position).message;
+            MessagesActivity.this.delete(message);
+        }
     }
 
     private class MessageListOnScrollListener extends RecyclerView.OnScrollListener {
