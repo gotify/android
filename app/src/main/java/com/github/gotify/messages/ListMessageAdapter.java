@@ -5,10 +5,10 @@ import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,7 +25,7 @@ import io.noties.markwon.image.picasso.PicassoImagesPlugin;
 import io.noties.markwon.movement.MovementMethodPlugin;
 import java.util.List;
 
-public class ListMessageAdapter extends BaseAdapter {
+public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.ViewHolder> {
 
     private Context content;
     private Picasso picasso;
@@ -60,30 +60,17 @@ public class ListMessageAdapter extends BaseAdapter {
         this.items = items;
     }
 
+    @NonNull
     @Override
-    public int getCount() {
-        return items.size();
-    }
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(content).inflate(R.layout.message_item, parent, false);
 
-    @Override
-    public MessageWithImage getItem(int position) {
-        return items.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return getItem(position).message.getId();
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        final View view;
-        if (convertView == null) {
-            view = LayoutInflater.from(content).inflate(R.layout.message_item, parent, false);
-        } else {
-            view = convertView;
-        }
         ViewHolder holder = new ViewHolder(view);
+        return holder;
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final MessageWithImage message = items.get(position);
         if (Extras.useMarkdown(message.message)) {
             holder.message.setAutoLinkMask(0);
@@ -102,8 +89,17 @@ public class ListMessageAdapter extends BaseAdapter {
                         ? Utils.dateToRelative(message.message.getDate())
                         : "?");
         holder.delete.setOnClickListener((ignored) -> delete.delete(message.message));
+    }
 
-        return view;
+    @Override
+    public int getItemCount() {
+        return items.size();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        MessageWithImage currentItem = items.get(position);
+        return currentItem.message.getId();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
