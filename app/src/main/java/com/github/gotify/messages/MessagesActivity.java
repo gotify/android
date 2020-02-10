@@ -12,9 +12,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -23,6 +21,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -66,7 +67,7 @@ import okhttp3.OkHttpClient;
 import static java.util.Collections.emptyList;
 
 public class MessagesActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, AbsListView.OnScrollListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private BroadcastReceiver receiver =
             new BroadcastReceiver() {
@@ -90,7 +91,7 @@ public class MessagesActivity extends AppCompatActivity
     NavigationView navigationView;
 
     @BindView(R.id.messages_view)
-    ListView messagesView;
+    RecyclerView messagesView;
 
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout swipeRefreshLayout;
@@ -137,7 +138,14 @@ public class MessagesActivity extends AppCompatActivity
 
         messages = new MessageFacade(client.createService(MessageApi.class), appsHolder);
 
-        messagesView.setOnScrollListener(this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        DividerItemDecoration dividerItemDecoration =
+                new DividerItemDecoration(
+                        messagesView.getContext(), layoutManager.getOrientation());
+        messagesView.addItemDecoration(dividerItemDecoration);
+        messagesView.setHasFixedSize(true);
+        messagesView.setLayoutManager(layoutManager);
+        messagesView.addOnScrollListener(new MessageListOnScrollListener());
         messagesView.setAdapter(
                 new ListMessageAdapter(this, settings, picasso, emptyList(), this::delete));
 
@@ -341,18 +349,25 @@ public class MessagesActivity extends AppCompatActivity
         picasso.shutdown();
     }
 
-    @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {}
+    private class MessageListOnScrollListener extends RecyclerView.OnScrollListener {
+        @Override
+        public void onScrollStateChanged(RecyclerView view, int scrollState) {}
 
-    @Override
-    public void onScroll(
-            AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if (firstVisibleItem + visibleItemCount > totalItemCount - 15
-                && totalItemCount != 0
-                && messages.canLoadMore(appId)) {
-            if (!isLoadMore) {
-                isLoadMore = true;
-                new LoadMore().execute(appId);
+        @Override
+        public void onScrolled(RecyclerView view, int dx, int dy) {
+            LinearLayoutManager linearLayoutManager = (LinearLayoutManager) view.getLayoutManager();
+            if (linearLayoutManager != null) {
+                int lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
+                int totalItemCount = view.getAdapter().getItemCount();
+
+                if (lastVisibleItem > totalItemCount - 15
+                        && totalItemCount != 0
+                        && messages.canLoadMore(appId)) {
+                    if (!isLoadMore) {
+                        isLoadMore = true;
+                        new LoadMore().execute(appId);
+                    }
+                }
             }
         }
     }
