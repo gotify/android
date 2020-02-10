@@ -222,6 +222,16 @@ public class WebSocketService extends Service {
 
         Intent intent;
 
+        String intentUrl =
+                Extras.getNestedValue(
+                        String.class, extras, "android::action", "onReceive", "intentUrl");
+
+        if (intentUrl != null) {
+            intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(intentUrl));
+            startActivity(intent);
+        }
+
         String url =
                 Extras.getNestedValue(String.class, extras, "client::notification", "click", "url");
 
