@@ -25,6 +25,8 @@
     <string name="grouped_message">Received %d messages while being disconnected</string>
     <string name="delete_all">Delete all</string>
     <string name="delete_logs">Delete logs</string>
+    <string name="snackbar_deleted">Message deleted</string>
+    <string name="snackbar_undo">Undo</string>
     <string name="all_messages">All Messages</string>
     <string name="logs">Logs</string>
     <string name="message_image_desc">The image of a message</string>

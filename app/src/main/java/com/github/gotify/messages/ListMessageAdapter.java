@@ -48,11 +48,11 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
                         .build();
     }
 
-    public MessageWithImage getItem(int position) {
-        return items.get(position);
+    public List<MessageWithImage> getItems() {
+        return items;
     }
 
-    void items(List<MessageWithImage> items) {
+    public void setItems(List<MessageWithImage> items) {
         this.items = items;
     }
 

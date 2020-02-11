@@ -9,6 +9,10 @@ class MessageStateHolder {
     private int lastReceivedMessage = -1;
     private Map<Integer, MessageState> states = new HashMap<>();
 
+    private Message lastRemovedMessage;
+    private int lastRemovedAllPosition;
+    private int lastRemovedAppPosition;
+
     synchronized void clear() {
         states = new HashMap<>();
     }
@@ -30,17 +34,7 @@ class MessageStateHolder {
     }
 
     synchronized void newMessage(Message message) {
-        MessageState allMessages = state(MessageState.ALL_MESSAGES);
-        MessageState appMessages = state(message.getAppid());
-
-        if (allMessages.loaded) {
-            allMessages.messages.add(0, message);
-        }
-
-        if (appMessages.loaded) {
-            appMessages.messages.add(0, message);
-        }
-
+        addMessage(message, 0, 0);
         lastReceivedMessage = message.getId();
     }
 
@@ -77,11 +71,45 @@ class MessageStateHolder {
         MessageState appMessages = state(message.getAppid());
 
         if (allMessages.loaded) {
-            allMessages.messages.remove(message);
+            int allPosition = allMessages.messages.indexOf(message);
+            allMessages.messages.remove(allPosition);
+            lastRemovedAllPosition = allPosition;
         }
 
         if (appMessages.loaded) {
-            appMessages.messages.remove(message);
+            int appPosition = appMessages.messages.indexOf(message);
+            appMessages.messages.remove(appPosition);
+            lastRemovedAppPosition = appPosition;
+        }
+
+        lastRemovedMessage = message;
+    }
+
+    PositionPair undoLastRemoveMessage() {
+        PositionPair result = null;
+
+        if (lastRemovedMessage != null) {
+            addMessage(lastRemovedMessage, lastRemovedAllPosition, lastRemovedAppPosition);
+            result = new PositionPair(lastRemovedAllPosition, lastRemovedAppPosition);
+
+            lastRemovedMessage = null;
+            lastRemovedAllPosition = -1;
+            lastRemovedAppPosition = -1;
+        }
+
+        return result;
+    }
+
+    private void addMessage(Message message, int allPosition, int appPosition) {
+        MessageState allMessages = state(MessageState.ALL_MESSAGES);
+        MessageState appMessages = state(message.getAppid());
+
+        if (allMessages.loaded && allPosition != -1) {
+            allMessages.messages.add(allPosition, message);
+        }
+
+        if (appMessages.loaded && appPosition != -1) {
+            appMessages.messages.add(appPosition, message);
         }
     }
 }

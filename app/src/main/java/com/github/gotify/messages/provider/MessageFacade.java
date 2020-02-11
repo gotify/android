@@ -10,6 +10,7 @@ public class MessageFacade {
     private final MessageRequester requester;
     private final MessageStateHolder state;
     private final MessageImageCombiner combiner;
+    private Message messagePendingDeletion;
 
     public MessageFacade(MessageApi api, ApplicationHolder applicationHolder) {
         this.applicationHolder = applicationHolder;
@@ -33,6 +34,13 @@ public class MessageFacade {
         if (state.hasNext || !state.loaded) {
             PagedMessages pagedMessages = requester.loadMore(state);
             this.state.newMessages(appId, pagedMessages);
+
+            // If there is a message with pending removal, it should not reappear in the list when
+            // reloading. Thus, it needs to be removed from the local list again after loading new
+            // messages.
+            if (messagePendingDeletion != null) {
+                this.state.removeMessage(messagePendingDeletion);
+            }
         }
         return get(appId);
     }
@@ -52,9 +60,24 @@ public class MessageFacade {
         return state.getLastReceivedMessage();
     }
 
-    public void delete(Message message) {
-        this.requester.asyncRemoveMessage(message);
+    public void deleteLocal(Message message) {
         this.state.removeMessage(message);
+        // If there is already a deletion pending, that one should be executed before scheduling the
+        // next deletion.
+        if (messagePendingDeletion != null) {
+            commitDelete();
+        }
+        messagePendingDeletion = message;
+    }
+
+    public void commitDelete() {
+        this.requester.asyncRemoveMessage(messagePendingDeletion);
+        messagePendingDeletion = null;
+    }
+
+    public PositionPair undoDeleteLocal() {
+        messagePendingDeletion = null;
+        return this.state.undoLastRemoveMessage();
     }
 
     public boolean deleteAll(Integer appId) {
