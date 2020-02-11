@@ -58,8 +58,11 @@ import com.github.gotify.messages.provider.ApplicationHolder;
 import com.github.gotify.messages.provider.MessageFacade;
 import com.github.gotify.messages.provider.MessageState;
 import com.github.gotify.messages.provider.MessageWithImage;
+import com.github.gotify.messages.provider.PositionPair;
 import com.github.gotify.service.WebSocketService;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -212,8 +215,8 @@ public class MessagesActivity extends AppCompatActivity
         startActivity(browserIntent);
     }
 
-    public void delete(Message message) {
-        new DeleteMessage().execute(message);
+    public void commitDelete() {
+        new CommitDeleteMessage().execute();
     }
 
     protected void onUpdateApps(List<Application> applications) {
@@ -360,6 +363,54 @@ public class MessagesActivity extends AppCompatActivity
         picasso.shutdown();
     }
 
+    private void scheduleDeletion(int position, Message message) {
+        ListMessageAdapter adapter = (ListMessageAdapter) messagesView.getAdapter();
+
+        messages.deleteLocal(message);
+        adapter.setItems(messages.get(appId));
+        adapter.notifyItemRemoved(position);
+
+        showDeletionSnackbar();
+    }
+
+    private void undoDelete() {
+        PositionPair positionPair = messages.undoDeleteLocal();
+
+        if (positionPair != null) {
+            ListMessageAdapter adapter = (ListMessageAdapter) messagesView.getAdapter();
+            adapter.setItems(messages.get(appId));
+            int insertPosition =
+                    appId == MessageState.ALL_MESSAGES
+                            ? positionPair.getAllPosition()
+                            : positionPair.getAppPosition();
+            adapter.notifyItemInserted(insertPosition);
+            messagesView.smoothScrollToPosition(insertPosition);
+        }
+    }
+
+    private void showDeletionSnackbar() {
+        View view = swipeRefreshLayout;
+        Snackbar snackbar = Snackbar.make(view, R.string.snackbar_deleted, Snackbar.LENGTH_LONG);
+        snackbar.setAction(R.string.snackbar_undo, v -> undoDelete());
+        snackbar.addCallback(new SnackbarCallback());
+        snackbar.show();
+    }
+
+    private class SnackbarCallback extends BaseTransientBottomBar.BaseCallback<Snackbar> {
+        @Override
+        public void onDismissed(Snackbar transientBottomBar, int event) {
+            super.onDismissed(transientBottomBar, event);
+            if (event != DISMISS_EVENT_ACTION && event != DISMISS_EVENT_CONSECUTIVE) {
+                // Execute deletion when the snackbar disappeared without pressing the undo button
+                // DISMISS_EVENT_CONSECUTIVE should be excluded as well, because it would cause the
+                // deletion to be sent to the server twice, since the deletion is sent to the server
+                // in MessageFacade if a message is deleted while another message was already
+                // waiting for deletion.
+                MessagesActivity.this.commitDelete();
+            }
+        }
+    }
+
     private class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback {
         private ListMessageAdapter adapter;
         private Drawable icon;
@@ -394,8 +445,8 @@ public class MessagesActivity extends AppCompatActivity
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
             int position = viewHolder.getAdapterPosition();
-            Message message = adapter.getItem(position).message;
-            MessagesActivity.this.delete(message);
+            MessageWithImage message = adapter.getItems().get(position);
+            scheduleDeletion(position, message.message);
         }
 
         @Override
@@ -561,11 +612,11 @@ public class MessagesActivity extends AppCompatActivity
         }
     }
 
-    private class DeleteMessage extends AsyncTask<Message, Void, Void> {
+    private class CommitDeleteMessage extends AsyncTask<Void, Void, Void> {
 
         @Override
-        protected Void doInBackground(Message... messages) {
-            MessagesActivity.this.messages.delete(first(messages));
+        protected Void doInBackground(Void... messages) {
+            MessagesActivity.this.messages.commitDelete();
             return null;
         }
 
@@ -648,7 +699,7 @@ public class MessagesActivity extends AppCompatActivity
         }
 
         ListMessageAdapter adapter = (ListMessageAdapter) messagesView.getAdapter();
-        adapter.items(messageWithImages);
+        adapter.setItems(messageWithImages);
         adapter.notifyDataSetChanged();
     }
 
