@@ -9,9 +9,7 @@ class MessageStateHolder {
     private int lastReceivedMessage = -1;
     private Map<Integer, MessageState> states = new HashMap<>();
 
-    private Message lastRemovedMessage;
-    private int lastRemovedAllPosition;
-    private int lastRemovedAppPosition;
+    private MessageDeletion pendingDeletion = null;
 
     synchronized void clear() {
         states = new HashMap<>();
@@ -31,11 +29,24 @@ class MessageStateHolder {
         state.nextSince = pagedMessages.getPaging().getSince();
         state.appId = appId;
         states.put(appId, state);
+
+        // If there is a message with pending deletion, it should not reappear in the list in case
+        // it is added again.
+        if (deletionPending()) {
+            deleteMessage(pendingDeletion.getMessage());
+        }
     }
 
     synchronized void newMessage(Message message) {
+        // If there is a message with pending deletion, its indices are going to change. To keep
+        // them consistent the deletion is undone first and redone again after adding the new
+        // message.
+        MessageDeletion deletion = undoPendingDeletion();
+
         addMessage(message, 0, 0);
         lastReceivedMessage = message.getId();
+
+        if (deletion != null) deleteMessage(deletion.getMessage());
     }
 
     synchronized MessageState state(Integer appId) {
@@ -66,38 +77,46 @@ class MessageStateHolder {
         return lastReceivedMessage;
     }
 
-    synchronized void removeMessage(Message message) {
+    synchronized void deleteMessage(Message message) {
         MessageState allMessages = state(MessageState.ALL_MESSAGES);
         MessageState appMessages = state(message.getAppid());
+
+        int pendingDeletedAllPosition = -1;
+        int pendingDeletedAppPosition = -1;
 
         if (allMessages.loaded) {
             int allPosition = allMessages.messages.indexOf(message);
             allMessages.messages.remove(allPosition);
-            lastRemovedAllPosition = allPosition;
+            pendingDeletedAllPosition = allPosition;
         }
 
         if (appMessages.loaded) {
             int appPosition = appMessages.messages.indexOf(message);
             appMessages.messages.remove(appPosition);
-            lastRemovedAppPosition = appPosition;
+            pendingDeletedAppPosition = appPosition;
         }
 
-        lastRemovedMessage = message;
+        pendingDeletion =
+                new MessageDeletion(message, pendingDeletedAllPosition, pendingDeletedAppPosition);
     }
 
-    synchronized PositionPair undoLastRemoveMessage() {
-        PositionPair result = null;
+    synchronized MessageDeletion undoPendingDeletion() {
+        if (pendingDeletion != null)
+            addMessage(
+                    pendingDeletion.getMessage(),
+                    pendingDeletion.getAllPosition(),
+                    pendingDeletion.getAppPosition());
+        return purgePendingDeletion();
+    }
 
-        if (lastRemovedMessage != null) {
-            addMessage(lastRemovedMessage, lastRemovedAllPosition, lastRemovedAppPosition);
-            result = new PositionPair(lastRemovedAllPosition, lastRemovedAppPosition);
-
-            lastRemovedMessage = null;
-            lastRemovedAllPosition = -1;
-            lastRemovedAppPosition = -1;
-        }
-
+    synchronized MessageDeletion purgePendingDeletion() {
+        MessageDeletion result = pendingDeletion;
+        pendingDeletion = null;
         return result;
+    }
+
+    boolean deletionPending() {
+        return pendingDeletion != null;
     }
 
     private void addMessage(Message message, int allPosition, int appPosition) {
