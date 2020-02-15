@@ -153,7 +153,8 @@ public class MessagesActivity extends AppCompatActivity
                 new DividerItemDecoration(
                         messagesView.getContext(), layoutManager.getOrientation());
         ListMessageAdapter adapter =
-                new ListMessageAdapter(this, settings, picasso, emptyList(), this::delete);
+                new ListMessageAdapter(
+                        this, settings, picasso, emptyList(), this::scheduleDeletion);
 
         messagesView.addItemDecoration(dividerItemDecoration);
         messagesView.setHasFixedSize(true);
@@ -364,12 +365,14 @@ public class MessagesActivity extends AppCompatActivity
         picasso.shutdown();
     }
 
-    private void scheduleDeletion(int position, Message message) {
+    private void scheduleDeletion(int position, Message message, boolean listAnimation) {
         ListMessageAdapter adapter = (ListMessageAdapter) messagesView.getAdapter();
 
         messages.deleteLocal(message);
         adapter.setItems(messages.get(appId));
-        adapter.notifyItemRemoved(position);
+
+        if (listAnimation) adapter.notifyItemRemoved(position);
+        else adapter.notifyDataSetChanged();
 
         showDeletionSnackbar();
     }
@@ -447,7 +450,7 @@ public class MessagesActivity extends AppCompatActivity
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
             int position = viewHolder.getAdapterPosition();
             MessageWithImage message = adapter.getItems().get(position);
-            scheduleDeletion(position, message.message);
+            scheduleDeletion(position, message.message, true);
         }
 
         @Override

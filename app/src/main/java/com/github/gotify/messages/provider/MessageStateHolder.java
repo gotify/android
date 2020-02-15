@@ -86,13 +86,13 @@ class MessageStateHolder {
 
         if (allMessages.loaded) {
             int allPosition = allMessages.messages.indexOf(message);
-            allMessages.messages.remove(allPosition);
+            if (allPosition != -1) allMessages.messages.remove(allPosition);
             pendingDeletedAllPosition = allPosition;
         }
 
         if (appMessages.loaded) {
             int appPosition = appMessages.messages.indexOf(message);
-            appMessages.messages.remove(appPosition);
+            if (appPosition != -1) appMessages.messages.remove(appPosition);
             pendingDeletedAppPosition = appPosition;
         }
 
