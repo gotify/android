@@ -425,6 +425,7 @@ public class MessagesActivity extends AppCompatActivity
 
             Drawable drawable =
                     ContextCompat.getDrawable(MessagesActivity.this, R.drawable.ic_delete);
+            icon = null;
             if (drawable != null) {
                 icon = DrawableCompat.wrap(drawable.mutate());
                 DrawableCompat.setTint(icon, iconColorId);
@@ -457,47 +458,49 @@ public class MessagesActivity extends AppCompatActivity
                 float dY,
                 int actionState,
                 boolean isCurrentlyActive) {
-            View itemView = viewHolder.itemView;
+            if (icon != null) {
+                View itemView = viewHolder.itemView;
 
-            int iconHeight = itemView.getHeight() / 3;
-            double scale = iconHeight / (double) icon.getIntrinsicHeight();
-            int iconWidth = (int) (icon.getIntrinsicWidth() * scale);
+                int iconHeight = itemView.getHeight() / 3;
+                double scale = iconHeight / (double) icon.getIntrinsicHeight();
+                int iconWidth = (int) (icon.getIntrinsicWidth() * scale);
 
-            int iconMarginLeftRight = 50;
-            int iconMarginTopBottom = (itemView.getHeight() - iconHeight) / 2;
-            int iconTop = itemView.getTop() + iconMarginTopBottom;
-            int iconBottom = itemView.getBottom() - iconMarginTopBottom;
+                int iconMarginLeftRight = 50;
+                int iconMarginTopBottom = (itemView.getHeight() - iconHeight) / 2;
+                int iconTop = itemView.getTop() + iconMarginTopBottom;
+                int iconBottom = itemView.getBottom() - iconMarginTopBottom;
 
-            if (dX > 0) {
-                // Swiping to the right
-                int iconLeft = itemView.getLeft() + iconMarginLeftRight;
-                int iconRight = itemView.getLeft() + iconMarginLeftRight + iconWidth;
-                icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+                if (dX > 0) {
+                    // Swiping to the right
+                    int iconLeft = itemView.getLeft() + iconMarginLeftRight;
+                    int iconRight = itemView.getLeft() + iconMarginLeftRight + iconWidth;
+                    icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
 
-                background.setBounds(
-                        itemView.getLeft(),
-                        itemView.getTop(),
-                        itemView.getLeft() + ((int) dX),
-                        itemView.getBottom());
-            } else if (dX < 0) {
-                // Swiping to the left
-                int iconLeft = itemView.getRight() - iconMarginLeftRight - iconWidth;
-                int iconRight = itemView.getRight() - iconMarginLeftRight;
-                icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+                    background.setBounds(
+                            itemView.getLeft(),
+                            itemView.getTop(),
+                            itemView.getLeft() + ((int) dX),
+                            itemView.getBottom());
+                } else if (dX < 0) {
+                    // Swiping to the left
+                    int iconLeft = itemView.getRight() - iconMarginLeftRight - iconWidth;
+                    int iconRight = itemView.getRight() - iconMarginLeftRight;
+                    icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
 
-                background.setBounds(
-                        itemView.getRight() + ((int) dX),
-                        itemView.getTop(),
-                        itemView.getRight(),
-                        itemView.getBottom());
-            } else {
-                // View is unswiped
-                icon.setBounds(0, 0, 0, 0);
-                background.setBounds(0, 0, 0, 0);
+                    background.setBounds(
+                            itemView.getRight() + ((int) dX),
+                            itemView.getTop(),
+                            itemView.getRight(),
+                            itemView.getBottom());
+                } else {
+                    // View is unswiped
+                    icon.setBounds(0, 0, 0, 0);
+                    background.setBounds(0, 0, 0, 0);
+                }
+
+                background.draw(c);
+                icon.draw(c);
             }
-
-            background.draw(c);
-            icon.draw(c);
 
             super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
         }
