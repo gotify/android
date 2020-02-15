@@ -55,10 +55,10 @@ import com.github.gotify.log.Log;
 import com.github.gotify.log.LogsActivity;
 import com.github.gotify.login.LoginActivity;
 import com.github.gotify.messages.provider.ApplicationHolder;
+import com.github.gotify.messages.provider.MessageDeletion;
 import com.github.gotify.messages.provider.MessageFacade;
 import com.github.gotify.messages.provider.MessageState;
 import com.github.gotify.messages.provider.MessageWithImage;
-import com.github.gotify.messages.provider.PositionPair;
 import com.github.gotify.service.WebSocketService;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
@@ -374,15 +374,15 @@ public class MessagesActivity extends AppCompatActivity
     }
 
     private void undoDelete() {
-        PositionPair positionPair = messages.undoDeleteLocal();
+        MessageDeletion deletion = messages.undoDeleteLocal();
 
-        if (positionPair != null) {
+        if (deletion != null) {
             ListMessageAdapter adapter = (ListMessageAdapter) messagesView.getAdapter();
             adapter.setItems(messages.get(appId));
             int insertPosition =
                     appId == MessageState.ALL_MESSAGES
-                            ? positionPair.getAllPosition()
-                            : positionPair.getAppPosition();
+                            ? deletion.getAllPosition()
+                            : deletion.getAppPosition();
             adapter.notifyItemInserted(insertPosition);
         }
     }
