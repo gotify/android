@@ -152,7 +152,8 @@ public class MessagesActivity extends AppCompatActivity
         DividerItemDecoration dividerItemDecoration =
                 new DividerItemDecoration(
                         messagesView.getContext(), layoutManager.getOrientation());
-        ListMessageAdapter adapter = new ListMessageAdapter(this, settings, picasso, emptyList());
+        ListMessageAdapter adapter =
+                new ListMessageAdapter(this, settings, picasso, emptyList(), this::delete);
 
         messagesView.addItemDecoration(dividerItemDecoration);
         messagesView.setHasFixedSize(true);

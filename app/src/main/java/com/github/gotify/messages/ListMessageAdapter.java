@@ -5,6 +5,7 @@ import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -14,6 +15,7 @@ import butterknife.ButterKnife;
 import com.github.gotify.R;
 import com.github.gotify.Settings;
 import com.github.gotify.Utils;
+import com.github.gotify.client.model.Message;
 import com.github.gotify.messages.provider.MessageWithImage;
 import com.squareup.picasso.Picasso;
 import io.noties.markwon.Markwon;
@@ -28,16 +30,22 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
     private Context content;
     private Picasso picasso;
     private List<MessageWithImage> items;
+    private Delete delete;
     private Settings settings;
     private Markwon markwon;
 
     ListMessageAdapter(
-            Context context, Settings settings, Picasso picasso, List<MessageWithImage> items) {
+            Context context,
+            Settings settings,
+            Picasso picasso,
+            List<MessageWithImage> items,
+            Delete delete) {
         super();
         this.content = context;
         this.settings = settings;
         this.picasso = picasso;
         this.items = items;
+        this.delete = delete;
 
         this.markwon =
                 Markwon.builder(context)
@@ -84,6 +92,7 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
                 message.message.getDate() != null
                         ? Utils.dateToRelative(message.message.getDate())
                         : "?");
+        holder.delete.setOnClickListener((ignored) -> delete.delete(message.message));
     }
 
     @Override
@@ -110,9 +119,16 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
         @BindView(R.id.message_date)
         TextView date;
 
+        @BindView(R.id.message_delete)
+        ImageButton delete;
+
         ViewHolder(final View view) {
             super(view);
             ButterKnife.bind(this, view);
         }
+    }
+
+    public interface Delete {
+        void delete(Message message);
     }
 }
