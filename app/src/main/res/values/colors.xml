@@ -4,6 +4,6 @@
     <color name="colorPrimaryDark">#3867d6</color>
     <color name="colorAccent">#1c49b4</color>
     <color name="icons">#434343</color>
-    <color name="swipeBackground">#E91E1E</color>
+    <color name="swipeBackground">#E74C3C</color>
     <color name="swipeIcon">#FFFFFF</color>
 </resources>
