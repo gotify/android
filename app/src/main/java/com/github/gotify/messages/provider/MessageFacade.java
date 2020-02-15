@@ -60,7 +60,7 @@ public class MessageFacade {
         return state.getLastReceivedMessage();
     }
 
-    public void deleteLocal(Message message) {
+    public synchronized void deleteLocal(Message message) {
         this.state.removeMessage(message);
         // If there is already a deletion pending, that one should be executed before scheduling the
         // next deletion.
@@ -70,12 +70,12 @@ public class MessageFacade {
         messagePendingDeletion = message;
     }
 
-    public void commitDelete() {
+    public synchronized void commitDelete() {
         this.requester.asyncRemoveMessage(messagePendingDeletion);
         messagePendingDeletion = null;
     }
 
-    public PositionPair undoDeleteLocal() {
+    public synchronized PositionPair undoDeleteLocal() {
         messagePendingDeletion = null;
         return this.state.undoLastRemoveMessage();
     }

@@ -66,7 +66,7 @@ class MessageStateHolder {
         return lastReceivedMessage;
     }
 
-    void removeMessage(Message message) {
+    synchronized void removeMessage(Message message) {
         MessageState allMessages = state(MessageState.ALL_MESSAGES);
         MessageState appMessages = state(message.getAppid());
 
@@ -85,7 +85,7 @@ class MessageStateHolder {
         lastRemovedMessage = message;
     }
 
-    PositionPair undoLastRemoveMessage() {
+    synchronized PositionPair undoLastRemoveMessage() {
         PositionPair result = null;
 
         if (lastRemovedMessage != null) {
