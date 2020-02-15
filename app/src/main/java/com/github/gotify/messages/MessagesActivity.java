@@ -384,7 +384,6 @@ public class MessagesActivity extends AppCompatActivity
                             ? positionPair.getAllPosition()
                             : positionPair.getAppPosition();
             adapter.notifyItemInserted(insertPosition);
-            messagesView.smoothScrollToPosition(insertPosition);
         }
     }
 
