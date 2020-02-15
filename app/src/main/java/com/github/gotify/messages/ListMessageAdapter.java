@@ -92,7 +92,8 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
                 message.message.getDate() != null
                         ? Utils.dateToRelative(message.message.getDate())
                         : "?");
-        holder.delete.setOnClickListener((ignored) -> delete.delete(message.message));
+        holder.delete.setOnClickListener(
+                (ignored) -> delete.delete(holder.getAdapterPosition(), message.message, false));
     }
 
     @Override
@@ -129,6 +130,6 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
     }
 
     public interface Delete {
-        void delete(Message message);
+        void delete(int position, Message message, boolean listAnimation);
     }
 }
