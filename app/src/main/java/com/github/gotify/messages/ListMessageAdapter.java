@@ -24,6 +24,7 @@ import io.noties.markwon.ext.tables.TablePlugin;
 import io.noties.markwon.image.picasso.PicassoImagesPlugin;
 import io.noties.markwon.movement.MovementMethodPlugin;
 import java.util.List;
+import org.threeten.bp.OffsetDateTime;
 
 public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.ViewHolder> {
 
@@ -88,10 +89,10 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
                 .error(R.drawable.ic_alarm)
                 .placeholder(R.drawable.ic_placeholder)
                 .into(holder.image);
-        holder.date.setText(
-                message.message.getDate() != null
-                        ? Utils.dateToRelative(message.message.getDate())
-                        : "?");
+
+        holder.setDateTime(message.message.getDate());
+        holder.date.setOnClickListener((ignored) -> holder.switchPreciseDate());
+
         holder.delete.setOnClickListener(
                 (ignored) -> delete.delete(holder.getAdapterPosition(), message.message, false));
     }
@@ -123,9 +124,37 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
         @BindView(R.id.message_delete)
         ImageButton delete;
 
+        private boolean preciseDate;
+        private OffsetDateTime dateTime;
+
         ViewHolder(final View view) {
             super(view);
             ButterKnife.bind(this, view);
+            preciseDate = false;
+            dateTime = null;
+        }
+
+        void switchPreciseDate() {
+            preciseDate = !preciseDate;
+            updateDate();
+        }
+
+        void setDateTime(OffsetDateTime dateTime) {
+            this.dateTime = dateTime;
+            preciseDate = false;
+            updateDate();
+        }
+
+        void updateDate() {
+            String text = "?";
+            if (dateTime != null) {
+                if (preciseDate) {
+                    text = dateTime.toString();
+                } else {
+                    text = Utils.dateToRelative(dateTime);
+                }
+            }
+            date.setText(text);
         }
     }
 
