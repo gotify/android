@@ -57,7 +57,7 @@ class MessageStateHolder {
         return state;
     }
 
-    void deleteAll(Integer appId) {
+    synchronized void deleteAll(Integer appId) {
         clear();
         MessageState state = state(appId);
         state.loaded = true;
@@ -115,7 +115,7 @@ class MessageStateHolder {
         return result;
     }
 
-    boolean deletionPending() {
+    synchronized boolean deletionPending() {
         return pendingDeletion != null;
     }
 
