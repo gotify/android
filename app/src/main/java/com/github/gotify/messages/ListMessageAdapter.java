@@ -25,6 +25,7 @@ import io.noties.markwon.image.picasso.PicassoImagesPlugin;
 import io.noties.markwon.movement.MovementMethodPlugin;
 import java.util.List;
 import org.threeten.bp.OffsetDateTime;
+import org.threeten.bp.temporal.ChronoUnit;
 
 public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.ViewHolder> {
 
@@ -149,7 +150,7 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
             String text = "?";
             if (dateTime != null) {
                 if (preciseDate) {
-                    text = dateTime.toString();
+                    text = dateTime.truncatedTo(ChronoUnit.SECONDS).toString();
                 } else {
                     text = Utils.dateToRelative(dateTime);
                 }
