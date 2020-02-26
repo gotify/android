@@ -28,7 +28,7 @@ import org.threeten.bp.OffsetDateTime;
 
 public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.ViewHolder> {
 
-    private Context content;
+    private Context context;
     private Picasso picasso;
     private List<MessageWithImage> items;
     private Delete delete;
@@ -42,7 +42,7 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
             List<MessageWithImage> items,
             Delete delete) {
         super();
-        this.content = context;
+        this.context = context;
         this.settings = settings;
         this.picasso = picasso;
         this.items = items;
@@ -68,7 +68,7 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(content).inflate(R.layout.message_item, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.message_item, parent, false);
 
         ViewHolder holder = new ViewHolder(view);
         return holder;
