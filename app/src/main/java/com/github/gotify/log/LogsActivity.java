@@ -1,14 +1,21 @@
 package com.github.gotify.log;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import com.github.gotify.R;
+import com.github.gotify.Utils;
 
 public class LogsActivity extends AppCompatActivity {
 
@@ -31,7 +38,7 @@ public class LogsActivity extends AppCompatActivity {
     private void updateLogs() {
         new RefreshLogs().execute();
         if (!isDestroyed()) {
-            handler.postDelayed(this::updateLogs, 1000);
+            handler.postDelayed(this::updateLogs, 5000);
         }
     }
 
@@ -48,6 +55,12 @@ public class LogsActivity extends AppCompatActivity {
         }
         if (item.getItemId() == R.id.action_delete_logs) {
             Log.clear();
+        }
+        if (item.getItemId() == R.id.action_copy_logs) {
+            TextView content = findViewById(R.id.log_content);
+            ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clipData = ClipData.newPlainText("GotifyLog", content.getText().toString());
+            clipboardManager.setPrimaryClip(clipData);
         }
         return super.onOptionsItemSelected(item);
     }
