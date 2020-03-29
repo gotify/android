@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import com.github.gotify.R;
+import com.github.gotify.Utils;
 
 public class LogsActivity extends AppCompatActivity {
 
@@ -58,6 +59,7 @@ public class LogsActivity extends AppCompatActivity {
                     (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clipData = ClipData.newPlainText("GotifyLog", content.getText().toString());
             clipboardManager.setPrimaryClip(clipData);
+            Utils.showSnackBar(this, getString(R.string.logs_copied));
         }
         return super.onOptionsItemSelected(item);
     }
