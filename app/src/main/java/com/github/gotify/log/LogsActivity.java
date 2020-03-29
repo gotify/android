@@ -74,7 +74,9 @@ public class LogsActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
             TextView content = findViewById(R.id.log_content);
-            content.setText(s);
+            if (content.getSelectionStart() == content.getSelectionEnd()) {
+                content.setText(s);
+            }
             super.onPostExecute(s);
         }
     }
