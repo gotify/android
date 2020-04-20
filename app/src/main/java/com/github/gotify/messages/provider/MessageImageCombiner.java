@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class MessageImageCombiner {
+public class MessageImageCombiner {
 
     List<MessageWithImage> combine(List<Message> messages, List<Application> applications) {
         Map<Integer, String> appIdToImage = appIdToImage(applications);
@@ -26,7 +26,7 @@ class MessageImageCombiner {
         return result;
     }
 
-    private Map<Integer, String> appIdToImage(List<Application> applications) {
+    public static Map<Integer, String> appIdToImage(List<Application> applications) {
         Map<Integer, String> map = new HashMap<>();
         for (Application app : applications) {
             map.put(app.getId(), app.getImage());

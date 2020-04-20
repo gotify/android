@@ -120,7 +120,7 @@ public class MessagesActivity extends AppCompatActivity
     private boolean isLoadMore = false;
     private Integer selectAppIdOnDrawerClose = null;
 
-    int PICASSO_CACHE_SIZE = 50 * 1024 * 1024; // 50 MB
+    public static int PICASSO_CACHE_SIZE = 50 * 1024 * 1024; // 50 MB
     private Cache picassoCache;
     private Picasso picasso;
 
