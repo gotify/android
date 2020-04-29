@@ -343,16 +343,12 @@ public class WebSocketService extends Service {
             return BitmapFactory.decodeResource(getResources(), R.drawable.gotify);
         }
 
-        Bitmap icon;
-        RequestCreator request;
         try {
-            request= cache.load(Utils.resolveAbsoluteUrl(settings.url() + "/", appIdMap.get(appid)));
-            icon = request.get();
+            return cache.load(Utils.resolveAbsoluteUrl(settings.url() + "/", appIdMap.get(appid))).get();
         } catch (IOException e) {
-            icon = BitmapFactory.decodeResource(getResources(), R.drawable.gotify);
+            com.github.gotify.log.Log.e("java.lang.String", e);
         }
-
-        return icon;
+        return BitmapFactory.decodeResource(getResources(), R.drawable.gotify);
     }
 
     private Picasso makePicasso() {
@@ -374,6 +370,5 @@ public class WebSocketService extends Service {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }
