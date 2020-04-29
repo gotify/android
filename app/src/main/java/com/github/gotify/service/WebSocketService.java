@@ -346,7 +346,7 @@ public class WebSocketService extends Service {
         try {
             return picasso.load(Utils.resolveAbsoluteUrl(settings.url() + "/", appIdMap.get(appid))).get();
         } catch (IOException e) {
-            com.github.gotify.log.Log.e("java.lang.String", e);
+            com.github.gotify.log.Log.e("Could not load image for notification", e);
         }
         return BitmapFactory.decodeResource(getResources(), R.drawable.gotify);
     }
