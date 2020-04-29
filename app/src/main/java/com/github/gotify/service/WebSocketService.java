@@ -62,7 +62,7 @@ public class WebSocketService extends Service {
     private AtomicInteger lastReceivedMessage = new AtomicInteger(NOT_LOADED);
     private MissedMessageUtil missingMessageUtil;
 
-    private Picasso cache;
+    private Picasso picasso;
     private Map<Integer, String> appIdMap;
 
     @Override
@@ -72,7 +72,7 @@ public class WebSocketService extends Service {
         ApiClient client = ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
         missingMessageUtil = new MissedMessageUtil(client .createService(MessageApi.class));
         Log.i("Create " + getClass().getSimpleName());
-        cache = makePicasso();
+        picasso = makePicasso();
     }
 
     @Override
@@ -344,7 +344,7 @@ public class WebSocketService extends Service {
         }
 
         try {
-            return cache.load(Utils.resolveAbsoluteUrl(settings.url() + "/", appIdMap.get(appid))).get();
+            return picasso.load(Utils.resolveAbsoluteUrl(settings.url() + "/", appIdMap.get(appid))).get();
         } catch (IOException e) {
             com.github.gotify.log.Log.e("java.lang.String", e);
         }
