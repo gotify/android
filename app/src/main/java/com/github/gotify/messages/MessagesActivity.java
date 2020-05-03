@@ -59,6 +59,7 @@ import com.github.gotify.messages.provider.MessageDeletion;
 import com.github.gotify.messages.provider.MessageFacade;
 import com.github.gotify.messages.provider.MessageState;
 import com.github.gotify.messages.provider.MessageWithImage;
+import com.github.gotify.picasso.PicassoDataRequestHandler;
 import com.github.gotify.service.WebSocketService;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
@@ -247,7 +248,10 @@ public class MessagesActivity extends AppCompatActivity
 
         OkHttp3Downloader downloader = new OkHttp3Downloader(builder.build());
 
-        return new Picasso.Builder(this).downloader(downloader).build();
+        return new Picasso.Builder(this)
+                .addRequestHandler(new PicassoDataRequestHandler())
+                .downloader(downloader)
+                .build();
     }
 
     private void initDrawer() {
