@@ -1,0 +1,13 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/settings_appearance" >
+        <ListPreference
+            android:defaultValue="@string/theme_default"
+            android:entries="@array/mode"
+            android:entryValues="@array/mode"
+            android:key="@string/setting_key_theme"
+            android:title="@string/setting_theme" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

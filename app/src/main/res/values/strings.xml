@@ -64,4 +64,8 @@
     <string name="websocket_no_network">Waiting for network</string>
     <string name="connection">%s@%s</string>
     <string name="no_messages_yet">There are no messages, yet.\nSend a message to Gotify\nand it will appear here.</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="setting_theme">Theme</string>
+    <string name="setting_key_theme">theme</string>
 </resources>

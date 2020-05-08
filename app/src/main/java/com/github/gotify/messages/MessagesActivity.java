@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
@@ -61,6 +62,7 @@ import com.github.gotify.messages.provider.MessageState;
 import com.github.gotify.messages.provider.MessageWithImage;
 import com.github.gotify.picasso.PicassoDataRequestHandler;
 import com.github.gotify.service.WebSocketService;
+import com.github.gotify.settings.SettingsActivity;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -309,7 +311,7 @@ public class MessagesActivity extends AppCompatActivity
             startLoading();
             toolbar.setSubtitle("");
         } else if (id == R.id.logout) {
-            new AlertDialog.Builder(this)
+            new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AppTheme_Dialog))
                     .setTitle(R.string.logout)
                     .setMessage(getString(R.string.logout_confirm))
                     .setPositiveButton(R.string.yes, this::doLogout)
@@ -317,6 +319,8 @@ public class MessagesActivity extends AppCompatActivity
                     .show();
         } else if (id == R.id.nav_logs) {
             startActivity(new Intent(this, LogsActivity.class));
+        } else if (id == R.id.settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
         }
 
         drawer.closeDrawer(GravityCompat.START);
@@ -326,6 +330,7 @@ public class MessagesActivity extends AppCompatActivity
     public void doLogout(DialogInterface dialog, int which) {
         setContentView(R.layout.splash);
         new DeleteClientAndNavigateToLogin().execute();
+        finish();
     }
 
     private void startLoading() {

@@ -91,6 +91,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+        app:theme="@style/AppTheme.Nav"
         app:headerLayout="@layout/nav_header_drawer"
         app:menu="@menu/messages_menu" />
 
