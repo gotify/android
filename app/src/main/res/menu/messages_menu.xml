@@ -16,15 +16,20 @@
     </group>
     <group android:checkableBehavior="single">
         <item
-            android:icon="@drawable/ic_power_setting"
+            android:icon="@drawable/ic_settings"
             android:orderInCategory="2"
-            android:id="@+id/logout"
-            android:title="@string/logout" />
+            android:id="@+id/settings"
+            android:title="@string/title_activity_settings" />
         <item
             android:orderInCategory="2"
             android:icon="@drawable/ic_bug_report"
             android:id="@+id/nav_logs"
             android:title="@string/logs" />
+        <item
+            android:icon="@drawable/ic_power_setting"
+            android:orderInCategory="2"
+            android:id="@+id/logout"
+            android:title="@string/logout" />
     </group>
 
 </menu>

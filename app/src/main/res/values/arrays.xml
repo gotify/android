@@ -1,0 +1,10 @@
+<resources>
+    <string-array name="mode">
+        <item>@string/theme_light</item>
+        <item>@string/theme_dark</item>
+        <item>@string/theme_default</item>
+    </string-array>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_default">System Default</string>
+</resources>

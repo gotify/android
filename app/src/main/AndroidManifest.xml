@@ -41,6 +41,10 @@
             android:name=".log.LogsActivity"
             android:label="@string/title_activity_logs"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".settings.SettingsActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_activity_settings" />
 
         <service android:name=".service.WebSocketService" />
 
