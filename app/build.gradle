@@ -37,22 +37,22 @@ dependencies {
     implementation project(':client')
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'com.google.android.material:material:1.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta3'
+    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta5'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
-    implementation 'com.jakewharton:butterknife:10.2.0'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.0'
+    implementation 'com.jakewharton:butterknife:10.2.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
     implementation 'com.hypertrack:hyperlog:0.0.10'
     implementation 'com.squareup.picasso:picasso:2.71828'
-    implementation 'io.noties.markwon:core:4.2.0'
-    implementation 'io.noties.markwon:image-picasso:4.2.0'
-    implementation 'io.noties.markwon:image:4.2.0'
-    implementation 'io.noties.markwon:ext-tables:4.2.0'
+    implementation 'io.noties.markwon:core:4.3.1'
+    implementation 'io.noties.markwon:image-picasso:4.3.1'
+    implementation 'io.noties.markwon:image:4.3.1'
+    implementation 'io.noties.markwon:ext-tables:4.3.1'
 }
 
 configurations {
