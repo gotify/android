@@ -330,7 +330,6 @@ public class MessagesActivity extends AppCompatActivity
     public void doLogout(DialogInterface dialog, int which) {
         setContentView(R.layout.splash);
         new DeleteClientAndNavigateToLogin().execute();
-        finish();
     }
 
     private void startLoading() {
@@ -683,7 +682,7 @@ public class MessagesActivity extends AppCompatActivity
 
                 if (currentClient != null) {
                     Log.i("Delete client with id " + currentClient.getId());
-                    api.deleteClient(currentClient.getId());
+                    Api.execute(api.deleteClient(currentClient.getId()));
                 } else {
                     Log.e("Could not delete client, client does not exist.");
                 }
