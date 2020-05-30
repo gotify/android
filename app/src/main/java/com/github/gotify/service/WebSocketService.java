@@ -1,5 +1,6 @@
 package com.github.gotify.service;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -30,7 +31,6 @@ import com.github.gotify.messages.Extras;
 import com.github.gotify.messages.MessagesActivity;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class WebSocketService extends Service {
@@ -92,10 +92,15 @@ public class WebSocketService extends Service {
 
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         connection =
                 new WebSocketConnection(
-                                settings.url(), settings.sslSettings(), settings.token(), cm)
+                                settings.url(),
+                                settings.sslSettings(),
+                                settings.token(),
+                                cm,
+                                alarmManager)
                         .onOpen(this::onOpen)
                         .onClose(() -> foreground(getString(R.string.websocket_closed)))
                         .onBadRequest(this::onBadRequest)
@@ -121,7 +126,7 @@ public class WebSocketService extends Service {
             return;
         }
 
-        connection.scheduleReconnect(TimeUnit.SECONDS.toMillis(5));
+        connection.scheduleReconnect(5);
     }
 
     private void onBadRequest(String message) {
