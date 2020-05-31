@@ -2,6 +2,8 @@ plugins {
     id "com.diffplug.gradle.spotless" version "3.26.1"
 }
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 29
@@ -54,6 +56,8 @@ dependencies {
     implementation 'io.noties.markwon:image-picasso:4.3.1'
     implementation 'io.noties.markwon:image:4.3.1'
     implementation 'io.noties.markwon:ext-tables:4.3.1'
+    implementation "androidx.core:core-ktx:+"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 configurations {
@@ -69,4 +73,7 @@ spotless {
         removeUnusedImports()
         importOrder('', 'static *')
     }
+}
+repositories {
+    mavenCentral()
 }

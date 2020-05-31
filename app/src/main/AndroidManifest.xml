@@ -47,6 +47,8 @@
             android:label="@string/title_activity_settings" />
 
         <service android:name=".service.WebSocketService" />
+        <service android:name=".service.GotifyPushNotification" />
+        <service android:name=".service.GotifyMessengerService" android:exported="true" />
 
         <receiver android:name=".init.BootCompletedReceiver">
             <intent-filter>
