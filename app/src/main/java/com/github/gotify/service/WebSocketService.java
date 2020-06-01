@@ -30,12 +30,10 @@ import com.github.gotify.log.Log;
 import com.github.gotify.log.UncaughtExceptionHandler;
 import com.github.gotify.messages.Extras;
 import com.github.gotify.messages.MessagesActivity;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
 
 public class WebSocketService extends Service {
 
@@ -52,13 +50,13 @@ public class WebSocketService extends Service {
 
     private PicassoHandler picassoHandler;
 
-
     @Override
     public void onCreate() {
         super.onCreate();
         settings = new Settings(this);
-        ApiClient client = ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
-        missingMessageUtil = new MissedMessageUtil(client .createService(MessageApi.class));
+        ApiClient client =
+                ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
+        missingMessageUtil = new MissedMessageUtil(client.createService(MessageApi.class));
         Log.i("Create " + getClass().getSimpleName());
         picassoHandler = new PicassoHandler(this, settings);
     }
@@ -226,12 +224,18 @@ public class WebSocketService extends Service {
         startForeground(NotificationSupport.ID.FOREGROUND, notification);
     }
 
-    private void showNotification(int id, String title, String message, long priority, Map<String, Object> extras) {
+    private void showNotification(
+            int id, String title, String message, long priority, Map<String, Object> extras) {
         showNotification(id, title, message, priority, extras, -1);
     }
 
     private void showNotification(
-            int id, String title, String message, long priority, Map<String, Object> extras, Integer appid) {
+            int id,
+            String title,
+            String message,
+            long priority,
+            Map<String, Object> extras,
+            Integer appid) {
 
         Intent intent;
 
@@ -314,6 +318,4 @@ public class WebSocketService extends Service {
                 (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(-5, b.build());
     }
-
-
 }

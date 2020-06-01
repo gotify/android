@@ -43,7 +43,6 @@ import com.github.gotify.Settings;
 import com.github.gotify.Utils;
 import com.github.gotify.api.Api;
 import com.github.gotify.api.ApiException;
-import com.github.gotify.api.CertUtils;
 import com.github.gotify.api.ClientFactory;
 import com.github.gotify.client.ApiClient;
 import com.github.gotify.client.api.ClientApi;
@@ -64,18 +63,12 @@ import com.github.gotify.service.WebSocketService;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
-import com.squareup.picasso.OkHttp3Downloader;
-import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import okhttp3.Cache;
-import okhttp3.OkHttpClient;
 
-import static com.github.gotify.PicassoHandler.PICASSO_CACHE_SIZE;
 import static java.util.Collections.emptyList;
 
 public class MessagesActivity extends AppCompatActivity
@@ -122,7 +115,7 @@ public class MessagesActivity extends AppCompatActivity
     private boolean isLoadMore = false;
     private Integer selectAppIdOnDrawerClose = null;
 
-    //private Picasso picasso;
+    // private Picasso picasso;
     private PicassoHandler picassoHandler;
 
     // we need to keep the target references otherwise they get gc'ed before they can be called.
@@ -154,7 +147,11 @@ public class MessagesActivity extends AppCompatActivity
                         messagesView.getContext(), layoutManager.getOrientation());
         ListMessageAdapter adapter =
                 new ListMessageAdapter(
-                        this, settings, picassoHandler.exposedPicasso(), emptyList(), this::scheduleDeletion);
+                        this,
+                        settings,
+                        picassoHandler.exposedPicasso(),
+                        emptyList(),
+                        this::scheduleDeletion);
 
         messagesView.addItemDecoration(dividerItemDecoration);
         messagesView.setHasFixedSize(true);
@@ -231,7 +228,9 @@ public class MessagesActivity extends AppCompatActivity
             item.setCheckable(true);
             Target t = Utils.toDrawable(getResources(), item::setIcon);
             targetReferences.add(t);
-            picassoHandler.exposedPicasso().load(Utils.resolveAbsoluteUrl(settings.url() + "/", app.getImage()))
+            picassoHandler
+                    .exposedPicasso()
+                    .load(Utils.resolveAbsoluteUrl(settings.url() + "/", app.getImage()))
                     .error(R.drawable.ic_alarm)
                     .placeholder(R.drawable.ic_placeholder)
                     .resize(100, 100)
