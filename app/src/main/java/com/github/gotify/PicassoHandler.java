@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
@@ -58,7 +59,7 @@ public class PicassoHandler {
     private Cache picassoCache;
 
     private Picasso picasso;
-    private Map<Integer, String> appIdMap;
+    private Map<Integer, String> appIdToAppImage = new ConcurrentHashMap<>();
 
     public PicassoHandler(Context context, Settings settings) {
         this.context = context;
@@ -90,7 +91,7 @@ public class PicassoHandler {
         }
 
         try {
-            return picasso.load(Utils.resolveAbsoluteUrl(settings.url() + "/", appIdMap.get(appId))).get();
+            return picasso.load(Utils.resolveAbsoluteUrl(settings.url() + "/", appIdToAppImage.get(appId))).get();
         } catch (IOException e) {
             com.github.gotify.log.Log.e("Could not load image for notification", e);
         }
@@ -115,7 +116,7 @@ public class PicassoHandler {
         List<Application> applications = null;
         try {
             applications = client.createService(ApplicationApi.class).getApps().execute().body();
-            appIdMap = MessageImageCombiner.appIdToImage(applications);
+            appIdToAppImage = MessageImageCombiner.appIdToImage(applications);
         } catch (IOException e) {
             e.printStackTrace();
         }

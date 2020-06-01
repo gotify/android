@@ -3,9 +3,9 @@ package com.github.gotify.messages.provider;
 import com.github.gotify.client.model.Application;
 import com.github.gotify.client.model.Message;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MessageImageCombiner {
 
@@ -27,7 +27,7 @@ public class MessageImageCombiner {
     }
 
     public static Map<Integer, String> appIdToImage(List<Application> applications) {
-        Map<Integer, String> map = new HashMap<>();
+        Map<Integer, String> map = new ConcurrentHashMap<>();
         for (Application app : applications) {
             map.put(app.getId(), app.getImage());
         }
