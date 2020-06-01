@@ -37,6 +37,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.github.gotify.BuildConfig;
 import com.github.gotify.MissedMessageUtil;
+import com.github.gotify.PicassoHandler;
 import com.github.gotify.R;
 import com.github.gotify.Settings;
 import com.github.gotify.Utils;
@@ -74,6 +75,7 @@ import java.util.List;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 
+import static com.github.gotify.PicassoHandler.PICASSO_CACHE_SIZE;
 import static java.util.Collections.emptyList;
 
 public class MessagesActivity extends AppCompatActivity
@@ -120,9 +122,8 @@ public class MessagesActivity extends AppCompatActivity
     private boolean isLoadMore = false;
     private Integer selectAppIdOnDrawerClose = null;
 
-    public static int PICASSO_CACHE_SIZE = 50 * 1024 * 1024; // 50 MB
-    private Cache picassoCache;
-    private Picasso picasso;
+    //private Picasso picasso;
+    private PicassoHandler picassoHandler;
 
     // we need to keep the target references otherwise they get gc'ed before they can be called.
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
@@ -136,8 +137,7 @@ public class MessagesActivity extends AppCompatActivity
         Log.i("Entering " + getClass().getSimpleName());
         settings = new Settings(this);
 
-        picassoCache = new Cache(new File(getCacheDir(), "picasso-cache"), PICASSO_CACHE_SIZE);
-        picasso = makePicasso();
+        picassoHandler = new PicassoHandler(this, settings);
 
         client =
                 ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
@@ -154,7 +154,7 @@ public class MessagesActivity extends AppCompatActivity
                         messagesView.getContext(), layoutManager.getOrientation());
         ListMessageAdapter adapter =
                 new ListMessageAdapter(
-                        this, settings, picasso, emptyList(), this::scheduleDeletion);
+                        this, settings, picassoHandler.exposedPicasso(), emptyList(), this::scheduleDeletion);
 
         messagesView.addItemDecoration(dividerItemDecoration);
         messagesView.setHasFixedSize(true);
@@ -197,7 +197,7 @@ public class MessagesActivity extends AppCompatActivity
 
     public void onRefreshAll(View view) {
         try {
-            picassoCache.evictAll();
+            picassoHandler.evict();
         } catch (IOException e) {
             Log.e("Problem evicting Picasso cache", e);
         }
@@ -231,23 +231,12 @@ public class MessagesActivity extends AppCompatActivity
             item.setCheckable(true);
             Target t = Utils.toDrawable(getResources(), item::setIcon);
             targetReferences.add(t);
-            picasso.load(Utils.resolveAbsoluteUrl(settings.url() + "/", app.getImage()))
+            picassoHandler.exposedPicasso().load(Utils.resolveAbsoluteUrl(settings.url() + "/", app.getImage()))
                     .error(R.drawable.ic_alarm)
                     .placeholder(R.drawable.ic_placeholder)
                     .resize(100, 100)
                     .into(t);
         }
-    }
-
-    private Picasso makePicasso() {
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.cache(picassoCache);
-
-        CertUtils.applySslSettings(builder, settings.sslSettings());
-
-        OkHttp3Downloader downloader = new OkHttp3Downloader(builder.build());
-
-        return new Picasso.Builder(this).downloader(downloader).build();
     }
 
     private void initDrawer() {
@@ -362,7 +351,7 @@ public class MessagesActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        picasso.shutdown();
+        picassoHandler.exposedPicasso().shutdown();
     }
 
     private void scheduleDeletion(int position, Message message, boolean listAnimation) {
