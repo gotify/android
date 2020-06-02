@@ -5,8 +5,8 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
-private val DB_NAME = "gotify_service"
-private val DB_VERSION = 1
+private const val DB_NAME = "gotify_service"
+private const val DB_VERSION = 1
 
 class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION){
     private val CREATE_TABLE_APPS = "CREATE TABLE apps (" +
@@ -24,7 +24,7 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
     private val FIELD_TOKEN = "token"
 
     override fun onCreate(db: SQLiteDatabase){
-        db.execSQL(CREATE_TABLE_APPS);
+        db.execSQL(CREATE_TABLE_APPS)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -70,7 +70,9 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
             null,
             null
         )
-        return (cursor != null && cursor.count > 0)
+        val res = (cursor != null && cursor.count > 0)
+        cursor.close()
+        return res
     }
 
     fun strictIsRegistered(packageName: String, uid: Int): Boolean {
@@ -86,7 +88,9 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
             null,
             null
         )
-        return (cursor != null && cursor.count > 0)
+        val res = (cursor != null && cursor.count > 0)
+        cursor.close()
+        return res
     }
 
     fun getServiceName(packageName: String): String{
@@ -107,6 +111,7 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
         if(cursor.moveToFirst()){
             res = cursor.getString(cursor.getColumnIndex(FIELD_SERVICE_NAME))
         }
+        cursor.close()
         return res
     }
 
@@ -128,6 +133,7 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
         if(cursor.moveToFirst()){
             res = cursor.getString(cursor.getColumnIndex(FIELD_PACKAGE_NAME))
         }
+        cursor.close()
         return res
     }
 
@@ -149,6 +155,7 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
         if(cursor.moveToFirst()){
             res = cursor.getInt(cursor.getColumnIndex(FIELD_APP_ID))
         }
+        cursor.close()
         return res
     }
 
@@ -170,6 +177,7 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
         if(cursor.moveToFirst()){
             res = cursor.getString(cursor.getColumnIndex(FIELD_TOKEN))
         }
+        cursor.close()
         removeToken(packageName)
         return res
     }
