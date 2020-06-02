@@ -20,7 +20,7 @@ import java.io.IOException
 class GotifyMessengerService : Service() {
     /** Keeps track of all current registered clients.  */
     private val db = MessagingDatabase(this)
-    private lateinit var settings: Settings //= Settings(this)
+    private lateinit var settings: Settings
 
     /**
      * Handler of incoming messages from clients.
@@ -29,7 +29,7 @@ class GotifyMessengerService : Service() {
 
         override fun handleMessage(msg: Message) {
             when (msg.what) {
-                MSG_START -> simpleAnswer(msg, MSG_START,0)
+                MSG_START -> simpleAnswer(msg, MSG_START)
                 MSG_REGISTER_CLIENT -> {
                     val uid = msg.sendingUid
                     val msgData = msg.data
@@ -39,42 +39,39 @@ class GotifyMessengerService : Service() {
                         }
                     }
                     thread.start()
+                    // We need to wait until the registration is done to send url & token :
                     thread.join()
-                    simpleAnswer(msg, MSG_REGISTER_CLIENT,0)
+                    sendInfo(msg)
                 }
                 MSG_UNREGISTER_CLIENT -> {
-                    unregisterApp(msg.data,msg.sendingUid,true)
-                    simpleAnswer(msg, MSG_UNREGISTER_CLIENT,0)
-                }
-                MSG_GET_INFO -> sendInfo(msg)
-                MSG_IS_REGISTERED -> {
-                    var rep =0
-                    if(db.strictIsRegistered(msg.data.getString("package").toString(),msg.sendingUid)){
-                        rep = 1
+                    val thread = object : Thread() {
+                        val uid = msg.sendingUid
+                        val msgData = msg.data
+                        override fun run() {
+                            unregisterApp(msgData, uid)
+                        }
                     }
-                    simpleAnswer(msg, MSG_IS_REGISTERED,rep)
+                    thread.start()
+                    simpleAnswer(msg, MSG_UNREGISTER_CLIENT)
                 }
                 else -> super.handleMessage(msg)
             }
         }
 
-        private fun simpleAnswer(msg: Message, what: Int, arg1: Int) {
+        private fun simpleAnswer(msg: Message, what: Int) {
             try {
-                msg.replyTo?.send(Message.obtain(null, what, arg1, 0))
+                msg.replyTo?.send(Message.obtain(null, what, 0, 0))
             } catch (e: RemoteException) {
             }
         }
 
-        private fun unregisterApp(msg: Bundle, clientUid: Int, deleteApp: Boolean) {
+        private fun unregisterApp(msg: Bundle, clientUid: Int) {
             val clientPackageName = msg.getString("package").toString()
             // we only trust unregistered demands from the uid who registered the app
             if (db.strictIsRegistered(clientPackageName, clientUid)) {
                 Log.i("Unregistering $clientPackageName uid: $clientUid")
+                deleteApp(clientPackageName)
                 db.unregisterApp(clientPackageName, clientUid)
-                if(deleteApp){
-                    // TODO : delete app on the server,
-                    //  it can be done manually for the moment
-                }
             }
         }
 
@@ -89,7 +86,7 @@ class GotifyMessengerService : Service() {
             // the client may need to create a new app in the server
             if (db.strictIsRegistered(clientPackageName, clientUid)) {
                 Log.i("$clientPackageName already registered : unregistering to register again")
-                unregisterApp(msg,clientUid,false)
+                unregisterApp(msg,clientUid)
             }
             // The app is registered with a new uid.
             // User should unregister this app manually
@@ -104,13 +101,9 @@ class GotifyMessengerService : Service() {
                 Log.w("Cannot find the service for $clientPackageName")
                 return
             }
-            var app = getApp(clientPackageName)
-            if (app == null){
-                Log.i("$clientPackageName isn't registered to the server, creating a new one")
-                app = createApp(clientPackageName)
-            }
+            val app = createApp(clientPackageName)
             if(app == null){
-                Log.w("Cannot find the AppId neither create a new app to register")
+                Log.w("Cannot create a new app to register")
                 return
             }
             Log.i("registering : $clientPackageName $clientUid $clientService ${app.id} ${app.token}")
@@ -122,9 +115,10 @@ class GotifyMessengerService : Service() {
             Log.i("$clientPackageName is asking for its token and url")
             // we only trust unregistered demands from the uid who registered the app
             if (db.strictIsRegistered(clientPackageName, msg.sendingUid)) {
+                // db.getToken also remove the token in the db
                 val token = db.getToken(clientPackageName)
                 try {
-                    val answer = Message.obtain(null, MSG_GET_INFO, 0, 0)
+                    val answer = Message.obtain(null, MSG_REGISTER_CLIENT, 0, 0)
                     answer.data = bundleOf("url" to settings.url(),
                                             "token" to token)
                     msg.replyTo?.send(answer)
@@ -156,24 +150,6 @@ class GotifyMessengerService : Service() {
         super.onDestroy()
     }
 
-    private fun getApp(appName: String): com.github.gotify.client.model.Application? {
-        val client = ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token())
-        var applications: List<com.github.gotify.client.model.Application>? = null
-        try{
-            applications = client.createService(ApplicationApi::class.java).apps.execute().body()
-        }catch(e: IOException){
-            e.printStackTrace()
-        }
-        if(applications.isNullOrEmpty()) {
-            Log.i("There isn't any app registered to the server")
-            return null
-        }
-        for (app in applications) {
-            if (app.name == appName) return app
-        }
-        return null
-    }
-
     private fun createApp(appName: String): com.github.gotify.client.model.Application? {
         val client = ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token())
         val app = com.github.gotify.client.model.Application()
@@ -185,5 +161,16 @@ class GotifyMessengerService : Service() {
             e.printStackTrace()
         }
         return null
+    }
+
+    private fun deleteApp(appName: String){
+        val client = ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token())
+        try {
+            val appId = db.getAppId(appName)
+            Log.i("appId: $appId")
+            client.createService(ApplicationApi::class.java).deleteApp(appId).execute()
+        }catch(e: IOException){
+            e.printStackTrace()
+        }
     }
 }

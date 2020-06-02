@@ -131,6 +131,27 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
         return res
     }
 
+    fun getAppId(packageName: String): Int{
+        val db = readableDatabase
+        val projection = arrayOf(FIELD_APP_ID)
+        val selection = "$FIELD_PACKAGE_NAME = ?"
+        val selectionArgs = arrayOf(packageName)
+        val cursor = db.query(
+                TABLE_APPS,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        )
+        var res = -1
+        if(cursor.moveToFirst()){
+            res = cursor.getInt(cursor.getColumnIndex(FIELD_APP_ID))
+        }
+        return res
+    }
+
     fun getToken(packageName: String): String{
         val db = readableDatabase
         val projection = arrayOf(FIELD_TOKEN)
@@ -149,6 +170,17 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
         if(cursor.moveToFirst()){
             res = cursor.getString(cursor.getColumnIndex(FIELD_TOKEN))
         }
+        removeToken(packageName)
         return res
+    }
+
+    private fun removeToken(packageName: String){
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(FIELD_TOKEN,"null")
+        }
+        val selection = "$FIELD_PACKAGE_NAME = ?"
+        val selectionArgs = arrayOf(packageName)
+        db.update(TABLE_APPS,values,selection,selectionArgs)
     }
 }
