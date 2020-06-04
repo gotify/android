@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 import com.github.gotify.NotificationSupport;
 import com.github.gotify.R;
 import com.github.gotify.Settings;
@@ -21,6 +22,7 @@ import com.github.gotify.log.UncaughtExceptionHandler;
 import com.github.gotify.login.LoginActivity;
 import com.github.gotify.messages.MessagesActivity;
 import com.github.gotify.service.WebSocketService;
+import com.github.gotify.settings.ThemeHelper;
 
 import static com.github.gotify.api.Callback.callInUI;
 
@@ -31,6 +33,13 @@ public class InitializationActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.init(this);
+        String theme =
+                PreferenceManager.getDefaultSharedPreferences(this)
+                        .getString(
+                                getString(R.string.setting_key_theme),
+                                getString(R.string.theme_default));
+        ThemeHelper.setTheme(this, theme);
+
         setContentView(R.layout.splash);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

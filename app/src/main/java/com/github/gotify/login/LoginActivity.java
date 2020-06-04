@@ -14,6 +14,7 @@ import android.widget.ProgressBar;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ContextThemeWrapper;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -135,7 +136,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void showHttpWarning() {
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AppTheme_Dialog))
                 .setTitle(R.string.warning)
                 .setCancelable(true)
                 .setMessage(R.string.http_warning)
@@ -273,7 +274,7 @@ public class LoginActivity extends AppCompatActivity {
         EditText clientName = new EditText(this);
         clientName.setText(Build.MODEL);
 
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AppTheme_Dialog))
                 .setTitle(R.string.create_client_title)
                 .setMessage(R.string.create_client_message)
                 .setView(clientName)
