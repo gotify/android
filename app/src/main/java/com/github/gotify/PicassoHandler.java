@@ -3,20 +3,16 @@ package com.github.gotify;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-
 import com.github.gotify.api.Callback;
 import com.github.gotify.api.CertUtils;
 import com.github.gotify.api.ClientFactory;
-import com.github.gotify.client.ApiClient;
 import com.github.gotify.client.api.ApplicationApi;
-import com.github.gotify.client.model.Application;
 import com.github.gotify.log.Log;
 import com.github.gotify.messages.provider.MessageImageCombiner;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import okhttp3.Cache;
@@ -79,18 +75,19 @@ public class PicassoHandler {
         return BitmapFactory.decodeResource(context.getResources(), R.drawable.gotify);
     }
 
-    private void updateAppIds(){
+    private void updateAppIds() {
         ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token())
                 .createService(ApplicationApi.class)
                 .getApps()
-                .enqueue(Callback.call(
-                        (apps) -> {
-                            appIdToAppImage.clear();
-                            appIdToAppImage.putAll(MessageImageCombiner.appIdToImage(apps));
-                        },
-                        (t) -> {
-                            appIdToAppImage.clear();
-                        }));
+                .enqueue(
+                        Callback.call(
+                                (apps) -> {
+                                    appIdToAppImage.clear();
+                                    appIdToAppImage.putAll(MessageImageCombiner.appIdToImage(apps));
+                                },
+                                (t) -> {
+                                    appIdToAppImage.clear();
+                                }));
     }
 
     public Picasso get() {

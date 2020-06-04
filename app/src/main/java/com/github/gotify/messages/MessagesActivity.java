@@ -147,11 +147,7 @@ public class MessagesActivity extends AppCompatActivity
                         messagesView.getContext(), layoutManager.getOrientation());
         ListMessageAdapter adapter =
                 new ListMessageAdapter(
-                        this,
-                        settings,
-                        picassoHandler.get(),
-                        emptyList(),
-                        this::scheduleDeletion);
+                        this, settings, picassoHandler.get(), emptyList(), this::scheduleDeletion);
 
         messagesView.addItemDecoration(dividerItemDecoration);
         messagesView.setHasFixedSize(true);
