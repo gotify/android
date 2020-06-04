@@ -149,7 +149,7 @@ public class MessagesActivity extends AppCompatActivity
                 new ListMessageAdapter(
                         this,
                         settings,
-                        picassoHandler.exposedPicasso(),
+                        picassoHandler.get(),
                         emptyList(),
                         this::scheduleDeletion);
 
@@ -229,7 +229,7 @@ public class MessagesActivity extends AppCompatActivity
             Target t = Utils.toDrawable(getResources(), item::setIcon);
             targetReferences.add(t);
             picassoHandler
-                    .exposedPicasso()
+                    .get()
                     .load(Utils.resolveAbsoluteUrl(settings.url() + "/", app.getImage()))
                     .error(R.drawable.ic_alarm)
                     .placeholder(R.drawable.ic_placeholder)
@@ -350,7 +350,7 @@ public class MessagesActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        picassoHandler.exposedPicasso().shutdown();
+        picassoHandler.get().shutdown();
     }
 
     private void scheduleDeletion(int position, Message message, boolean listAnimation) {

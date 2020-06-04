@@ -8,6 +8,7 @@ import com.github.gotify.api.ClientFactory;
 import com.github.gotify.client.ApiClient;
 import com.github.gotify.client.api.ApplicationApi;
 import com.github.gotify.client.model.Application;
+import com.github.gotify.log.Log;
 import com.github.gotify.messages.provider.MessageImageCombiner;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
@@ -45,20 +46,14 @@ public class PicassoHandler {
         this.context = context;
         this.settings = settings;
 
+        picassoCache =
+                new Cache(
+                        new File(context.getCacheDir(), PICASSO_CACHE_SUBFOLDER),
+                        PICASSO_CACHE_SIZE);
         picasso = makePicasso();
     }
 
-    private void prepareCache() {
-        if (picassoCache == null) {
-            picassoCache =
-                    new Cache(
-                            new File(context.getCacheDir(), PICASSO_CACHE_SUBFOLDER),
-                            PICASSO_CACHE_SIZE);
-        }
-    }
-
     private Picasso makePicasso() {
-        prepareCache();
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.cache(picassoCache);
         CertUtils.applySslSettings(builder, settings.sslSettings());
@@ -77,7 +72,7 @@ public class PicassoHandler {
                                     settings.url() + "/", appIdToAppImage.get(appId)))
                     .get();
         } catch (IOException e) {
-            com.github.gotify.log.Log.e("Could not load image for notification", e);
+            Log.e("Could not load image for notification", e);
         }
         return BitmapFactory.decodeResource(context.getResources(), R.drawable.gotify);
     }
@@ -96,19 +91,17 @@ public class PicassoHandler {
     }
 
     private void updateAppIds_nonasync() {
-        ApiClient client =
-                ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
-
-        List<Application> applications = null;
         try {
-            applications = client.createService(ApplicationApi.class).getApps().execute().body();
-            appIdToAppImage = MessageImageCombiner.appIdToImage(applications);
+            ApiClient client = ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
+            List<Application> applications = client.createService(ApplicationApi.class).getApps().execute().body();
+            appIdToAppImage.clear();
+            appIdToAppImage.putAll(MessageImageCombiner.appIdToImage(applications));
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e("Could not update appids", e);
         }
     }
 
-    public Picasso exposedPicasso() {
+    public Picasso get() {
         return picasso;
     }
 
