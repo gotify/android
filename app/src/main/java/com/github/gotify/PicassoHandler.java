@@ -3,6 +3,8 @@ package com.github.gotify;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+
+import com.github.gotify.api.Callback;
 import com.github.gotify.api.CertUtils;
 import com.github.gotify.api.ClientFactory;
 import com.github.gotify.client.ApiClient;
@@ -77,28 +79,18 @@ public class PicassoHandler {
         return BitmapFactory.decodeResource(context.getResources(), R.drawable.gotify);
     }
 
-    public void updateAppIds() {
-        Thread thread =
-                new Thread(
-                        () -> {
-                            try {
-                                updateAppIds_nonasync();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        });
-        thread.start();
-    }
-
-    private void updateAppIds_nonasync() {
-        try {
-            ApiClient client = ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
-            List<Application> applications = client.createService(ApplicationApi.class).getApps().execute().body();
-            appIdToAppImage.clear();
-            appIdToAppImage.putAll(MessageImageCombiner.appIdToImage(applications));
-        } catch (IOException e) {
-            Log.e("Could not update appids", e);
-        }
+    private void updateAppIds(){
+        ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token())
+                .createService(ApplicationApi.class)
+                .getApps()
+                .enqueue(Callback.call(
+                        (apps) -> {
+                            appIdToAppImage.clear();
+                            appIdToAppImage.putAll(MessageImageCombiner.appIdToImage(apps));
+                        },
+                        (t) -> {
+                            appIdToAppImage.clear();
+                        }));
     }
 
     public Picasso get() {
