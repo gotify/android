@@ -75,7 +75,7 @@ public class PicassoHandler {
         return BitmapFactory.decodeResource(context.getResources(), R.drawable.gotify);
     }
 
-    private void updateAppIds() {
+    public void updateAppIds() {
         ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token())
                 .createService(ApplicationApi.class)
                 .getApps()
