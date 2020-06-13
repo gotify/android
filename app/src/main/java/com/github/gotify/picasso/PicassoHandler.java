@@ -21,15 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 
-/**
- * Copyright (C) 2020 Felix Nüsse Created on 01.06.20 - 20:03
- *
- * <p>Edited by: Felix Nüsse felix.nuesse(at)t-online.de
- *
- * <p>gotify-android
- *
- * <p>This program is released under the MIT License
- */
 public class PicassoHandler {
 
     private static final int PICASSO_CACHE_SIZE = 50 * 1024 * 1024; // 50 MB
