@@ -1,8 +1,11 @@
-package com.github.gotify;
+package com.github.gotify.picasso;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import com.github.gotify.R;
+import com.github.gotify.Settings;
+import com.github.gotify.Utils;
 import com.github.gotify.api.Callback;
 import com.github.gotify.api.CertUtils;
 import com.github.gotify.api.ClientFactory;
@@ -29,8 +32,8 @@ import okhttp3.OkHttpClient;
  */
 public class PicassoHandler {
 
-    public static int PICASSO_CACHE_SIZE = 50 * 1024 * 1024; // 50 MB
-    public static String PICASSO_CACHE_SUBFOLDER = "picasso-cache";
+    private static final int PICASSO_CACHE_SIZE = 50 * 1024 * 1024; // 50 MB
+    private static final String PICASSO_CACHE_SUBFOLDER = "picasso-cache";
 
     private Context context;
     private Settings settings;

@@ -38,7 +38,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.github.gotify.BuildConfig;
 import com.github.gotify.MissedMessageUtil;
-import com.github.gotify.PicassoHandler;
 import com.github.gotify.R;
 import com.github.gotify.Settings;
 import com.github.gotify.Utils;
@@ -60,7 +59,7 @@ import com.github.gotify.messages.provider.MessageDeletion;
 import com.github.gotify.messages.provider.MessageFacade;
 import com.github.gotify.messages.provider.MessageState;
 import com.github.gotify.messages.provider.MessageWithImage;
-import com.github.gotify.picasso.PicassoDataRequestHandler;
+import com.github.gotify.picasso.PicassoHandler;
 import com.github.gotify.service.WebSocketService;
 import com.github.gotify.settings.SettingsActivity;
 import com.google.android.material.navigation.NavigationView;
@@ -118,7 +117,6 @@ public class MessagesActivity extends AppCompatActivity
     private boolean isLoadMore = false;
     private Integer selectAppIdOnDrawerClose = null;
 
-    // private Picasso picasso;
     private PicassoHandler picassoHandler;
 
     // we need to keep the target references otherwise they get gc'ed before they can be called.
