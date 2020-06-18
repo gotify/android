@@ -1,7 +1,9 @@
 package com.github.gotify.service;
 
+import android.app.AlarmManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Handler;
 import com.github.gotify.SSLSettings;
 import com.github.gotify.Utils;
@@ -9,6 +11,7 @@ import com.github.gotify.api.Callback;
 import com.github.gotify.api.CertUtils;
 import com.github.gotify.client.model.Message;
 import com.github.gotify.log.Log;
+import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -17,8 +20,9 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
-public class WebSocketConnection {
+class WebSocketConnection {
     private final ConnectivityManager connectivityManager;
+    private final AlarmManager alarmManager;
     private OkHttpClient client;
 
     private final Handler reconnectHandler = new Handler();
@@ -41,8 +45,10 @@ public class WebSocketConnection {
             String baseUrl,
             SSLSettings settings,
             String token,
-            ConnectivityManager connectivityManager) {
+            ConnectivityManager connectivityManager,
+            AlarmManager alarmManager) {
         this.connectivityManager = connectivityManager;
+        this.alarmManager = alarmManager;
         OkHttpClient.Builder builder =
                 new OkHttpClient.Builder()
                         .readTimeout(0, TimeUnit.MILLISECONDS)
@@ -119,14 +125,25 @@ public class WebSocketConnection {
         }
     }
 
-    public synchronized void scheduleReconnect(long millis) {
-        reconnectHandler.removeCallbacks(reconnectCallback);
-
-        Log.i(
-                "WebSocket: scheduling a restart in "
-                        + TimeUnit.SECONDS.convert(millis, TimeUnit.MILLISECONDS)
-                        + " second(s)");
-        reconnectHandler.postDelayed(reconnectCallback, millis);
+    public synchronized void scheduleReconnect(long seconds) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Log.i(
+                    "WebSocket: scheduling a restart in "
+                            + seconds
+                            + " second(s) (via alarm manager)");
+            final Calendar future = Calendar.getInstance();
+            future.add(Calendar.SECOND, (int) seconds);
+            alarmManager.setExact(
+                    AlarmManager.RTC_WAKEUP,
+                    future.getTimeInMillis(),
+                    "reconnect-tag",
+                    this::start,
+                    null);
+        } else {
+            Log.i("WebSocket: scheduling a restart in " + seconds + " second(s)");
+            reconnectHandler.removeCallbacks(reconnectCallback);
+            reconnectHandler.postDelayed(reconnectCallback, TimeUnit.SECONDS.toMillis(seconds));
+        }
     }
 
     private class Listener extends WebSocketListener {
@@ -191,7 +208,7 @@ public class WebSocketConnection {
                 int minutes = Math.min(errorCount * 2 - 1, 20);
 
                 onNetworkFailure.execute(minutes);
-                scheduleReconnect(TimeUnit.MINUTES.toMillis(minutes));
+                scheduleReconnect(TimeUnit.MINUTES.toSeconds(minutes));
             }
 
             super.onFailure(webSocket, t, response);
