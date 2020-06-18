@@ -23,12 +23,14 @@ import com.github.gotify.R;
 import com.github.gotify.Settings;
 import com.github.gotify.Utils;
 import com.github.gotify.api.ClientFactory;
+import com.github.gotify.client.ApiClient;
 import com.github.gotify.client.api.MessageApi;
 import com.github.gotify.client.model.Message;
 import com.github.gotify.log.Log;
 import com.github.gotify.log.UncaughtExceptionHandler;
 import com.github.gotify.messages.Extras;
 import com.github.gotify.messages.MessagesActivity;
+import com.github.gotify.picasso.PicassoHandler;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -46,16 +48,17 @@ public class WebSocketService extends Service {
     private AtomicInteger lastReceivedMessage = new AtomicInteger(NOT_LOADED);
     private MissedMessageUtil missingMessageUtil;
 
+    private PicassoHandler picassoHandler;
+
     @Override
     public void onCreate() {
         super.onCreate();
         settings = new Settings(this);
-        missingMessageUtil =
-                new MissedMessageUtil(
-                        ClientFactory.clientToken(
-                                        settings.url(), settings.sslSettings(), settings.token())
-                                .createService(MessageApi.class));
+        ApiClient client =
+                ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
+        missingMessageUtil = new MissedMessageUtil(client.createService(MessageApi.class));
         Log.i("Create " + getClass().getSimpleName());
+        picassoHandler = new PicassoHandler(this, settings);
     }
 
     @Override
@@ -115,6 +118,8 @@ public class WebSocketService extends Service {
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         ReconnectListener receiver = new ReconnectListener(this::doReconnect);
         registerReceiver(receiver, intentFilter);
+
+        picassoHandler.updateAppIds();
     }
 
     private void onDisconnect() {
@@ -176,13 +181,15 @@ public class WebSocketService extends Service {
         if (lastReceivedMessage.get() < message.getId()) {
             lastReceivedMessage.set(message.getId());
         }
+
         broadcast(message);
         showNotification(
                 message.getId(),
                 message.getTitle(),
                 message.getMessage(),
                 message.getPriority(),
-                message.getExtras());
+                message.getExtras(),
+                message.getAppid());
     }
 
     private void broadcast(Message message) {
@@ -224,6 +231,16 @@ public class WebSocketService extends Service {
 
     private void showNotification(
             int id, String title, String message, long priority, Map<String, Object> extras) {
+        showNotification(id, title, message, priority, extras, -1);
+    }
+
+    private void showNotification(
+            int id,
+            String title,
+            String message,
+            long priority,
+            Map<String, Object> extras,
+            Integer appid) {
 
         Intent intent;
 
@@ -263,6 +280,7 @@ public class WebSocketService extends Service {
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.drawable.ic_gotify)
+                .setLargeIcon(picassoHandler.getIcon(appid))
                 .setTicker(getString(R.string.app_name) + " - " + title)
                 .setGroup(NotificationSupport.Group.MESSAGES)
                 .setContentTitle(title)

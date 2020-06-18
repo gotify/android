@@ -43,7 +43,6 @@ import com.github.gotify.Settings;
 import com.github.gotify.Utils;
 import com.github.gotify.api.Api;
 import com.github.gotify.api.ApiException;
-import com.github.gotify.api.CertUtils;
 import com.github.gotify.api.ClientFactory;
 import com.github.gotify.client.ApiClient;
 import com.github.gotify.client.api.ClientApi;
@@ -60,22 +59,17 @@ import com.github.gotify.messages.provider.MessageDeletion;
 import com.github.gotify.messages.provider.MessageFacade;
 import com.github.gotify.messages.provider.MessageState;
 import com.github.gotify.messages.provider.MessageWithImage;
-import com.github.gotify.picasso.PicassoDataRequestHandler;
+import com.github.gotify.picasso.PicassoHandler;
 import com.github.gotify.service.WebSocketService;
 import com.github.gotify.settings.SettingsActivity;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
-import com.squareup.picasso.OkHttp3Downloader;
-import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import okhttp3.Cache;
-import okhttp3.OkHttpClient;
 
 import static java.util.Collections.emptyList;
 
@@ -123,9 +117,7 @@ public class MessagesActivity extends AppCompatActivity
     private boolean isLoadMore = false;
     private Integer selectAppIdOnDrawerClose = null;
 
-    int PICASSO_CACHE_SIZE = 50 * 1024 * 1024; // 50 MB
-    private Cache picassoCache;
-    private Picasso picasso;
+    private PicassoHandler picassoHandler;
 
     // we need to keep the target references otherwise they get gc'ed before they can be called.
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
@@ -139,8 +131,7 @@ public class MessagesActivity extends AppCompatActivity
         Log.i("Entering " + getClass().getSimpleName());
         settings = new Settings(this);
 
-        picassoCache = new Cache(new File(getCacheDir(), "picasso-cache"), PICASSO_CACHE_SIZE);
-        picasso = makePicasso();
+        picassoHandler = new PicassoHandler(this, settings);
 
         client =
                 ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
@@ -157,7 +148,7 @@ public class MessagesActivity extends AppCompatActivity
                         messagesView.getContext(), layoutManager.getOrientation());
         ListMessageAdapter adapter =
                 new ListMessageAdapter(
-                        this, settings, picasso, emptyList(), this::scheduleDeletion);
+                        this, settings, picassoHandler.get(), emptyList(), this::scheduleDeletion);
 
         messagesView.addItemDecoration(dividerItemDecoration);
         messagesView.setHasFixedSize(true);
@@ -200,7 +191,7 @@ public class MessagesActivity extends AppCompatActivity
 
     public void onRefreshAll(View view) {
         try {
-            picassoCache.evictAll();
+            picassoHandler.evict();
         } catch (IOException e) {
             Log.e("Problem evicting Picasso cache", e);
         }
@@ -234,26 +225,14 @@ public class MessagesActivity extends AppCompatActivity
             item.setCheckable(true);
             Target t = Utils.toDrawable(getResources(), item::setIcon);
             targetReferences.add(t);
-            picasso.load(Utils.resolveAbsoluteUrl(settings.url() + "/", app.getImage()))
+            picassoHandler
+                    .get()
+                    .load(Utils.resolveAbsoluteUrl(settings.url() + "/", app.getImage()))
                     .error(R.drawable.ic_alarm)
                     .placeholder(R.drawable.ic_placeholder)
                     .resize(100, 100)
                     .into(t);
         }
-    }
-
-    private Picasso makePicasso() {
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.cache(picassoCache);
-
-        CertUtils.applySslSettings(builder, settings.sslSettings());
-
-        OkHttp3Downloader downloader = new OkHttp3Downloader(builder.build());
-
-        return new Picasso.Builder(this)
-                .addRequestHandler(new PicassoDataRequestHandler())
-                .downloader(downloader)
-                .build();
     }
 
     private void initDrawer() {
@@ -370,7 +349,7 @@ public class MessagesActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        picasso.shutdown();
+        picassoHandler.get().shutdown();
     }
 
     private void scheduleDeletion(int position, Message message, boolean listAnimation) {

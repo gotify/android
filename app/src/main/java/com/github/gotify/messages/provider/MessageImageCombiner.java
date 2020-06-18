@@ -3,11 +3,11 @@ package com.github.gotify.messages.provider;
 import com.github.gotify.client.model.Application;
 import com.github.gotify.client.model.Message;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-class MessageImageCombiner {
+public class MessageImageCombiner {
 
     List<MessageWithImage> combine(List<Message> messages, List<Application> applications) {
         Map<Integer, String> appIdToImage = appIdToImage(applications);
@@ -26,8 +26,8 @@ class MessageImageCombiner {
         return result;
     }
 
-    private Map<Integer, String> appIdToImage(List<Application> applications) {
-        Map<Integer, String> map = new HashMap<>();
+    public static Map<Integer, String> appIdToImage(List<Application> applications) {
+        Map<Integer, String> map = new ConcurrentHashMap<>();
         for (Application app : applications) {
             map.put(app.getId(), app.getImage());
         }
