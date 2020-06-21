@@ -19,7 +19,7 @@ import kotlin.concurrent.thread
 // TODO : in the app, implement forceUnregisterApp
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-class GotifyMessengerService : Service() {
+class GotifyRegisterService : Service() {
     /** Keeps track of all current registered clients.  */
     private val db = MessagingDatabase(this)
     private lateinit var settings: Settings
