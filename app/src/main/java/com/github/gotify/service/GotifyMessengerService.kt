@@ -10,6 +10,7 @@ import com.github.gotify.api.ClientFactory
 import com.github.gotify.client.api.ApplicationApi
 import com.github.gotify.log.Log
 import java.io.IOException
+import kotlin.concurrent.thread
 
 /**
  * THIS SERVICE IS USED BY OTHER APPS TO REGISTER
@@ -33,25 +34,17 @@ class GotifyMessengerService : Service() {
                 MSG_REGISTER_CLIENT -> {
                     val uid = msg.sendingUid
                     val msgData = msg.data
-                    val thread = object : Thread() {
-                        override fun run() {
-                            registerApp(msgData, uid)
-                        }
-                    }
-                    thread.start()
-                    // We need to wait until the registration is done to send url & token :
-                    thread.join()
+                    thread(start = true) {
+                        registerApp(msgData, uid)
+                    }.join()
                     sendInfo(msg)
                 }
                 MSG_UNREGISTER_CLIENT -> {
-                    val thread = object : Thread() {
-                        val uid = msg.sendingUid
-                        val msgData = msg.data
-                        override fun run() {
-                            unregisterApp(msgData, uid)
-                        }
+                    val uid = msg.sendingUid
+                    val msgData = msg.data
+                    thread(start = true) {
+                        unregisterApp(msgData, uid)
                     }
-                    thread.start()
                     simpleAnswer(msg, MSG_UNREGISTER_CLIENT)
                 }
                 else -> super.handleMessage(msg)

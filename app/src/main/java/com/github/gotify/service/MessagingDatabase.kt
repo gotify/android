@@ -61,36 +61,34 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
         val db = readableDatabase
         val selection = "$FIELD_PACKAGE_NAME = ?"
         val selectionArgs = arrayOf(packageName)
-        val cursor = db.query(
-            TABLE_APPS,
-            null,
-            selection,
-            selectionArgs,
-            null,
-            null,
-            null
-        )
-        val res = (cursor != null && cursor.count > 0)
-        cursor.close()
-        return res
+        return db.query(
+                TABLE_APPS,
+                null,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        ).use { cursor ->
+            (cursor != null && cursor.count > 0)
+        }
     }
 
     fun strictIsRegistered(packageName: String, uid: Int): Boolean {
         val db = readableDatabase
         val selection = "$FIELD_PACKAGE_NAME = ? AND $FIELD_UID = ?"
         val selectionArgs = arrayOf(packageName,uid.toString())
-        val cursor = db.query(
-            TABLE_APPS,
-            null,
-            selection,
-            selectionArgs,
-            null,
-            null,
-            null
-        )
-        val res = (cursor != null && cursor.count > 0)
-        cursor.close()
-        return res
+        return db.query(
+                TABLE_APPS,
+                null,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        ).use { cursor ->
+            (cursor != null && cursor.count > 0)
+        }
     }
 
     fun getServiceName(packageName: String): String{
@@ -98,21 +96,17 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
         val projection = arrayOf(FIELD_SERVICE_NAME)
         val selection = "$FIELD_PACKAGE_NAME = ?"
         val selectionArgs = arrayOf(packageName)
-        val cursor = db.query(
-            TABLE_APPS,
-            projection,
-            selection,
-            selectionArgs,
-            null,
-            null,
-            null
-        )
-        var res = ""
-        if(cursor.moveToFirst()){
-            res = cursor.getString(cursor.getColumnIndex(FIELD_SERVICE_NAME))
+        return db.query(
+                TABLE_APPS,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        ).use { cursor ->
+            if (cursor.moveToFirst()) cursor.getString(cursor.getColumnIndex(FIELD_SERVICE_NAME)) else ""
         }
-        cursor.close()
-        return res
     }
 
     fun getAppFromId(appId: Int): String{
@@ -120,7 +114,7 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
         val projection = arrayOf(FIELD_PACKAGE_NAME)
         val selection = "$FIELD_APP_ID = ?"
         val selectionArgs = arrayOf(appId.toString())
-        val cursor = db.query(
+        return db.query(
                 TABLE_APPS,
                 projection,
                 selection,
@@ -128,13 +122,9 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
                 null,
                 null,
                 null
-        )
-        var res = ""
-        if(cursor.moveToFirst()){
-            res = cursor.getString(cursor.getColumnIndex(FIELD_PACKAGE_NAME))
+        ).use { cursor ->
+            if (cursor.moveToFirst()) cursor.getString(cursor.getColumnIndex(FIELD_PACKAGE_NAME)) else ""
         }
-        cursor.close()
-        return res
     }
 
     fun getAppId(packageName: String): Int{
@@ -142,7 +132,7 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
         val projection = arrayOf(FIELD_APP_ID)
         val selection = "$FIELD_PACKAGE_NAME = ?"
         val selectionArgs = arrayOf(packageName)
-        val cursor = db.query(
+        return db.query(
                 TABLE_APPS,
                 projection,
                 selection,
@@ -150,13 +140,9 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
                 null,
                 null,
                 null
-        )
-        var res = -1
-        if(cursor.moveToFirst()){
-            res = cursor.getInt(cursor.getColumnIndex(FIELD_APP_ID))
+        ).use { cursor ->
+            if (cursor.moveToFirst()) cursor.getInt(cursor.getColumnIndex(FIELD_APP_ID)) else -1
         }
-        cursor.close()
-        return res
     }
 
     fun getToken(packageName: String): String{
@@ -164,7 +150,7 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
         val projection = arrayOf(FIELD_TOKEN)
         val selection = "$FIELD_PACKAGE_NAME = ?"
         val selectionArgs = arrayOf(packageName)
-        val cursor = db.query(
+        val token = db.query(
                 TABLE_APPS,
                 projection,
                 selection,
@@ -172,14 +158,11 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
                 null,
                 null,
                 null
-        )
-        var res = ""
-        if(cursor.moveToFirst()){
-            res = cursor.getString(cursor.getColumnIndex(FIELD_TOKEN))
+        ).use { cursor ->
+            if (cursor.moveToFirst()) cursor.getString(cursor.getColumnIndex(FIELD_TOKEN)) else ""
         }
-        cursor.close()
-        removeToken(packageName)
-        return res
+        removeToken(token)
+        return token
     }
 
     private fun removeToken(packageName: String){
