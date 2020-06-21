@@ -11,7 +11,6 @@ import com.github.gotify.api.ApiException
 import com.github.gotify.api.ClientFactory
 import com.github.gotify.client.api.ApplicationApi
 import com.github.gotify.log.Log
-import java.io.IOException
 import kotlin.concurrent.thread
 
 /**
@@ -32,8 +31,8 @@ class GotifyMessengerService : Service() {
 
         override fun handleMessage(msg: Message) {
             when (msg.what) {
-                MSG_START -> simpleAnswer(msg, MSG_START)
-                MSG_REGISTER_CLIENT -> {
+                TYPE_CLIENT_STARTED -> simpleAnswer(msg, TYPE_CLIENT_STARTED)
+                TYPE_REGISTER_CLIENT -> {
                     val uid = msg.sendingUid
                     val msgData = msg.data
                     thread(start = true) {
@@ -41,13 +40,13 @@ class GotifyMessengerService : Service() {
                     }.join()
                     sendInfo(msg)
                 }
-                MSG_UNREGISTER_CLIENT -> {
+                TYPE_UNREGISTER_CLIENT -> {
                     val uid = msg.sendingUid
                     val msgData = msg.data
                     thread(start = true) {
                         unregisterApp(msgData, uid)
                     }
-                    simpleAnswer(msg, MSG_UNREGISTER_CLIENT)
+                    simpleAnswer(msg, TYPE_UNREGISTERED_CLIENT)
                 }
                 else -> super.handleMessage(msg)
             }
@@ -114,7 +113,7 @@ class GotifyMessengerService : Service() {
                 // db.getToken also remove the token in the db
                 val token = db.getToken(clientPackageName)
                 try {
-                    val answer = Message.obtain(null, MSG_REGISTER_CLIENT, 0, 0)
+                    val answer = Message.obtain(null, TYPE_REGISTERED_CLIENT, 0, 0)
                     answer.data = bundleOf("url" to settings.url(),
                                             "token" to token)
                     msg.replyTo?.send(answer)

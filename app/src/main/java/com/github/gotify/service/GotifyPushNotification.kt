@@ -40,7 +40,7 @@ fun notifyClient(context: Context, clientPackage: String, message: com.github.go
             try {
                 val msg = Message.obtain(
                         null,
-                        MSG_NOTIFICATION, 0, 0
+                        TYPE_MESSAGE, 0, 0
                 )
                 msg.data = bundleOf("message" to message.message,
                         "title" to message.title,
