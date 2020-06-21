@@ -76,6 +76,7 @@ class GotifyMessengerService : Service() {
                 Log.w("Trying to register an app without packageName")
                 return
             }
+            //TODO Send a notification to let the user acknowledge the registering
             Log.i("registering $clientPackageName uid: $clientUid")
             // The app is registered with the same uid : we re-register it
             // the client may need to create a new app in the server
@@ -159,6 +160,7 @@ class GotifyMessengerService : Service() {
     }
 
     private fun deleteApp(appName: String){
+        //TODO Send a notification to let the user choosing if the app will be deleted or not
         val client = ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token())
         try {
             val appId = db.getAppId(appName)
