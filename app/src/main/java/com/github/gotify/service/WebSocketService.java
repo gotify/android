@@ -172,20 +172,21 @@ public class WebSocketService extends Service {
             lastReceivedMessage.set(message.getId());
         }
         broadcast(message);
-        MessagingDatabase db = new MessagingDatabase(this);
-        String registeredAppName = db.getAppFromId(message.getAppid());
-        db.close();
-        if(!registeredAppName.isEmpty() && registeredAppName != "") {
-            Log.i("Notification to " + registeredAppName);
-            GotifyPushNotificationKt.notifyClient(this, registeredAppName, message);
-        }else {
-            showNotification(
-                    message.getId(),
-                    message.getTitle(),
-                    message.getMessage(),
-                    message.getPriority(),
-                    message.getExtras());
+        try (MessagingDatabase db = new MessagingDatabase(this)) {
+            String registeredAppName = db.getAppFromId(message.getAppid());
+            db.close();
+            if (!registeredAppName.isEmpty()) {
+                Log.i("Forward message to " + registeredAppName);
+                GotifyPushNotificationKt.notifyClient(this, registeredAppName, message);
+                return;
+            }
         }
+        showNotification(
+                message.getId(),
+                message.getTitle(),
+                message.getMessage(),
+                message.getPriority(),
+                message.getExtras());
     }
 
     private void broadcast(Message message) {
