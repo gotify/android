@@ -6,6 +6,8 @@ import android.os.*
 import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import com.github.gotify.Settings
+import com.github.gotify.api.Api
+import com.github.gotify.api.ApiException
 import com.github.gotify.api.ClientFactory
 import com.github.gotify.client.api.ApplicationApi
 import com.github.gotify.log.Log
@@ -148,10 +150,10 @@ class GotifyMessengerService : Service() {
         val app = com.github.gotify.client.model.Application()
         app.name = appName
         app.description = "automatically created"
-        try{
-            return client.createService(ApplicationApi::class.java).createApp(app).execute().body()
-        }catch(e: IOException){
-            e.printStackTrace()
+        try {
+            return Api.execute(client.createService(ApplicationApi::class.java).createApp(app));
+        } catch (e: ApiException) {
+            Log.e("Could not create app.", e);
         }
         return null
     }
@@ -161,9 +163,9 @@ class GotifyMessengerService : Service() {
         try {
             val appId = db.getAppId(appName)
             Log.i("appId: $appId")
-            client.createService(ApplicationApi::class.java).deleteApp(appId).execute()
-        }catch(e: IOException){
-            e.printStackTrace()
+            Api.execute(client.createService(ApplicationApi::class.java).deleteApp(appId));
+        } catch (e: ApiException) {
+            Log.e("Could not delete app.", e);
         }
     }
 }
