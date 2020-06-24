@@ -32,7 +32,7 @@ public class PicassoHandler {
     private Cache picassoCache;
 
     private Picasso picasso;
-    private Map<Integer, String> appIdToAppImage = new ConcurrentHashMap<>();
+    private Map<Long, String> appIdToAppImage = new ConcurrentHashMap<>();
 
     public PicassoHandler(Context context, Settings settings) {
         this.context = context;
@@ -53,7 +53,7 @@ public class PicassoHandler {
         return new Picasso.Builder(context).downloader(downloader).build();
     }
 
-    public Bitmap getIcon(Integer appId) {
+    public Bitmap getIcon(Long appId) {
         if (appId == -1) {
             return BitmapFactory.decodeResource(context.getResources(), R.drawable.gotify);
         }

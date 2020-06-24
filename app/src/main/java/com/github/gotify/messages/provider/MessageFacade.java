@@ -18,7 +18,7 @@ public class MessageFacade {
         this.state = new MessageStateHolder();
     }
 
-    public synchronized List<MessageWithImage> get(Integer appId) {
+    public synchronized List<MessageWithImage> get(long appId) {
         return combiner.combine(state.state(appId).messages, applicationHolder.get());
     }
 
@@ -28,7 +28,7 @@ public class MessageFacade {
         }
     }
 
-    public synchronized List<MessageWithImage> loadMore(Integer appId) {
+    public synchronized List<MessageWithImage> loadMore(long appId) {
         MessageState state = this.state.state(appId);
         if (state.hasNext || !state.loaded) {
             PagedMessages pagedMessages = requester.loadMore(state);
@@ -37,7 +37,7 @@ public class MessageFacade {
         return get(appId);
     }
 
-    public synchronized void loadMoreIfNotPresent(Integer appId) {
+    public synchronized void loadMoreIfNotPresent(long appId) {
         MessageState state = this.state.state(appId);
         if (!state.loaded) {
             loadMore(appId);
@@ -48,7 +48,7 @@ public class MessageFacade {
         this.state.clear();
     }
 
-    public int getLastReceivedMessage() {
+    public long getLastReceivedMessage() {
         return state.getLastReceivedMessage();
     }
 
@@ -70,13 +70,13 @@ public class MessageFacade {
         return this.state.undoPendingDeletion();
     }
 
-    public synchronized boolean deleteAll(Integer appId) {
+    public synchronized boolean deleteAll(long appId) {
         boolean success = this.requester.deleteAll(appId);
         this.state.deleteAll(appId);
         return success;
     }
 
-    public synchronized boolean canLoadMore(Integer appId) {
+    public synchronized boolean canLoadMore(long appId) {
         return state.state(appId).hasNext;
     }
 }

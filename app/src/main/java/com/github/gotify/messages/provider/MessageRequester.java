@@ -35,7 +35,7 @@ class MessageRequester {
         messageApi.deleteMessage(message.getId()).enqueue(Callback.call());
     }
 
-    boolean deleteAll(Integer appId) {
+    boolean deleteAll(Long appId) {
         try {
             Log.i("Deleting all messages for " + appId);
             if (MessageState.ALL_MESSAGES == appId) {

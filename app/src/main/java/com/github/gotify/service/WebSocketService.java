@@ -33,19 +33,19 @@ import com.github.gotify.messages.MessagesActivity;
 import com.github.gotify.picasso.PicassoHandler;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class WebSocketService extends Service {
 
     public static final String NEW_MESSAGE_BROADCAST =
             WebSocketService.class.getName() + ".NEW_MESSAGE";
 
-    private static final int NOT_LOADED = -2;
+    private static final long NOT_LOADED = -2;
 
     private Settings settings;
     private WebSocketConnection connection;
 
-    private AtomicInteger lastReceivedMessage = new AtomicInteger(NOT_LOADED);
+    private AtomicLong lastReceivedMessage = new AtomicLong(NOT_LOADED);
     private MissedMessageUtil missingMessageUtil;
 
     private PicassoHandler picassoHandler;
@@ -143,7 +143,7 @@ public class WebSocketService extends Service {
     }
 
     private void notifyMissedNotifications() {
-        int messageId = lastReceivedMessage.get();
+        long messageId = lastReceivedMessage.get();
         if (messageId == NOT_LOADED) {
             return;
         }
@@ -231,16 +231,16 @@ public class WebSocketService extends Service {
 
     private void showNotification(
             int id, String title, String message, long priority, Map<String, Object> extras) {
-        showNotification(id, title, message, priority, extras, -1);
+        showNotification(id, title, message, priority, extras, -1L);
     }
 
     private void showNotification(
-            int id,
+            long id,
             String title,
             String message,
             long priority,
             Map<String, Object> extras,
-            Integer appid) {
+            Long appid) {
 
         Intent intent;
 
@@ -293,7 +293,7 @@ public class WebSocketService extends Service {
 
         NotificationManager notificationManager =
                 (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(id, b.build());
+        notificationManager.notify(Utils.longToInt(id), b.build());
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
