@@ -33,6 +33,10 @@ public class Utils {
         Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT).show();
     }
 
+    public static int longToInt(long value) {
+        return (int) (value % Integer.MAX_VALUE);
+    }
+
     public static String dateToRelative(OffsetDateTime data) {
         long time = data.toInstant().toEpochMilli();
         long now = System.currentTimeMillis();

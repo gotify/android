@@ -114,10 +114,10 @@ public class MessagesActivity extends AppCompatActivity
     private Settings settings;
     protected ApplicationHolder appsHolder;
 
-    private int appId = MessageState.ALL_MESSAGES;
+    private long appId = MessageState.ALL_MESSAGES;
 
     private boolean isLoadMore = false;
-    private Integer selectAppIdOnDrawerClose = null;
+    private Long selectAppIdOnDrawerClose = null;
 
     private PicassoHandler picassoHandler;
 
@@ -223,7 +223,12 @@ public class MessagesActivity extends AppCompatActivity
         targetReferences.clear();
         updateMessagesAndStopLoading(messages.get(appId));
         for (Application app : applications) {
-            MenuItem item = menu.add(R.id.apps, app.getId(), APPLICATION_ORDER, app.getName());
+            MenuItem item =
+                    menu.add(
+                            R.id.apps,
+                            Utils.longToInt(app.getId()),
+                            APPLICATION_ORDER,
+                            app.getName());
             item.setCheckable(true);
             Target t = Utils.toDrawable(getResources(), item::setIcon);
             targetReferences.add(t);
@@ -284,7 +289,7 @@ public class MessagesActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (item.getGroupId() == R.id.apps) {
-            selectAppIdOnDrawerClose = id;
+            selectAppIdOnDrawerClose = (long) id;
             startLoading();
             toolbar.setSubtitle(item.getTitle());
         } else if (id == R.id.nav_all_messages) {
@@ -340,7 +345,10 @@ public class MessagesActivity extends AppCompatActivity
         new UpdateMissedMessages().execute(messages.getLastReceivedMessage());
         navigationView
                 .getMenu()
-                .findItem(appId == MessageState.ALL_MESSAGES ? R.id.nav_all_messages : appId)
+                .findItem(
+                        appId == MessageState.ALL_MESSAGES
+                                ? R.id.nav_all_messages
+                                : Utils.longToInt(appId))
                 .setChecked(true);
         super.onResume();
     }
@@ -525,10 +533,10 @@ public class MessagesActivity extends AppCompatActivity
         }
     }
 
-    private class UpdateMissedMessages extends AsyncTask<Integer, Void, Boolean> {
+    private class UpdateMissedMessages extends AsyncTask<Long, Void, Boolean> {
         @Override
-        protected Boolean doInBackground(Integer... ids) {
-            Integer id = first(ids);
+        protected Boolean doInBackground(Long... ids) {
+            Long id = first(ids);
             if (id == -1) {
                 return false;
             }
@@ -562,10 +570,10 @@ public class MessagesActivity extends AppCompatActivity
         return super.onContextItemSelected(item);
     }
 
-    private class LoadMore extends AsyncTask<Integer, Void, List<MessageWithImage>> {
+    private class LoadMore extends AsyncTask<Long, Void, List<MessageWithImage>> {
 
         @Override
-        protected List<MessageWithImage> doInBackground(Integer... appId) {
+        protected List<MessageWithImage> doInBackground(Long... appId) {
             return messages.loadMore(first(appId));
         }
 
@@ -575,7 +583,7 @@ public class MessagesActivity extends AppCompatActivity
         }
     }
 
-    private class SelectApplicationAndUpdateMessages extends AsyncTask<Integer, Void, Integer> {
+    private class SelectApplicationAndUpdateMessages extends AsyncTask<Long, Void, Long> {
 
         private SelectApplicationAndUpdateMessages(boolean withLoadingSpinner) {
             if (withLoadingSpinner) {
@@ -584,14 +592,14 @@ public class MessagesActivity extends AppCompatActivity
         }
 
         @Override
-        protected Integer doInBackground(Integer... appIds) {
-            Integer appId = first(appIds);
+        protected Long doInBackground(Long... appIds) {
+            Long appId = first(appIds);
             messages.loadMoreIfNotPresent(appId);
             return appId;
         }
 
         @Override
-        protected void onPostExecute(Integer appId) {
+        protected void onPostExecute(Long appId) {
             updateMessagesAndStopLoading(messages.get(appId));
         }
     }
@@ -624,14 +632,14 @@ public class MessagesActivity extends AppCompatActivity
         }
     }
 
-    private class DeleteMessages extends AsyncTask<Integer, Void, Boolean> {
+    private class DeleteMessages extends AsyncTask<Long, Void, Boolean> {
 
         DeleteMessages() {
             startLoading();
         }
 
         @Override
-        protected Boolean doInBackground(Integer... appId) {
+        protected Boolean doInBackground(Long... appId) {
             return messages.deleteAll(first(appId));
         }
 

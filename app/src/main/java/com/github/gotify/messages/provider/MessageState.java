@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MessageState {
-    public static final int ALL_MESSAGES = -1;
+    public static final long ALL_MESSAGES = -1;
 
-    int appId;
+    long appId;
     boolean loaded;
     boolean hasNext;
-    int nextSince = 0;
+    long nextSince = 0;
     List<Message> messages = new ArrayList<>();
 }
