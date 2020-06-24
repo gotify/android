@@ -43,7 +43,7 @@ public interface MessageApi {
   })
   @DELETE("application/{id}/message")
   Call<Void> deleteAppMessages(
-    @retrofit2.http.Path("id") Integer id
+    @retrofit2.http.Path("id") Long id
   );
 
   /**
@@ -57,7 +57,7 @@ public interface MessageApi {
   })
   @DELETE("message/{id}")
   Call<Void> deleteMessage(
-    @retrofit2.http.Path("id") Integer id
+    @retrofit2.http.Path("id") Long id
   );
 
   /**
@@ -85,7 +85,7 @@ public interface MessageApi {
   })
   @GET("application/{id}/message")
   Call<PagedMessages> getAppMessages(
-    @retrofit2.http.Path("id") Integer id, @retrofit2.http.Query("limit") Integer limit, @retrofit2.http.Query("since") Integer since
+    @retrofit2.http.Path("id") Long id, @retrofit2.http.Query("limit") Integer limit, @retrofit2.http.Query("since") Long since
   );
 
   /**
@@ -100,7 +100,7 @@ public interface MessageApi {
   })
   @GET("message")
   Call<PagedMessages> getMessages(
-    @retrofit2.http.Query("limit") Integer limit, @retrofit2.http.Query("since") Integer since
+    @retrofit2.http.Query("limit") Integer limit, @retrofit2.http.Query("since") Long since
   );
 
   /**

@@ -47,7 +47,7 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 //clientTokenQuery.setApiKeyPrefix("Token");
 
 PluginApi apiInstance = new PluginApi();
-Integer id = 56; // Integer | the plugin id
+Long id = 789L; // Long | the plugin id
 try {
     Void result = apiInstance.disablePlugin(id);
     System.out.println(result);
@@ -61,7 +61,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **id** | **Integer**| the plugin id |
+ **id** | **Long**| the plugin id |
 
 ### Return type
 
@@ -111,7 +111,7 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 //clientTokenQuery.setApiKeyPrefix("Token");
 
 PluginApi apiInstance = new PluginApi();
-Integer id = 56; // Integer | the plugin id
+Long id = 789L; // Long | the plugin id
 try {
     Void result = apiInstance.enablePlugin(id);
     System.out.println(result);
@@ -125,7 +125,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **id** | **Integer**| the plugin id |
+ **id** | **Long**| the plugin id |
 
 ### Return type
 
@@ -175,7 +175,7 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 //clientTokenQuery.setApiKeyPrefix("Token");
 
 PluginApi apiInstance = new PluginApi();
-Integer id = 56; // Integer | the plugin id
+Long id = 789L; // Long | the plugin id
 try {
     Object result = apiInstance.getPluginConfig(id);
     System.out.println(result);
@@ -189,7 +189,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **id** | **Integer**| the plugin id |
+ **id** | **Long**| the plugin id |
 
 ### Return type
 
@@ -239,7 +239,7 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 //clientTokenQuery.setApiKeyPrefix("Token");
 
 PluginApi apiInstance = new PluginApi();
-Integer id = 56; // Integer | the plugin id
+Long id = 789L; // Long | the plugin id
 try {
     String result = apiInstance.getPluginDisplay(id);
     System.out.println(result);
@@ -253,7 +253,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **id** | **Integer**| the plugin id |
+ **id** | **Long**| the plugin id |
 
 ### Return type
 
@@ -363,7 +363,7 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 //clientTokenQuery.setApiKeyPrefix("Token");
 
 PluginApi apiInstance = new PluginApi();
-Integer id = 56; // Integer | the plugin id
+Long id = 789L; // Long | the plugin id
 try {
     Void result = apiInstance.updatePluginConfig(id);
     System.out.println(result);
@@ -377,7 +377,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **id** | **Integer**| the plugin id |
+ **id** | **Long**| the plugin id |
 
 ### Return type
 

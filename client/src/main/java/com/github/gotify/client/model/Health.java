@@ -24,84 +24,51 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
 
 /**
- * The UserWithPass holds information about the credentials and other stuff.
+ * Health represents how healthy the application is.
  */
-@ApiModel(description = "The UserWithPass holds information about the credentials and other stuff.")
+@ApiModel(description = "Health represents how healthy the application is.")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2020-06-24T18:39:01.386+02:00")
-public class UserWithPass {
-  @SerializedName("admin")
-  private Boolean admin = null;
+public class Health {
+  @SerializedName("database")
+  private String database = null;
 
-  @SerializedName("id")
-  private Long id = null;
+  @SerializedName("health")
+  private String health = null;
 
-  @SerializedName("name")
-  private String name = null;
-
-  @SerializedName("pass")
-  private String pass = null;
-
-  public UserWithPass admin(Boolean admin) {
-    this.admin = admin;
+  public Health database(String database) {
+    this.database = database;
     return this;
   }
 
    /**
-   * If the user is an administrator.
-   * @return admin
+   * The health of the database connection.
+   * @return database
   **/
-  @ApiModelProperty(example = "true", value = "If the user is an administrator.")
-  public Boolean isAdmin() {
-    return admin;
+  @ApiModelProperty(example = "green", required = true, value = "The health of the database connection.")
+  public String getDatabase() {
+    return database;
   }
 
-  public void setAdmin(Boolean admin) {
-    this.admin = admin;
+  public void setDatabase(String database) {
+    this.database = database;
   }
 
-   /**
-   * The user id.
-   * @return id
-  **/
-  @ApiModelProperty(example = "25", required = true, value = "The user id.")
-  public Long getId() {
-    return id;
-  }
-
-  public UserWithPass name(String name) {
-    this.name = name;
+  public Health health(String health) {
+    this.health = health;
     return this;
   }
 
    /**
-   * The user name. For login.
-   * @return name
+   * The health of the overall application.
+   * @return health
   **/
-  @ApiModelProperty(example = "unicorn", required = true, value = "The user name. For login.")
-  public String getName() {
-    return name;
+  @ApiModelProperty(example = "green", required = true, value = "The health of the overall application.")
+  public String getHealth() {
+    return health;
   }
 
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public UserWithPass pass(String pass) {
-    this.pass = pass;
-    return this;
-  }
-
-   /**
-   * The user password. For login.
-   * @return pass
-  **/
-  @ApiModelProperty(example = "nrocinu", required = true, value = "The user password. For login.")
-  public String getPass() {
-    return pass;
-  }
-
-  public void setPass(String pass) {
-    this.pass = pass;
+  public void setHealth(String health) {
+    this.health = health;
   }
 
 
@@ -113,28 +80,24 @@ public class UserWithPass {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    UserWithPass userWithPass = (UserWithPass) o;
-    return Objects.equals(this.admin, userWithPass.admin) &&
-        Objects.equals(this.id, userWithPass.id) &&
-        Objects.equals(this.name, userWithPass.name) &&
-        Objects.equals(this.pass, userWithPass.pass);
+    Health health = (Health) o;
+    return Objects.equals(this.database, health.database) &&
+        Objects.equals(this.health, health.health);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(admin, id, name, pass);
+    return Objects.hash(database, health);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class UserWithPass {\n");
+    sb.append("class Health {\n");
     
-    sb.append("    admin: ").append(toIndentedString(admin)).append("\n");
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
-    sb.append("    name: ").append(toIndentedString(name)).append("\n");
-    sb.append("    pass: ").append(toIndentedString(pass)).append("\n");
+    sb.append("    database: ").append(toIndentedString(database)).append("\n");
+    sb.append("    health: ").append(toIndentedString(health)).append("\n");
     sb.append("}");
     return sb.toString();
   }
