@@ -28,7 +28,7 @@ public interface PluginApi {
   })
   @POST("plugin/{id}/disable")
   Call<Void> disablePlugin(
-    @retrofit2.http.Path("id") Integer id
+    @retrofit2.http.Path("id") Long id
   );
 
   /**
@@ -42,7 +42,7 @@ public interface PluginApi {
   })
   @POST("plugin/{id}/enable")
   Call<Void> enablePlugin(
-    @retrofit2.http.Path("id") Integer id
+    @retrofit2.http.Path("id") Long id
   );
 
   /**
@@ -56,7 +56,7 @@ public interface PluginApi {
   })
   @GET("plugin/{id}/config")
   Call<Object> getPluginConfig(
-    @retrofit2.http.Path("id") Integer id
+    @retrofit2.http.Path("id") Long id
   );
 
   /**
@@ -70,7 +70,7 @@ public interface PluginApi {
   })
   @GET("plugin/{id}/display")
   Call<String> getPluginDisplay(
-    @retrofit2.http.Path("id") Integer id
+    @retrofit2.http.Path("id") Long id
   );
 
   /**
@@ -96,7 +96,7 @@ public interface PluginApi {
   })
   @POST("plugin/{id}/config")
   Call<Void> updatePluginConfig(
-    @retrofit2.http.Path("id") Integer id
+    @retrofit2.http.Path("id") Long id
   );
 
 }

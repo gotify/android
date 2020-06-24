@@ -30,7 +30,7 @@ public class PluginApiTest {
      */
     @Test
     public void disablePluginTest() {
-        Integer id = null;
+        Long id = null;
         // Void response = api.disablePlugin(id);
 
         // TODO: test validations
@@ -42,7 +42,7 @@ public class PluginApiTest {
      */
     @Test
     public void enablePluginTest() {
-        Integer id = null;
+        Long id = null;
         // Void response = api.enablePlugin(id);
 
         // TODO: test validations
@@ -54,7 +54,7 @@ public class PluginApiTest {
      */
     @Test
     public void getPluginConfigTest() {
-        Integer id = null;
+        Long id = null;
         // Object response = api.getPluginConfig(id);
 
         // TODO: test validations
@@ -66,7 +66,7 @@ public class PluginApiTest {
      */
     @Test
     public void getPluginDisplayTest() {
-        Integer id = null;
+        Long id = null;
         // String response = api.getPluginDisplay(id);
 
         // TODO: test validations
@@ -89,7 +89,7 @@ public class PluginApiTest {
      */
     @Test
     public void updatePluginConfigTest() {
-        Integer id = null;
+        Long id = null;
         // Void response = api.updatePluginConfig(id);
 
         // TODO: test validations

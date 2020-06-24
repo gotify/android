@@ -43,7 +43,7 @@ public interface ApplicationApi {
   })
   @DELETE("application/{id}")
   Call<Void> deleteApp(
-    @retrofit2.http.Path("id") Integer id
+    @retrofit2.http.Path("id") Long id
   );
 
   /**
@@ -70,7 +70,7 @@ public interface ApplicationApi {
   })
   @PUT("application/{id}")
   Call<Application> updateApplication(
-    @retrofit2.http.Body Application body, @retrofit2.http.Path("id") Integer id
+    @retrofit2.http.Body Application body, @retrofit2.http.Path("id") Long id
   );
 
   /**
@@ -83,7 +83,7 @@ public interface ApplicationApi {
   @retrofit2.http.Multipart
   @POST("application/{id}/image")
   Call<Application> uploadAppImage(
-    @retrofit2.http.Part("file\"; filename=\"file") RequestBody file, @retrofit2.http.Path("id") Integer id
+    @retrofit2.http.Part("file\"; filename=\"file") RequestBody file, @retrofit2.http.Path("id") Long id
   );
 
 }

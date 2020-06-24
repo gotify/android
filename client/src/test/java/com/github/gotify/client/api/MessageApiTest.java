@@ -43,7 +43,7 @@ public class MessageApiTest {
      */
     @Test
     public void deleteAppMessagesTest() {
-        Integer id = null;
+        Long id = null;
         // Void response = api.deleteAppMessages(id);
 
         // TODO: test validations
@@ -55,7 +55,7 @@ public class MessageApiTest {
      */
     @Test
     public void deleteMessageTest() {
-        Integer id = null;
+        Long id = null;
         // Void response = api.deleteMessage(id);
 
         // TODO: test validations
@@ -78,9 +78,9 @@ public class MessageApiTest {
      */
     @Test
     public void getAppMessagesTest() {
-        Integer id = null;
+        Long id = null;
         Integer limit = null;
-        Integer since = null;
+        Long since = null;
         // PagedMessages response = api.getAppMessages(id, limit, since);
 
         // TODO: test validations
@@ -93,7 +93,7 @@ public class MessageApiTest {
     @Test
     public void getMessagesTest() {
         Integer limit = null;
-        Integer since = null;
+        Long since = null;
         // PagedMessages response = api.getMessages(limit, since);
 
         // TODO: test validations

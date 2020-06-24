@@ -109,7 +109,7 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 //clientTokenQuery.setApiKeyPrefix("Token");
 
 MessageApi apiInstance = new MessageApi();
-Integer id = 56; // Integer | the application id
+Long id = 789L; // Long | the application id
 try {
     Void result = apiInstance.deleteAppMessages(id);
     System.out.println(result);
@@ -123,7 +123,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **id** | **Integer**| the application id |
+ **id** | **Long**| the application id |
 
 ### Return type
 
@@ -173,7 +173,7 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 //clientTokenQuery.setApiKeyPrefix("Token");
 
 MessageApi apiInstance = new MessageApi();
-Integer id = 56; // Integer | the message id
+Long id = 789L; // Long | the message id
 try {
     Void result = apiInstance.deleteMessage(id);
     System.out.println(result);
@@ -187,7 +187,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **id** | **Integer**| the message id |
+ **id** | **Long**| the message id |
 
 ### Return type
 
@@ -297,9 +297,9 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 //clientTokenQuery.setApiKeyPrefix("Token");
 
 MessageApi apiInstance = new MessageApi();
-Integer id = 56; // Integer | the application id
+Long id = 789L; // Long | the application id
 Integer limit = 100; // Integer | the maximal amount of messages to return
-Integer since = 56; // Integer | return all messages with an ID less than this value
+Long since = 789L; // Long | return all messages with an ID less than this value
 try {
     PagedMessages result = apiInstance.getAppMessages(id, limit, since);
     System.out.println(result);
@@ -313,9 +313,9 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **id** | **Integer**| the application id |
+ **id** | **Long**| the application id |
  **limit** | **Integer**| the maximal amount of messages to return | [optional] [default to 100]
- **since** | **Integer**| return all messages with an ID less than this value | [optional]
+ **since** | **Long**| return all messages with an ID less than this value | [optional]
 
 ### Return type
 
@@ -366,7 +366,7 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 
 MessageApi apiInstance = new MessageApi();
 Integer limit = 100; // Integer | the maximal amount of messages to return
-Integer since = 56; // Integer | return all messages with an ID less than this value
+Long since = 789L; // Long | return all messages with an ID less than this value
 try {
     PagedMessages result = apiInstance.getMessages(limit, since);
     System.out.println(result);
@@ -381,7 +381,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **limit** | **Integer**| the maximal amount of messages to return | [optional] [default to 100]
- **since** | **Integer**| return all messages with an ID less than this value | [optional]
+ **since** | **Long**| return all messages with an ID less than this value | [optional]
 
 ### Return type
 
