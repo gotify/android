@@ -45,6 +45,7 @@
             android:name=".settings.SettingsActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/title_activity_settings" />
+        
 
         <service android:name=".service.WebSocketService" />
 
