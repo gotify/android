@@ -62,6 +62,7 @@ import com.github.gotify.messages.provider.MessageWithImage;
 import com.github.gotify.picasso.PicassoHandler;
 import com.github.gotify.service.WebSocketService;
 import com.github.gotify.settings.SettingsActivity;
+import com.github.gotify.sharing.ShareActivity;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -301,6 +302,9 @@ public class MessagesActivity extends AppCompatActivity
             startActivity(new Intent(this, LogsActivity.class));
         } else if (id == R.id.settings) {
             startActivity(new Intent(this, SettingsActivity.class));
+        } else if (id == R.id.push_message) {
+            Intent intent = new Intent(MessagesActivity.this, ShareActivity.class);
+            startActivity(intent);
         }
 
         drawer.closeDrawer(GravityCompat.START);
