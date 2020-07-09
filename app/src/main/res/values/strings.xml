@@ -36,7 +36,6 @@
     <string name="gotify_url">https://push.example.com</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
-    <string name="show_advanced">Show Advanced Options</string>
     <string name="disabled_validate_ssl">Disable SSL Validation</string>
     <string name="select_ca_certificate">Select CA Certificate</string>
     <string name="select_ca_file">Select a Certificate File</string>
@@ -68,4 +67,11 @@
     <string name="settings_appearance">Appearance</string>
     <string name="setting_theme">Theme</string>
     <string name="setting_key_theme">theme</string>
+    <string name="push_message">Push message</string>
+    <string name="appListDescription">App:</string>
+    <string name="priorityDescription">Priority:</string>
+    <string name="push_button">Push Message</string>
+    <string name="push_title_hint">Title</string>
+    <string name="push_content_hint">Content</string>
+    <string name="push_priority_hint">Priority</string>
 </resources>

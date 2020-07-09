@@ -47,7 +47,8 @@
             android:label="@string/title_activity_settings" />
         <activity
             android:name=".sharing.ShareActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="Push message">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />

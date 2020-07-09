@@ -1,14 +1,12 @@
 package com.github.gotify;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.format.DateUtils;
 import android.view.View;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import com.github.gotify.client.JSON;
 import com.github.gotify.log.Log;
@@ -103,11 +101,6 @@ public class Utils {
         if (data.length != 1) {
             throw new IllegalArgumentException("must be one element");
         }
-
         return data[0];
-    }
-
-    public static void showLongToast(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
     }
 }

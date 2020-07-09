@@ -16,6 +16,12 @@
     </group>
     <group android:checkableBehavior="single">
         <item
+            android:orderInCategory="2"
+            android:icon="@drawable/ic_send"
+            android:id="@+id/push_message"
+            android:title="@string/push_message"
+            />
+        <item
             android:icon="@drawable/ic_settings"
             android:orderInCategory="2"
             android:id="@+id/settings"
