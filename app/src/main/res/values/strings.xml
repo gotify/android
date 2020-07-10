@@ -36,7 +36,6 @@
     <string name="gotify_url">https://push.example.com</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
-    <string name="show_advanced">Show Advanced Options</string>
     <string name="disabled_validate_ssl">Disable SSL Validation</string>
     <string name="select_ca_certificate">Select CA Certificate</string>
     <string name="select_ca_file">Select a Certificate File</string>
