@@ -1,8 +1,6 @@
 package com.github.gotify.sharing;
 
-
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -12,10 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.github.gotify.R;
 import com.github.gotify.Settings;
 import com.github.gotify.Utils;
@@ -29,7 +25,6 @@ import com.github.gotify.client.model.Application;
 import com.github.gotify.client.model.Message;
 import com.github.gotify.log.Log;
 import com.github.gotify.messages.provider.ApplicationHolder;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,36 +48,39 @@ public class ShareActivity extends AppCompatActivity {
         settings = new Settings(this);
 
         // App spinner
-        client = ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
+        client =
+                ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
         ApplicationHolder appsHolder = new ApplicationHolder(ShareActivity.this, client);
         List<Application> apps = appsHolder.get();
         appsHolder.onUpdate(() -> PopulateSpinner(appsHolder.get()));
         appsHolder.request();
 
         // Push button
-        final Button button = (Button) findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Message message = new Message();
+        final Button button = findViewById(R.id.button);
+        button.setOnClickListener(
+                new View.OnClickListener() {
+                    public void onClick(View v) {
+                        Message message = new Message();
 
-                EditText edtTxtTitle = (EditText)findViewById(R.id.title);
-                String title = edtTxtTitle.getText().toString();
-                message.setTitle(title);
+                        EditText edtTxtTitle = findViewById(R.id.title);
+                        String title = edtTxtTitle.getText().toString();
+                        message.setTitle(title);
 
-                EditText edtTxtContent = (EditText)findViewById(R.id.content);
-                String content = edtTxtContent.getText().toString();
-                message.setMessage(content);
+                        EditText edtTxtContent = findViewById(R.id.content);
+                        String content = edtTxtContent.getText().toString();
+                        message.setMessage(content);
 
-                Spinner appSpinner = (Spinner) findViewById(R.id.appSpinner);
-                String selectedApp = appSpinner.getSelectedItem().toString();
+                        Spinner appSpinner = findViewById(R.id.appSpinner);
+                        String selectedApp = appSpinner.getSelectedItem().toString();
 
-                Spinner prioritySpinner = (Spinner) findViewById(R.id.prioritySpinner);
-                Long priority = Long.parseLong(prioritySpinner.getSelectedItem().toString());
-                message.setPriority((long) priority);
+                        Spinner prioritySpinner = findViewById(R.id.prioritySpinner);
+                        Long priority =
+                                Long.parseLong(prioritySpinner.getSelectedItem().toString());
+                        message.setPriority(priority);
 
-                new GetApps(selectedApp).execute(message);
-            }
-        });
+                        new GetApps(selectedApp).execute(message);
+                    }
+                });
     }
 
     @Override
@@ -93,26 +91,31 @@ public class ShareActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void PopulateSpinner (List<Application> apps) {
+    private void PopulateSpinner(List<Application> apps) {
         List<String> appNameList = new ArrayList();
         for (Application app : apps) {
             appNameList.add(app.getName());
         }
-        Spinner dynamicSpinner = (Spinner) findViewById(R.id.appSpinner);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(ShareActivity.this,
-                android.R.layout.simple_spinner_dropdown_item, appNameList);
+        Spinner dynamicSpinner = findViewById(R.id.appSpinner);
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<String>(
+                        ShareActivity.this,
+                        android.R.layout.simple_spinner_dropdown_item,
+                        appNameList);
         dynamicSpinner.setAdapter(adapter);
-        dynamicSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //Log.v("item", (String) parent.getItemAtPosition(position));
-            }
+        dynamicSpinner.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(
+                            AdapterView<?> parent, View view, int position, long id) {
+                        // Log.v("item", (String) parent.getItemAtPosition(position));
+                    }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // TODO Auto-generated method stub
-            }
-        });
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        // TODO Auto-generated method stub
+                    }
+                });
 
         // Auto select app
         Integer selectedApp = getIntent().getIntExtra("SELECTED_APP", 0);
@@ -132,16 +135,17 @@ public class ShareActivity extends AppCompatActivity {
             try {
                 ApplicationApi applicationApi = client.createService(ApplicationApi.class);
                 List<Application> apps = Api.execute(applicationApi.getApps());
-                for(Application app : apps) {
+                for (Application app : apps) {
                     if (app.getName().equals(SelectedApp)) {
-                        client = ClientFactory.clientToken(settings.url(), settings.sslSettings(), app.getToken());
+                        client =
+                                ClientFactory.clientToken(
+                                        settings.url(), settings.sslSettings(), app.getToken());
                         new SendSharedContent().execute(first(messages));
                         break;
                     }
                 }
 
-            }
-            catch (ApiException apiException) {
+            } catch (ApiException apiException) {
                 Log.e("Failed getting apps", apiException);
             }
             return null;
@@ -168,4 +172,3 @@ public class ShareActivity extends AppCompatActivity {
         }
     }
 }
-
