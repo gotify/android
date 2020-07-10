@@ -1,6 +1,7 @@
 package com.github.gotify.sharing;
 
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -125,6 +126,7 @@ public class ShareActivity extends AppCompatActivity {
             SelectedApp = passedData;
         }
 
+        @SuppressLint("WrongThread")
         @Override
         protected Void doInBackground(Message... messages) {
             try {
@@ -134,8 +136,10 @@ public class ShareActivity extends AppCompatActivity {
                     if (app.getName().equals(SelectedApp)) {
                         client = ClientFactory.clientToken(settings.url(), settings.sslSettings(), app.getToken());
                         new SendSharedContent().execute(first(messages));
+                        break;
                     }
                 }
+
             }
             catch (ApiException apiException) {
                 Log.e("Failed getting apps", apiException);
