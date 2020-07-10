@@ -49,7 +49,7 @@
         <activity
             android:name=".sharing.ShareActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:label="Sharing" />
+            android:label="Push message" />
         
 
         <service android:name=".service.WebSocketService" />

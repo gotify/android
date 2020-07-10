@@ -14,7 +14,6 @@
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="42dp"
-        android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="Title"
         android:inputType="textUri"
@@ -27,20 +26,51 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:layout_marginTop="8dp"
-        android:ems="10"
         android:hint="Content"
         android:inputType="textCapSentences|textMultiLine"
-        android:maxLines ="4"
+        android:maxLines ="10"
         android:maxLength ="2000"
         android:text="" />
+
+    <TextView
+        android:id="@+id/txtAppListDesc"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="@string/appListDescription"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"/>
+    <Spinner
+        android:id="@+id/appSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp" />
+
+    <TextView
+        android:id="@+id/txtPriorityDesc"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="@string/priorityDescription"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"/>
+    <Spinner
+        android:id="@+id/prioritySpinner"
+        android:entries="@array/priorities"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"/>
 
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|center_horizontal"
         android:text="Push Message"
-        android:layout_gravity="center_vertical|center_horizontal"/>
-
+        android:layout_marginBottom="20dp" />
 
 </LinearLayout>

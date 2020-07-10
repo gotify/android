@@ -556,7 +556,9 @@ public class MessagesActivity extends AppCompatActivity
         if (item.getItemId() == R.id.action_delete_all) {
             new DeleteMessages().execute(appId);
         } else if (item.getItemId() == R.id.action_push_message) {
-            startActivity(new Intent(MessagesActivity.this, ShareActivity.class));
+            Intent intent = new Intent(MessagesActivity.this, ShareActivity.class);
+            intent.putExtra("SELECTED_APP", appId - 1);
+            startActivity(intent);
         }
         return super.onContextItemSelected(item);
     }

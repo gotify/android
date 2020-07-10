@@ -25,7 +25,6 @@
     <string name="grouped_message">Received %d messages while being disconnected</string>
     <string name="delete_all">Delete all</string>
     <string name="delete_logs">Delete logs</string>
-    <string name="push_message">Push message</string>
     <string name="copy_logs">Copy logs</string>
     <string name="logs_copied">Logs copied</string>
     <string name="snackbar_deleted">Message deleted</string>
@@ -69,4 +68,7 @@
     <string name="settings_appearance">Appearance</string>
     <string name="setting_theme">Theme</string>
     <string name="setting_key_theme">theme</string>
+    <string name="push_message">Push message</string>
+    <string name="appListDescription">Applications:</string>
+    <string name="priorityDescription">Priority:</string>
 </resources>
