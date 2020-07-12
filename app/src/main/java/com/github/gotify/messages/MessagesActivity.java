@@ -302,6 +302,10 @@ public class MessagesActivity extends AppCompatActivity
             startActivity(new Intent(this, LogsActivity.class));
         } else if (id == R.id.settings) {
             startActivity(new Intent(this, SettingsActivity.class));
+        } else if (id == R.id.push_message) {
+            Intent intent = new Intent(MessagesActivity.this, ShareActivity.class);
+            intent.putExtra("SELECTED_APP", appId - 1);
+            startActivity(intent);
         }
 
         drawer.closeDrawer(GravityCompat.START);
@@ -555,10 +559,6 @@ public class MessagesActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_delete_all) {
             new DeleteMessages().execute(appId);
-        } else if (item.getItemId() == R.id.action_push_message) {
-            Intent intent = new Intent(MessagesActivity.this, ShareActivity.class);
-            intent.putExtra("SELECTED_APP", appId - 1);
-            startActivity(intent);
         }
         return super.onContextItemSelected(item);
     }

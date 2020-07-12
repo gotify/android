@@ -68,6 +68,10 @@
     <string name="setting_theme">Theme</string>
     <string name="setting_key_theme">theme</string>
     <string name="push_message">Push message</string>
-    <string name="appListDescription">Applications:</string>
+    <string name="appListDescription">App:</string>
     <string name="priorityDescription">Priority:</string>
+    <string name="push_button">Push Message</string>
+    <string name="push_title_hint">Title</string>
+    <string name="push_content_hint">Content</string>
+    <string name="push_priority_hint">Priority</string>
 </resources>

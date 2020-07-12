@@ -49,8 +49,13 @@
         <activity
             android:name=".sharing.ShareActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:label="Push message" />
-        
+            android:label="Push message" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
 
         <service android:name=".service.WebSocketService" />
 

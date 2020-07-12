@@ -3,8 +3,4 @@
         android:title="@string/delete_all"
         android:id="@+id/action_delete_all"
         android:orderInCategory="100"/>
-    <item
-        android:title="@string/push_message"
-        android:id="@+id/action_push_message"
-        android:orderInCategory="100"/>
 </menu>

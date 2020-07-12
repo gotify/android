@@ -2,23 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <include
         layout="@layout/app_bar_drawer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
+        android:layout_height="wrap_content"/>
 
     <EditText
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="42dp"
         android:ems="10"
-        android:hint="Title"
-        android:inputType="textUri"
+        android:hint="@string/push_title_hint"
+        android:inputType="text"
         android:singleLine="true"
-        android:text=""
         android:layout_margin="20dp"/>
 
     <EditText
@@ -26,11 +24,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:hint="Content"
+        android:hint="@string/push_content_hint"
         android:inputType="textCapSentences|textMultiLine"
         android:maxLines ="10"
-        android:maxLength ="2000"
-        android:text="" />
+        android:maxLength ="2000"/>
+
+    <EditText
+        android:id="@+id/edtTxtPriority"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/push_priority_hint"
+        android:inputType="numberSigned"
+        android:digits="0123456789"
+        android:maxLength ="3"
+        android:layout_margin="20dp"
+        android:imeOptions="actionDone"/>
 
     <TextView
         android:id="@+id/txtAppListDesc"
@@ -46,31 +54,14 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp" />
-
-    <TextView
-        android:id="@+id/txtPriorityDesc"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="@string/priorityDescription"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"/>
-    <Spinner
-        android:id="@+id/prioritySpinner"
-        android:entries="@array/priorities"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"/>
+        android:layout_marginRight="20dp"
+        android:textSize="18sp"/>
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/push_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|center_horizontal"
-        android:text="Push Message"
-        android:layout_marginBottom="20dp" />
-
+        android:text="@string/push_button"
+        android:layout_marginBottom="20dp"/>
 </LinearLayout>
