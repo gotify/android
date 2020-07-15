@@ -222,13 +222,9 @@ public class MessagesActivity extends AppCompatActivity
         menu.removeGroup(R.id.apps);
         targetReferences.clear();
         updateMessagesAndStopLoading(messages.get(appId));
-        for (Application app : applications) {
-            MenuItem item =
-                    menu.add(
-                            R.id.apps,
-                            Utils.longToInt(app.getId()),
-                            APPLICATION_ORDER,
-                            app.getName());
+        for (int i = 0; i < applications.size(); i++) {
+            Application app = applications.get(i);
+            MenuItem item = menu.add(R.id.apps, i, APPLICATION_ORDER, app.getName());
             item.setCheckable(true);
             Target t = Utils.toDrawable(getResources(), item::setIcon);
             targetReferences.add(t);
@@ -289,7 +285,8 @@ public class MessagesActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (item.getGroupId() == R.id.apps) {
-            selectAppIdOnDrawerClose = (long) id;
+            Application app = appsHolder.get().get(id);
+            selectAppIdOnDrawerClose = app != null ? app.getId() : MessageState.ALL_MESSAGES;
             startLoading();
             toolbar.setSubtitle(item.getTitle());
         } else if (id == R.id.nav_all_messages) {
@@ -343,13 +340,17 @@ public class MessagesActivity extends AppCompatActivity
         filter.addAction(WebSocketService.NEW_MESSAGE_BROADCAST);
         registerReceiver(receiver, filter);
         new UpdateMissedMessages().execute(messages.getLastReceivedMessage());
-        navigationView
-                .getMenu()
-                .findItem(
-                        appId == MessageState.ALL_MESSAGES
-                                ? R.id.nav_all_messages
-                                : Utils.longToInt(appId))
-                .setChecked(true);
+
+        int selectedIndex = R.id.nav_all_messages;
+        if (appId != MessageState.ALL_MESSAGES) {
+            for (int i = 0; i < appsHolder.get().size(); i++) {
+                if (appsHolder.get().get(i).getId() == appId) {
+                    selectedIndex = i;
+                }
+            }
+        }
+
+        navigationView.getMenu().findItem(selectedIndex).setChecked(true);
         super.onResume();
     }
 
