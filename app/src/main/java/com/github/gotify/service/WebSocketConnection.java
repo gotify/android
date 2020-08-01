@@ -13,6 +13,7 @@ import com.github.gotify.client.model.Message;
 import com.github.gotify.log.Log;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -21,6 +22,7 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
 class WebSocketConnection {
+    private static final AtomicLong ID = new AtomicLong(0);
     private final ConnectivityManager connectivityManager;
     private final AlarmManager alarmManager;
     private OkHttpClient client;
@@ -110,15 +112,16 @@ class WebSocketConnection {
     public synchronized WebSocketConnection start() {
         close();
         isClosed = false;
-        Log.i("WebSocket: starting...");
+        long nextId = ID.incrementAndGet();
+        Log.i("WebSocket(" + nextId + "): starting...");
 
-        webSocket = client.newWebSocket(request(), new Listener());
+        webSocket = client.newWebSocket(request(), new Listener(nextId));
         return this;
     }
 
     public synchronized void close() {
         if (webSocket != null) {
-            Log.i("WebSocket: closing existing connection.");
+            Log.i("WebSocket(" + ID.get() + "): closing existing connection.");
             isClosed = true;
             webSocket.close(1000, "");
             webSocket = null;
@@ -147,39 +150,48 @@ class WebSocketConnection {
     }
 
     private class Listener extends WebSocketListener {
+        private final long id;
+
+        public Listener(long id) {
+            this.id = id;
+        }
 
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
-            Log.i("WebSocket: opened");
-            synchronized (this) {
-                onOpen.run();
+            syncExec(
+                    () -> {
+                        Log.i("WebSocket(" + id + "): opened");
+                        onOpen.run();
 
-                if (errorCount > 0) {
-                    onReconnected.run();
-                    errorCount = 0;
-                }
-            }
+                        if (errorCount > 0) {
+                            onReconnected.run();
+                            errorCount = 0;
+                        }
+                    });
             super.onOpen(webSocket, response);
         }
 
         @Override
         public void onMessage(WebSocket webSocket, String text) {
-            Log.i("WebSocket: received message " + text);
-            synchronized (this) {
-                Message message = Utils.JSON.fromJson(text, Message.class);
-                onMessage.onSuccess(message);
-            }
+            syncExec(
+                    () -> {
+                        Log.i("WebSocket(" + id + "): received message " + text);
+                        Message message = Utils.JSON.fromJson(text, Message.class);
+                        onMessage.onSuccess(message);
+                    });
             super.onMessage(webSocket, text);
         }
 
         @Override
         public void onClosed(WebSocket webSocket, int code, String reason) {
-            synchronized (this) {
-                if (!isClosed) {
-                    Log.w("WebSocket: closed");
-                    onClose.run();
-                }
-            }
+            syncExec(
+                    () -> {
+                        if (!isClosed) {
+                            Log.w("WebSocket(" + id + "): closed");
+                            onClose.run();
+                            isClosed = true;
+                        }
+                    });
 
             super.onClosed(webSocket, code, reason);
         }
@@ -188,30 +200,39 @@ class WebSocketConnection {
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
             String code = response != null ? "StatusCode: " + response.code() : "";
             String message = response != null ? response.message() : "";
-            Log.e("WebSocket: failure " + code + " Message: " + message, t);
-            synchronized (this) {
-                if (response != null && response.code() >= 400 && response.code() <= 499) {
-                    onBadRequest.execute(message);
-                    close();
-                    return;
-                }
+            Log.e("WebSocket(" + id + "): failure " + code + " Message: " + message, t);
+            syncExec(
+                    () -> {
+                        if (response != null && response.code() >= 400 && response.code() <= 499) {
+                            onBadRequest.execute(message);
+                            close();
+                            return;
+                        }
 
-                errorCount++;
+                        errorCount++;
 
-                NetworkInfo network = connectivityManager.getActiveNetworkInfo();
-                if (network == null || !network.isConnected()) {
-                    Log.i("WebSocket: Network not connected");
-                    onDisconnect.run();
-                    return;
-                }
+                        NetworkInfo network = connectivityManager.getActiveNetworkInfo();
+                        if (network == null || !network.isConnected()) {
+                            Log.i("WebSocket(" + id + "): Network not connected");
+                            onDisconnect.run();
+                            return;
+                        }
 
-                int minutes = Math.min(errorCount * 2 - 1, 20);
+                        int minutes = Math.min(errorCount * 2 - 1, 20);
 
-                onNetworkFailure.execute(minutes);
-                scheduleReconnect(TimeUnit.MINUTES.toSeconds(minutes));
-            }
+                        onNetworkFailure.execute(minutes);
+                        scheduleReconnect(TimeUnit.MINUTES.toSeconds(minutes));
+                    });
 
             super.onFailure(webSocket, t, response);
+        }
+
+        private void syncExec(Runnable runnable) {
+            synchronized (this) {
+                if (ID.get() == id) {
+                    runnable.run();
+                }
+            }
         }
     }
 
