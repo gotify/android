@@ -21,7 +21,8 @@
     <string name="auth_failed">Server returned 401 unauthorized while trying to get current user. This can be caused by deleting the client for this session.</string>
     <string name="other_error">Could not get current user. Server (%s) responded with code %d: body (first 200 chars): %s</string>
     <string name="websocket_failed">Connection failed, trying again in %d minutes</string>
-    <string name="websocket_closed">WebSocket closed; The client-token could be invalidated, please re-login</string>
+    <string name="websocket_closed_logout">User action required: Please login, the authentication token isn\'t valid anymore.</string>
+    <string name="websocket_closed_try_reconnect">Connection closed, trying to establish a new one.</string>
     <string name="grouped_message">Received %d messages while being disconnected</string>
     <string name="delete_all">Delete all</string>
     <string name="delete_logs">Delete logs</string>
