@@ -151,7 +151,7 @@ public class WebSocketService extends Service {
             return;
         }
 
-        connection.scheduleReconnect(5);
+        connection.scheduleReconnect(15);
     }
 
     private void onBadRequest(String message) {
