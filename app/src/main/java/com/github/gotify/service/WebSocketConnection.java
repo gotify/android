@@ -40,7 +40,7 @@ class WebSocketConnection {
     private BadRequestRunnable onBadRequest;
     private OnNetworkFailureRunnable onNetworkFailure;
     private Runnable onReconnected;
-    private boolean isClosed;
+    private State state;
     private Runnable onDisconnect;
 
     WebSocketConnection(
@@ -110,8 +110,11 @@ class WebSocketConnection {
     }
 
     public synchronized WebSocketConnection start() {
+        if (state == State.Connecting || state == State.Connected) {
+            return this;
+        }
         close();
-        isClosed = false;
+        state = State.Connecting;
         long nextId = ID.incrementAndGet();
         Log.i("WebSocket(" + nextId + "): starting...");
 
@@ -122,13 +125,18 @@ class WebSocketConnection {
     public synchronized void close() {
         if (webSocket != null) {
             Log.i("WebSocket(" + ID.get() + "): closing existing connection.");
-            isClosed = true;
+            state = State.Disconnected;
             webSocket.close(1000, "");
             webSocket = null;
         }
     }
 
     public synchronized void scheduleReconnect(long seconds) {
+        if (state == State.Connecting || state == State.Connected) {
+            return;
+        }
+        state = State.Scheduled;
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             Log.i(
                     "WebSocket: scheduling a restart in "
@@ -160,6 +168,7 @@ class WebSocketConnection {
         public void onOpen(WebSocket webSocket, Response response) {
             syncExec(
                     () -> {
+                        state = State.Connected;
                         Log.i("WebSocket(" + id + "): opened");
                         onOpen.run();
 
@@ -186,11 +195,11 @@ class WebSocketConnection {
         public void onClosed(WebSocket webSocket, int code, String reason) {
             syncExec(
                     () -> {
-                        if (!isClosed) {
+                        if (state == State.Connected) {
                             Log.w("WebSocket(" + id + "): closed");
                             onClose.run();
-                            isClosed = true;
                         }
+                        state = State.Disconnected;
                     });
 
             super.onClosed(webSocket, code, reason);
@@ -203,6 +212,7 @@ class WebSocketConnection {
             Log.e("WebSocket(" + id + "): failure " + code + " Message: " + message, t);
             syncExec(
                     () -> {
+                        state = State.Disconnected;
                         if (response != null && response.code() >= 400 && response.code() <= 499) {
                             onBadRequest.execute(message);
                             close();
@@ -242,5 +252,12 @@ class WebSocketConnection {
 
     interface OnNetworkFailureRunnable {
         void execute(long millis);
+    }
+
+    enum State {
+        Scheduled,
+        Connecting,
+        Connected,
+        Disconnected
     }
 }
