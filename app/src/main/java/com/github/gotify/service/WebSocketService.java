@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static com.github.gotify.api.Callback.call;
+
 public class WebSocketService extends Service {
 
     public static final String NEW_MESSAGE_BROADCAST =
@@ -105,7 +107,7 @@ public class WebSocketService extends Service {
                                 cm,
                                 alarmManager)
                         .onOpen(this::onOpen)
-                        .onClose(() -> foreground(getString(R.string.websocket_closed)))
+                        .onClose(this::onClose)
                         .onBadRequest(this::onBadRequest)
                         .onNetworkFailure(
                                 (min) -> foreground(getString(R.string.websocket_failed, min)))
@@ -120,6 +122,24 @@ public class WebSocketService extends Service {
         registerReceiver(receiver, intentFilter);
 
         picassoHandler.updateAppIds();
+    }
+
+    private void onClose() {
+        foreground(getString(R.string.websocket_closed_try_reconnect));
+        ClientFactory.userApiWithToken(settings)
+                .currentUser()
+                .enqueue(
+                        call(
+                                (ignored) -> this.doReconnect(),
+                                (exception) -> {
+                                    if (exception.code() == 401) {
+                                        foreground(getString(R.string.websocket_closed_logout));
+                                    } else {
+                                        Log.i(
+                                                "WebSocket closed but the user still authenticated, trying to reconnect");
+                                        this.doReconnect();
+                                    }
+                                }));
     }
 
     private void onDisconnect() {
