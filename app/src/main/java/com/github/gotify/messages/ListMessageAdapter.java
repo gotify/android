@@ -39,7 +39,11 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
     private Settings settings;
     private Markwon markwon;
 
-    ListMessageAdapter(Context context, Settings settings, Picasso picasso, List<MessageWithImage> items,
+    ListMessageAdapter(
+            Context context,
+            Settings settings,
+            Picasso picasso,
+            List<MessageWithImage> items,
             Delete delete) {
         super();
         this.context = context;
@@ -48,8 +52,13 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
         this.items = items;
         this.delete = delete;
 
-        this.markwon = Markwon.builder(context).usePlugin(CorePlugin.create()).usePlugin(MovementMethodPlugin.create())
-                .usePlugin(PicassoImagesPlugin.create(picasso)).usePlugin(TablePlugin.create(context)).build();
+        this.markwon =
+                Markwon.builder(context)
+                        .usePlugin(CorePlugin.create())
+                        .usePlugin(MovementMethodPlugin.create())
+                        .usePlugin(PicassoImagesPlugin.create(picasso))
+                        .usePlugin(TablePlugin.create(context))
+                        .build();
     }
 
     public List<MessageWithImage> getItems() {
@@ -80,14 +89,16 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
             holder.message.setText(message.message.getMessage());
         }
         holder.title.setText(message.message.getTitle());
-        picasso.load(Utils.resolveAbsoluteUrl(settings.url() + "/", message.image)).error(R.drawable.ic_alarm)
-                .placeholder(R.drawable.ic_placeholder).into(holder.image);
+        picasso.load(Utils.resolveAbsoluteUrl(settings.url() + "/", message.image))
+                .error(R.drawable.ic_alarm)
+                .placeholder(R.drawable.ic_placeholder)
+                .into(holder.image);
 
         holder.setDateTime(message.message.getDate());
         holder.date.setOnClickListener((ignored) -> holder.switchPreciseDate());
 
-        holder.delete
-                .setOnClickListener((ignored) -> delete.delete(holder.getAdapterPosition(), message.message, false));
+        holder.delete.setOnClickListener(
+                (ignored) -> delete.delete(holder.getAdapterPosition(), message.message, false));
     }
 
     @Override
@@ -152,20 +163,30 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
         }
 
         private void enableCopyToClipboard() {
-            super.itemView.setOnLongClickListener(view -> {
-                ClipboardManager clipboard = (ClipboardManager) view.getContext()
-                        .getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("GotifyMessageContent", message.getText().toString());
+            super.itemView.setOnLongClickListener(
+                    view -> {
+                        ClipboardManager clipboard =
+                                (ClipboardManager)
+                                        view.getContext()
+                                                .getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipData clip =
+                                ClipData.newPlainText(
+                                        "GotifyMessageContent", message.getText().toString());
 
-                if (clipboard != null) {
-                    clipboard.setPrimaryClip(clip);
-                    Toast toast = Toast.makeText(view.getContext(),
-                            view.getContext().getString(R.string.message_copied_to_clipboard), Toast.LENGTH_SHORT);
-                    toast.show();
-                }
+                        if (clipboard != null) {
+                            clipboard.setPrimaryClip(clip);
+                            Toast toast =
+                                    Toast.makeText(
+                                            view.getContext(),
+                                            view.getContext()
+                                                    .getString(
+                                                            R.string.message_copied_to_clipboard),
+                                            Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
 
-                return true;
-            });
+                        return true;
+                    });
         }
     }
 
