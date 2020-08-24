@@ -74,4 +74,5 @@
     <string name="push_title_hint">Title</string>
     <string name="push_content_hint">Content</string>
     <string name="push_priority_hint">Priority</string>
+    <string name="message_copied_to_clipboard">Content copied to clipboard</string>
 </resources>
