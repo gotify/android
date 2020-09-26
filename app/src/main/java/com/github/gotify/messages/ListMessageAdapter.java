@@ -1,5 +1,7 @@
 package com.github.gotify.messages;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
@@ -8,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
@@ -133,6 +136,7 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
             ButterKnife.bind(this, view);
             preciseDate = false;
             dateTime = null;
+            enableCopyToClipboard();
         }
 
         void switchPreciseDate() {
@@ -156,6 +160,33 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
                 }
             }
             date.setText(text);
+        }
+
+        private void enableCopyToClipboard() {
+            super.itemView.setOnLongClickListener(
+                    view -> {
+                        ClipboardManager clipboard =
+                                (ClipboardManager)
+                                        view.getContext()
+                                                .getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipData clip =
+                                ClipData.newPlainText(
+                                        "GotifyMessageContent", message.getText().toString());
+
+                        if (clipboard != null) {
+                            clipboard.setPrimaryClip(clip);
+                            Toast toast =
+                                    Toast.makeText(
+                                            view.getContext(),
+                                            view.getContext()
+                                                    .getString(
+                                                            R.string.message_copied_to_clipboard),
+                                            Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
+
+                        return true;
+                    });
         }
     }
 
