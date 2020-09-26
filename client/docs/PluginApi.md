@@ -21,11 +21,11 @@ Disable a plugin.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.PluginApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.PluginApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -85,11 +85,11 @@ Enable a plugin.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.PluginApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.PluginApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -149,11 +149,11 @@ Get YAML configuration for Configurer plugin.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.PluginApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.PluginApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -213,11 +213,11 @@ Get display info for a Displayer plugin.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.PluginApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.PluginApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -277,11 +277,11 @@ Return all plugins.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.PluginApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.PluginApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -337,11 +337,11 @@ Update YAML configuration for Configurer plugin.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.PluginApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.PluginApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 

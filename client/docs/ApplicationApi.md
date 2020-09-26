@@ -20,11 +20,11 @@ Create an application.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.ApplicationApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.ApplicationApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -84,11 +84,11 @@ Delete an application.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.ApplicationApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.ApplicationApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -148,11 +148,11 @@ Return all applications.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.ApplicationApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.ApplicationApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -208,11 +208,11 @@ Update an application.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.ApplicationApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.ApplicationApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -274,11 +274,11 @@ Upload an image for an application.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.ApplicationApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.ApplicationApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 

@@ -16,8 +16,8 @@ Get health information.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.api.HealthApi;
+//import alertify.client.ApiException;
+//import alertify.client.api.HealthApi;
 
 
 HealthApi apiInstance = new HealthApi();

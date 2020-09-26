@@ -1,8 +1,75 @@
-# Gotify Android [![Build Status][travis-badge]][travis] [![FOSSA Status][fossa-badge]][fossa] [![latest release version][release-badge]][release] [![F-Droid][fdroid-badge]][fdroid]
+# Alertify Android 
 
+## This fork of Gotify Android adds Spoofing of WEA Messages at the API 29 UI level
+
+## Gotify Android 
 <img align="right" src="app.gif" width="250" />
 
-Gotify Android connects to [gotify/server](https://github.com/gotify/server) and shows push notifications on new messages.
+Alertify Android connects to [gotify/server](https://github.com/gotify/server) and shows push notifications on new messages.
+
+## Sening an spoofed alert
+
+### Priority
+| Notification | Gotify Priority|
+|- |-|
+| - | 0 |
+| Icon in notification bar | 1 - 3 |
+| Icon in notification bar + Sound | 4 - 7 |
+| Icon in notification bar + Sound + Vibration | 8 - 10 |
+| Wireless Emergency Alert Dialog | 90 - 99 |
+| Wireless Emergency Alert Dialog + Sound + Overide volume and DND| 100 - 110 |
+
+### Title options
+
+The title field is used to send the message type, Types are as follows:
+
+*Note, if title is absent or dosent match it defaults to "Critical Alert"*
+*Title is case insesitive*
+
+#### CMAS Alerts
+
+| Type | Title Value | Message Type                  | Type | Title Value | Message Type                     |
+|------|-------------|-------------------------------|------|-------------|----------------------------------|
+| CMAS | President   | Presidental alert             | ETWS | Tsunami     | ETWS Tsunami alert               |
+| CMAS | Extreme     | Extreme alert                 | ETWS | Earthquake  | ETWS Earthquake alert            |
+| CMAS | Severe      | Severe alert                  | ETWS | ET          | ETWS Earthquake & Tsunami  alert |
+| CMAS | Amber       | Amber / Child Abduction alert | ETWS | ETWS        | ETWS Other Message               |
+| CMAS | Public      | Public Safety alert           | ETWS | ETWSTest    | ETWS Test Message                |
+| CMAS | RMT         | Required Monthly Test         |      |             |                                  |
+| CMAS | StateTest   | Local/State Test              |      |             |                                  |
+| CMAS | Broadcast   | Broadcast Operator alert      |      |             |                                  |
+| CMAS |\<OTHER\>    | Critical alert                |      |             |                                  |
+
+
+#### ETWS Alerts
+| Title Value | Message Type                     |
+|-------------|----------------------------------|
+| Tsunami     | ETWS Tsunami alert               |
+| Earthquake  | ETWS Earthquake alert            |
+| ET          | ETWS Earthquake & Tsunami  alert |
+| ETWS        | ETWS Other Message               |
+| ETWSTest    | ETWS Test Message                |
+
+
+### Example Commands
+
+**Example CMAS Presidental alert**
+
+`curl "https://<gotifyURL>/message?token=<APPTOKEN>" -F "title=President" -F "message=This is the body" -F "priority=105"`
+
+**Example CMAS Extreme alert muted**
+
+`curl "https://<gotifyURL>/message?token=<APPTOKEN>"-F "title=Extreme" -F "message=This is the body" -F "priority=95"`
+
+**Example ETWS Tsunami alert**
+
+`curl "https://<gotifyURL>/message?token=<APPTOKEN>"" -F "title=Tsunami" -F "message=This is the body" -F "priority=105"`
+
+### Examples
+
+See Example Messages [Images](./Images.md)
+
+![Images](./img/image.png)
 
 ## Features
 
@@ -11,13 +78,7 @@ Gotify Android connects to [gotify/server](https://github.com/gotify/server) and
 
 ## Installation
 
-Download the apk or get the app via F-Droid or Google Play.
-
-[<img src="https://play.google.com/intl/en_gb/badges/images/generic/en_badge_web_generic.png" alt="Get it on Google Play" width="150" />][playstore]
-[<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" width="150"/>][fdroid]
-[<img src="download-badge.png" alt="Get it on F-Droid" width="150"/>][release]
-
-Google Play and the Google Play logo are trademarks of Google LLC.
+Download the apk or build via Android studio.
 
 ### Disable battery optimization
 
@@ -49,6 +110,8 @@ The foreground notification with content like `Listening to https://push.yourdom
 | Icon in notification bar | 1 - 3 |
 | Icon in notification bar + Sound | 4 - 7 |
 | Icon in notification bar + Sound + Vibration | 8 - 10 |
+| Wireless Emergency Alert Dialog | 90 - 99 |
+| Wireless Emergency Alert Dialog + Sound | 100 - 110 |
 
 ## Building
 
@@ -65,20 +128,6 @@ $ ./gradlew build
 * Delete `client/settings.gradle` (client is a gradle sub project and must not have a settings.gradle)
 * Commit changes
 
-## Versioning
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the
-[tags on this repository](https://github.com/gotify/android/tags).
-
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
- [travis-badge]: https://travis-ci.org/gotify/android.svg?branch=master
- [travis]: https://travis-ci.org/gotify/android
- [playstore]: https://play.google.com/store/apps/details?id=com.github.gotify
- [fdroid-badge]: https://img.shields.io/f-droid/v/com.github.gotify.svg
- [fdroid]: https://f-droid.org/de/packages/com.github.gotify/
- [fossa-badge]: https://app.fossa.io/api/projects/git%2Bgithub.com%2Fgotify%2Fandroid.svg?type=shield
- [fossa]: https://app.fossa.io/projects/git%2Bgithub.com%2Fgotify%2Fandroid
- [release-badge]: https://img.shields.io/github/release/gotify/android.svg
- [release]: https://github.com/gotify/android/releases/latest
- 

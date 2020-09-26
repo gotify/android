@@ -1,5 +1,5 @@
-<resources>
-    <string name="app_name">Gotify</string>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">Alertify</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_desc">Navigation header</string>
@@ -21,8 +21,7 @@
     <string name="auth_failed">Server returned 401 unauthorized while trying to get current user. This can be caused by deleting the client for this session.</string>
     <string name="other_error">Could not get current user. Server (%s) responded with code %d: body (first 200 chars): %s</string>
     <string name="websocket_failed">Connection failed, trying again in %d minutes</string>
-    <string name="websocket_closed_logout">User action required: Please login, the authentication token isn\'t valid anymore.</string>
-    <string name="websocket_closed_try_reconnect">Connection closed, trying to establish a new one.</string>
+    <string name="websocket_closed">WebSocket closed; The client-token could be invalidated, please re-login</string>
     <string name="grouped_message">Received %d messages while being disconnected</string>
     <string name="delete_all">Delete all</string>
     <string name="delete_logs">Delete logs</string>
@@ -44,7 +43,7 @@
     <string name="select_ca_failed">Failed to read CA: %s</string>
     <string name="login">Login</string>
     <string name="check_url">Check URL</string>
-    <string name="gotify_logo">Gotify logo</string>
+    <string name="alertify_logo">Alertify logo</string>
     <string name="refresh_all">Refresh all</string>
     <string name="logout_confirm">Do you really want to logout?</string>
     <string name="yes">Yes</string>
@@ -53,7 +52,7 @@
     <string name="websocket_listening">Listening to %s</string>
     <string name="websocket_could_not_connect">Could not connect %s</string>
     <string name="websocket_init">Initializing</string>
-    <string name="versions">gotify/android v%s; gotify/server v%s</string>
+    <string name="versions">Alertify/android v%s; gotify/server v%s</string>
     <string name="advanced_settings">Advanced Settings</string>
     <string name="done">Done</string>
     <string name="no_certificate_selected">No certificate selected</string>
@@ -75,5 +74,350 @@
     <string name="push_title_hint">Title</string>
     <string name="push_content_hint">Content</string>
     <string name="push_priority_hint">Priority</string>
-    <string name="message_copied_to_clipboard">Content copied to clipboard</string>
+
+    <string name="MuteCritical">Mute Critical</string>
+    <string name="MuteCriticalT">Mute Critical Alerts</string>
+    <string name="MuteCritical_key">mute</string>
+    <string name="MuteDefault">False</string>
+
+
+    <!-- The name of the Cell Broadcast Receiver app. [CHAR LIMIT=NONE] -->
+    <string name="app_label">Wireless emergency alerts</string>
+    <string name="button_gsm_cmas_pres_alert" translatable="false">Send GSM CMAS Presidential Alert</string>
+    <string name="button_gsm_cmas_extreme_alert" translatable="false">Send GSM CMAS Extreme Alert</string>
+    <string name="button_gsm_cmas_severe_alert" translatable="false">Send GSM CMAS Severe Alert</string>
+    <string name="button_gsm_cmas_amber_alert" translatable="false">Send GSM CMAS AMBER Alert</string>
+    <string name="button_gsm_cmas_monthly_test" translatable="false">Send GSM CMAS Monthly Test Alert</string>
+    <string name="button_gsm_cmas_exercise_test" translatable="false">Send GSM CMAS Exercise Test Alert</string>
+    <string name="button_gsm_public_safety_message" translatable="false">Send GSM Public Safety Message</string>
+    <string name="button_gsm_state_local_test_alert" translatable="false">Send State/Local Test Alert</string>
+    <string name="button_etws_earthquake_type" translatable="false">Send ETWS Earthquake Broadcast</string>
+    <string name="button_etws_tsunami_type" translatable="false">Send ETWS Tsunami Broadcast</string>
+    <string name="button_etws_earthquake_tsunami_type" translatable="false">Send ETWS Earthquake and Tsunami Broadcast</string>
+    <string name="button_etws_other_type" translatable="false">Send ETWS Other Emergency Broadcast</string>
+    <string name="button_etws_cancel_type" translatable="false">Send ETWS Cancel Broadcast</string>
+    <string name="button_etws_test_type" translatable="false">Send ETWS Test Broadcast</string>
+
+    <!-- Label for settings screen. [CHAR LIMIT=NONE] -->
+    <string name="sms_cb_settings">Wireless emergency alerts</string>
+
+    <!-- Value of sms sender display name to be shown in SMS inbox -->
+    <string name="sms_cb_sender_name" translatable="false">Wireless emergency alerts</string>
+
+    <!-- Error message for users that aren't allowed to modify Cell broadcast settings [CHAR LIMIT=none] -->
+    <string name="cell_broadcast_settings_not_available">Wireless emergency alert settings are not available for this user</string>
+
+    <!-- Text for dismiss button in broadcast message view dialog. [CHAR LIMIT=25] -->
+    <string name="button_dismiss">OK</string>
+
+    <!-- Text for list view when empty (no broadcasts). [CHAR LIMIT=200] -->
+    <string name="no_cell_broadcasts">No previous alerts</string>
+
+    <!-- Menu item for deleting all broadcasts. [CHAR LIMIT=30] -->
+    <string name="menu_delete_all">Delete broadcasts</string>
+
+    <!-- Header for context menu on an individual broadcast. [CHAR LIMIT=30] -->
+    <string name="message_options">Message options</string>
+    <!-- Context menu item for viewing broadcast details such as time and date. [CHAR LIMIT=30] -->
+    <string name="menu_view_details">View details</string>
+    <!-- Context menu item to delete a previously received broadcast. [CHAR LIMIT=30] -->
+    <string name="menu_delete">Delete broadcast</string>
+
+    <!-- Title of "View details" dialog -->
+    <string name="view_details_title">Alert details</string>
+
+    <!-- Title of "View details for debugging" dialog. Note this is for debugging purposes only -->
+    <string name="view_details_debugging_title" translatable="false">Alert details for debugging</string>
+
+    <!-- Confirm Delete -->
+    <!-- Delete broadcast confirmation dialog message. [CHAR LIMIT=NONE] -->
+    <string name="confirm_delete_broadcast">Delete this broadcast?</string>
+    <!-- Delete all broadcasts confirmation dialog message. [CHAR LIMIT=NONE] -->
+    <string name="confirm_delete_all_broadcasts">Delete all received broadcast messages?</string>
+    <!-- Delete button text for delete broadcast dialog. [CHAR LIMIT=25] -->
+    <string name="button_delete">Delete</string>
+    <!-- Cancel button text for delete broadcast dialog. [CHAR LIMIT=25] -->
+    <string name="button_cancel">Cancel</string>
+
+
+    <!-- ETWS dialog title for Earthquake Warning. [CHAR LIMIT=50] -->
+    <string name="etws_earthquake_warning">Earthquake warning</string>
+    <!-- ETWS dialog title for Tsunami Warning. [CHAR LIMIT=50] -->
+    <string name="etws_tsunami_warning">Tsunami warning</string>
+    <!-- ETWS dialog title for Earthquake and Tsunami Warning. [CHAR LIMIT=50] -->
+    <string name="etws_earthquake_and_tsunami_warning">Earthquake and tsunami warning</string>
+    <!-- ETWS dialog title for test message. [CHAR LIMIT=50] -->
+    <string name="etws_test_message">ETWS test message</string>
+    <!-- ETWS dialog title for other emergency type. [CHAR LIMIT=50] -->
+    <string name="etws_other_emergency_type">Emergency warning</string>
+    <!-- CMAS dialog title for presidential level alert. [CHAR LIMIT=50] -->
+    <string name="cmas_presidential_level_alert">Presidential alert</string>
+    <!-- CMAS dialog title for extreme alert. [CHAR LIMIT=50] -->
+    <string name="cmas_extreme_alert">Emergency alert: Extreme</string>
+    <!-- CMAS dialog title for extreme alert with extreme severity, immediate urgency, and observed certainty. [CHAR LIMIT=50] -->
+    <string name="cmas_extreme_immediate_observed_alert">Emergency alert: Extreme</string>
+    <!-- CMAS dialog title for extreme alert with extreme severity, immediate urgency,  and likely certainty. [CHAR LIMIT=50] -->
+    <string name="cmas_extreme_immediate_likely_alert">Emergency alert: Extreme</string>
+    <!-- CMAS dialog title for severe alert. [CHAR LIMIT=50] -->
+    <string name="cmas_severe_alert">Emergency alert: Severe</string>
+    <!-- CMAS dialog title for child abduction emergency (Amber Alert). [CHAR LIMIT=50] -->
+    <string name="cmas_amber_alert">Child abduction (Amber alert)</string>
+    <!-- CMAS dialog title for required monthly test. [CHAR LIMIT=50] -->
+    <string name="cmas_required_monthly_test">Required Monthly Test</string>
+    <!-- CMAS dialog title for CMAS Exercise. [CHAR LIMIT=50] -->
+    <string name="cmas_exercise_alert">Emergency alert (exercise)</string>
+    <!-- CMAS dialog title for operator defined use. [CHAR LIMIT=50] -->
+    <string name="cmas_operator_defined_alert">Emergency alert (operator)</string>
+    <string name="CriticalTitle">Critical Alert</string>
+    <!-- Dialog title for all other message identifiers in the PWS range. [CHAR LIMIT=50] -->
+    <string name="pws_other_message_identifiers" translatable="false">@string/emergency_alert</string>
+    <!-- Dialog title for all non-emergency cell broadcasts. [CHAR LIMIT=50] -->
+    <string name="cb_other_message_identifiers">Broadcast messages</string>
+    <!-- Dialog title for all public safety message broadcasts. [CHAR LIMIT=50] -->
+    <string name="public_safety_message">Public safety message</string>
+    <!-- Dialog title for all state/local test alerts. [CHAR LIMIT=50] -->
+    <string name="state_local_test_alert">State/Local test</string>
+
+    <!-- Dialog title or menu title of emergency alert. [CHAR LIMIT=50] -->
+    <string name="emergency_alert">Emergency alert</string>
+
+    <!-- Preference category title for emergency alert settings. [CHAR LIMIT=50] -->
+    <string name="emergency_alerts_title">Alerts</string>
+    <!-- Notification channel name for a channel containing non-emergency broadcast messages notifications. [CHAR LIMIT=50] -->
+    <string name="notification_channel_broadcast_messages">Broadcast messages</string>
+    <!-- Notification channel name for a channel containing emergency alert notifications. [CHAR LIMIT=50] -->
+    <string name="notification_channel_emergency_alerts">Emergency alerts</string>
+    <!-- Notification channel name for a channel containing emergency alert notifications during voice call. [CHAR LIMIT=100] -->
+    <string name="notification_channel_broadcast_messages_in_voicecall" translatable="false">Emergency alerts in voice call</string>
+
+    <!-- Preference title for enable emergency alerts checkbox. [CHAR LIMIT=50] -->
+    <string name="enable_alerts_master_toggle_title">Allow alerts</string>
+    <!-- Preference summaries for allow alerts checkbox. [CHAR LIMIT=66] -->
+    <string name="enable_alerts_master_toggle_summary">Receive wireless emergency alert notifications</string>
+    <!-- Preference title for alert reminder interval list. [CHAR LIMIT=50] -->
+    <string name="alert_reminder_interval_title">Alert reminder</string>
+    <!-- Do not translate. Empty summary for alert reminder (set by CellBroadcastSettings). -->
+    <string name="alert_reminder_interval_summary" tools:ignore="MissingTranslation" />
+    <!-- Dialog title for alert reminder interval list. [CHAR LIMIT=100] -->
+    <string name="alert_reminder_dialog_title" translatable="false">A reminder sound will play at regular volume</string>
+    <!-- Preference title for emergency alert history. [CHAR LIMIT=50] -->
+    <string name="emergency_alert_history_title">Emergency alert history</string>
+
+    <!-- Preference category title for alert preferences. [CHAR LIMIT=50] -->
+    <string name="alert_preferences_title">Alert preferences</string>
+
+
+    <!-- Preference title for enable ETWS test alerts checkbox. [CHAR LIMIT=50] -->
+    <string name="enable_etws_test_alerts_title">ETWS test broadcasts</string>
+    <!-- Preference summary for enable ETWS test alerts checkbox. [CHAR LIMIT=100] -->
+    <string name="enable_etws_test_alerts_summary">Test broadcasts for Earthquake Tsunami Warning System</string>
+
+    <!-- Preference title for enable CMAS extreme threat alerts checkbox. [CHAR LIMIT=50] -->
+    <string name="enable_cmas_extreme_threat_alerts_title">Extreme threats</string>
+    <!-- Preference summary for enable CMAS extreme threat alerts checkbox. [CHAR LIMIT=100] -->
+    <string name="enable_cmas_extreme_threat_alerts_summary">Extreme threats to life and property</string>
+    <!-- Preference title for enable CMAS severe threat alerts checkbox. [CHAR LIMIT=50] -->
+    <string name="enable_cmas_severe_threat_alerts_title">Severe threats</string>
+    <!-- Preference summary for enable CMAS severe threat alerts checkbox. [CHAR LIMIT=100] -->
+    <string name="enable_cmas_severe_threat_alerts_summary">Severe threats to life and property</string>
+    <!-- Preference title for enable CMAS amber alerts checkbox. [CHAR LIMIT=50] -->
+    <string name="enable_cmas_amber_alerts_title">AMBER alerts</string>
+    <!-- Preference summary for enable CMAS amber alerts checkbox. [CHAR LIMIT=100] -->
+    <string name="enable_cmas_amber_alerts_summary">Child abduction emergency bulletins</string>
+    <!-- Preference title for enable alerts messages checkbox. [CHAR LIMIT=100] -->
+    <string name="enable_alert_message_title">Alert messages</string>
+    <!-- Preference summary for enable alerts messages checkbox. [CHAR LIMIT=100] -->
+    <string name="enable_alert_message_summary">Warn about imminent safety threats</string>
+    <!-- Preference title for enable public safety messages checkbox. [CHAR LIMIT=100] -->
+    <string name="enable_public_safety_messages_title">Public safety messages</string>
+    <!-- Preference summary for enable public safety messages checkbox. [CHAR LIMIT=100] -->
+    <string name="enable_public_safety_messages_summary">Recommended actions that can save lives or property</string>
+    <!-- Preference title for enable state/local test alerts checkbox. [CHAR LIMIT=100] -->
+    <string name="enable_state_local_test_alerts_title">State and local tests</string>
+    <!-- Preference summary for enable state/local test alerts checkbox. [CHAR LIMIT=100] -->
+    <string name="enable_state_local_test_alerts_summary">Receive test messages from state and local authorities</string>
+    <!-- Preference title for enable emergency alerts messages checkbox. [CHAR LIMIT=100] -->
+    <string name="enable_emergency_alerts_message_title">Emergency alerts</string>
+    <!-- Preference summary for enable emergency alerts messages checkbox. [CHAR LIMIT=100] -->
+    <string name="enable_emergency_alerts_message_summary">Warn about life-threatening events</string>
+
+    <!-- Preference title for other test alerts checkbox. [CHAR LIMIT=50] -->
+    <string name="enable_cmas_test_alerts_title">Test alerts</string>
+    <!-- Preference summary for other test alerts checkbox. [CHAR LIMIT=125] -->
+    <string name="enable_cmas_test_alerts_summary">Receive carrier tests and monthly tests from the safety alert system</string>
+
+    <!-- Preference title for CMAS vibration on/off. [CHAR LIMIT=50] -->
+    <string name="enable_alert_vibrate_title">Vibration</string>
+
+    <!-- Preference title for overriding Do Not Disturb. [CHAR LIMIT=50] -->
+    <string name="override_dnd_title" translatable="false">Always alert at full volume</string>
+    <!-- Preference summary for overriding Do Not Disturb mode. [CHAR LIMIT=125] -->
+    <string name="override_dnd_summary" translatable="false">Ignore Do Not Disturb &amp; other volume settings</string>
+
+    <!-- Preference title for enable area update information broadcasts. [CHAR LIMIT=50] -->
+    <string name="enable_area_update_info_alerts_title">Area update broadcasts</string>
+    <!-- Preference summary for enable area update information broadcasts. [CHAR LIMIT=100] -->
+    <string name="enable_area_update_info_alerts_summary">Show update information in SIM status</string>
+
+    <!-- CMAS alert category heading (including colon). [CHAR LIMIT=30] -->
+    <string name="cmas_category_heading" translatable="false">Alert Category:</string>
+    <!-- CMAS category for geophysical alerts. [CHAR LIMIT=50] -->
+    <string name="cmas_category_geo">Geophysical</string>
+    <!-- CMAS category for meteorological alerts. [CHAR LIMIT=50] -->
+    <string name="cmas_category_met">Meteorological</string>
+    <!-- CMAS category for general emergency and public safety alerts. [CHAR LIMIT=50] -->
+    <string name="cmas_category_safety">Safety</string>
+    <!-- CMAS category for security alerts (law enforcement, military, etc.). [CHAR LIMIT=50] -->
+    <string name="cmas_category_security">Security</string>
+    <!-- CMAS category for rescue and recovery alerts. [CHAR LIMIT=50] -->
+    <string name="cmas_category_rescue">Rescue</string>
+    <!-- CMAS category for fire suppression and rescue alerts. [CHAR LIMIT=50] -->
+    <string name="cmas_category_fire">Fire</string>
+    <!-- CMAS category for medical and public health alerts. [CHAR LIMIT=50] -->
+    <string name="cmas_category_health">Health</string>
+    <!-- CMAS category for pollution and other environmental alerts. [CHAR LIMIT=50] -->
+    <string name="cmas_category_env">Environmental</string>
+    <!-- CMAS category for transportation alerts. [CHAR LIMIT=50] -->
+    <string name="cmas_category_transport">Transportation</string>
+    <!-- CMAS category for utility, telecommunication, and other infrastructure alerts. [CHAR LIMIT=50] -->
+    <string name="cmas_category_infra">Infrastructure</string>
+    <!-- CMAS category for chemical, biological, radiological, nuclear alerts. [CHAR LIMIT=50] -->
+    <string name="cmas_category_cbrne">Chemical/Biological/Nuclear/Explosive</string>
+    <!-- CMAS category for other alerts. [CHAR LIMIT=50] -->
+    <string name="cmas_category_other">Other</string>
+
+    <!-- CMAS response type heading (including colon). [CHAR LIMIT=30] -->
+    <string name="cmas_response_heading">Response Type:</string>
+    <!-- CMAS response type: take shelter in place. [CHAR LIMIT=50] -->
+    <string name="cmas_response_shelter">Shelter</string>
+    <!-- CMAS response type: evacuate (relocate). [CHAR LIMIT=50] -->
+    <string name="cmas_response_evacuate">Evacuate</string>
+    <!-- CMAS response type: make preparations. [CHAR LIMIT=50] -->
+    <string name="cmas_response_prepare">Prepare</string>
+    <!-- CMAS response type: execute a pre-planned activity. [CHAR LIMIT=50] -->
+    <string name="cmas_response_execute">Execute</string>
+    <!-- CMAS response type: monitor information sources. [CHAR LIMIT=50] -->
+    <string name="cmas_response_monitor">Monitor</string>
+    <!-- CMAS response type: avoid hazard. [CHAR LIMIT=50] -->
+    <string name="cmas_response_avoid">Avoid</string>
+    <!-- CMAS response type: evaluate the information in this message. [CHAR LIMIT=50] -->
+    <string name="cmas_response_assess">Assess</string>
+    <!-- CMAS response type: no action recommended. [CHAR LIMIT=50] -->
+    <string name="cmas_response_none">None</string>
+
+    <!-- CMAS severity heading (including colon). [CHAR LIMIT=30] -->
+    <string name="cmas_severity_heading">Severity:</string>
+    <!-- CMAS severity type: extreme. [CHAR LIMIT=30] -->
+    <string name="cmas_severity_extreme">Extreme</string>
+    <!-- CMAS severity type: severe. [CHAR LIMIT=30] -->
+    <string name="cmas_severity_severe">Severe</string>
+
+    <!-- CMAS urgency heading (including colon). [CHAR LIMIT=30] -->
+    <string name="cmas_urgency_heading">Urgency:</string>
+    <!-- CMAS urgency type: take responsive action immediately. [CHAR LIMIT=30] -->
+    <string name="cmas_urgency_immediate">Immediate</string>
+    <!-- CMAS severity type: severe. [CHAR LIMIT=30] -->
+    <string name="cmas_urgency_expected">Expected</string>
+
+    <!-- CMAS certainty heading (including colon). [CHAR LIMIT=30] -->
+    <string name="cmas_certainty_heading">Certainty:</string>
+    <!-- CMAS certainty type: observed. [CHAR LIMIT=30] -->
+    <string name="cmas_certainty_observed">Observed</string>
+    <!-- CMAS severity type: severe. [CHAR LIMIT=30] -->
+    <string name="cmas_certainty_likely">Likely</string>
+
+    <!-- Message delivery time (including colon). [CHAR LIMIT=30] -->
+    <string name="delivery_time_heading">Received:</string>
+
+    <!-- Non-emergency broadcast notification description for multiple unread alerts. -->
+    <string name="notification_multiple"><xliff:g id="count">%s</xliff:g> unread alerts.</string>
+
+    <!-- Show CMAS opt-out dialog on first non-Presidential alert. [CHAR LIMIT=100] -->
+    <string name="show_cmas_opt_out_summary">Show an opt-out dialog after displaying the first alert (other than Presidential Alert).</string>
+    <!-- Show CMAS opt-out dialog on first non-Presidential alert. [CHAR LIMIT=40] -->
+    <string name="show_cmas_opt_out_title">Show opt-out dialog</string>
+
+    <!-- CMAS opt-out dialog message. [CHAR LIMIT=160] -->
+    <string name="cmas_opt_out_dialog_text">You are currently receiving wireless emergency alerts. Would you like to continue receiving wireless emergency alerts?</string>
+    <!-- Text for positive button in CMAS opt-out dialog. [CHAR LIMIT=25] -->
+    <string name="cmas_opt_out_button_yes">Yes</string>
+    <!-- Text for negative button in CMAS opt-out dialog. [CHAR LIMIT=25] -->
+    <string name="cmas_opt_out_button_no">No</string>
+
+    <!-- Title for CellBroadcastListActivity -->
+    <string name="cb_list_activity_title">"Emergency alert history"</string>
+
+    <!-- Entries in the ListPreference for alert reminder intervals. [CHAR LIMIT=30] -->
+    <string-array name="alert_reminder_interval_entries">
+        <item>Once</item>
+        <item>Every 2 minutes</item>
+        <item>Every 5 minutes</item>
+        <item>Every 15 minutes</item>
+        <item>Never</item>
+    </string-array>
+
+    <!-- Label to open emergencyNotifications dialog [CHAR LIMIT=40] -->
+    <string name="emergency_alert_settings_title_watches">Wireless emergency alerts</string>
+
+    <!-- Show checkbox for Presidential alerts in settings -->
+    <!-- Preference title for enable presidential threat alerts checkbox. [CHAR LIMIT=40] -->
+    <string name="enable_cmas_presidential_alerts_title" translatable="false">Presidential alerts</string>
+    <!-- Preference summary for enable presidential threat alerts checkbox. [CHAR LIMIT=100] -->
+    <string name="enable_cmas_presidential_alerts_summary" translatable="false">National warning messages issued by the President. Can\'t be turned off.</string>
+
+    <!-- Show additional language on/off switch in settings -->
+    <!-- Preference title for enable CMAS second language checkbox. [CHAR LIMIT=50] -->
+    <string name="receive_cmas_in_second_language_title" translatable="false" />
+    <!-- Preference summary for enable CMAS second language checkbox. [CHAR LIMIT=100] -->
+    <string name="receive_cmas_in_second_language_summary" translatable="false" />
+
+    <!-- Preference summary for emergency alert header -->
+    <string name="alerts_header_summary" translatable="false" />
+
+    <!-- Toast message to indicate testing mode is enabled. [CHAR LIMIT=100] -->
+    <string name="testing_mode_enabled" translatable="false">Cell broadcast testing mode is enabled.</string>
+    <!-- Toast message to indicate testing mode is disabled. [CHAR LIMIT=100] -->
+    <string name="testing_mode_disabled" translatable="false">Cell broadcast testing mode is disabled.</string>
+
+    <!-- Show all emergency messages including the hidden messages. This is for debugging purposes
+         only -->
+    <string name="show_all_messages" translatable="false">Show all messages</string>
+
+    <!-- Show regular emergency messages (not including hidden messages). This is for debugging
+         purposes only -->
+    <string name="show_regular_messages" translatable="false">Show regular messages</string>
+
+    <!-- Cell broadcast message identifier. This is the id of the alert message. For debugging
+         purposes only -->
+    <string name="message_identifier" translatable="false">Identifier:</string>
+
+    <!-- Serial number of the message. This is for debugging purposes only -->
+    <string name="message_serial_number" >Serial number:</string>
+
+    <!-- Data coding scheme of the emergency message. This is for debugging purposes only -->
+    <string name="data_coding_scheme" translatable="false">Data coding scheme:</string>
+
+    <!-- Content of the emergency message. This is for debugging purposes only -->
+    <string name="message_content" translatable="false">Message content:</string>
+
+    <!-- Location check time of the emergency message. This is for debugging purposes only -->
+    <string name="location_check_time" translatable="false">Location check time:</string>
+
+    <!-- Whether emergency message displayed to the user or not. This is for debugging purposes
+         only -->
+    <string name="message_displayed" translatable="false">Message displayed:</string>
+
+    <!-- Coordinates of the emergency alert. This is for debugging purposes only -->
+    <string name="message_coordinates" translatable="false">Coordinates:</string>
+
+    <!-- Maximum waiting time for location check. This is for debugging purposes only -->
+    <string name="maximum_waiting_time" translatable="false">Maximum waiting time:</string>
+
+    <!-- Sesconds (time unit). This is for debugging purposes only -->
+    <string name="seconds" translatable="false">seconds</string>
+
+    <!-- Emergency alert message copied to clipboard. -->
+    <string name="message_copied" translatable="false">Message copied</string>
+    <string name="notification_multiple_title">New Alerts</string>
+
 </resources>

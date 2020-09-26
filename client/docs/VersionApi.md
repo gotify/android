@@ -16,8 +16,8 @@ Get version information.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.api.VersionApi;
+//import alertify.client.ApiException;
+//import alertify.client.api.VersionApi;
 
 
 VersionApi apiInstance = new VersionApi();

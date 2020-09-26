@@ -9,5 +9,13 @@
             android:key="@string/setting_key_theme"
             android:title="@string/setting_theme" />
     </PreferenceCategory>
+    <PreferenceCategory app:title="@string/MuteCritical" >
+        <ListPreference
+            android:defaultValue="@string/MuteDefault"
+            android:entries="@array/mute"
+            android:entryValues="@array/mute"
+            android:key="@string/MuteCritical_key"
+            android:title="@string/MuteCriticalT" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

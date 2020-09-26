@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.github.gotify">
+    package="com.github.alertify">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -15,10 +15,9 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
-        android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".init.InitializationActivity"
+            android:name="com.github.alertify.init.InitializationActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize">
@@ -29,25 +28,25 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".messages.MessagesActivity"
+            android:name="com.github.alertify.init.messages.MessagesActivity"
             android:launchMode="singleTask"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".login.LoginActivity"
+            android:name="com.github.alertify.login.LoginActivity"
             android:label="Login"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".log.LogsActivity"
+            android:name="com.github.alertify.log.LogsActivity"
             android:label="@string/title_activity_logs"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".settings.SettingsActivity"
+            android:name="com.github.alertify.settings.SettingsActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/title_activity_settings" />
         <activity
-            android:name=".sharing.ShareActivity"
+            android:name="com.github.alertify.sharing.ShareActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="Push message">
             <intent-filter>
@@ -57,9 +56,24 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".service.WebSocketService" />
+        <!-- Settings opened by ListActivity menu, Settings app link or opt-out dialog. -->
+        <activity android:name="com.github.alertify.WEA.misc.CellBroadcastSettings"
+            android:label="@string/sms_cb_settings"
+            android:exported="true"  />
 
-        <receiver android:name=".init.BootCompletedReceiver">
+        <activity android:name="com.github.alertify.WEA.notification.CellBroadcastAlertDialog"
+            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog"
+            android:launchMode="singleTask"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:configChanges="orientation|keyboardHidden|keyboard|navigation">
+        </activity>
+
+        <service android:name="com.github.alertify.service.WebSocketService" />
+        <service android:enabled="true" android:name="com.github.alertify.WEA.notification.CellBroadcastAlertAudio" />
+        <service android:enabled="true" android:name="com.github.alertify.WEA.CellBroadcastAlertService" />
+
+        <receiver android:name="com.github.alertify.init.BootCompletedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>

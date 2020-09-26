@@ -7,4 +7,13 @@
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
     <string name="theme_default">System Default</string>
+
+    <string-array name="mute">
+        <item>@string/muted</item>
+        <item>@string/unMuted</item>
+    </string-array>
+    <string name="muted">True</string>
+    <string name="unMuted">False</string>
+
+
 </resources>

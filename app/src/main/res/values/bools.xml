@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <bool name="enable_text_copy">true</bool>
+    <bool name="show_date_time_title">true</bool>
+    <bool name="show_cmas_messages_in_priority_order">true</bool>
+    <bool name="mute_by_physical_button">true</bool>
+</resources>

@@ -22,11 +22,11 @@ Create a user.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.UserApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.UserApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -86,11 +86,11 @@ Return the current user.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.UserApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.UserApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -146,11 +146,11 @@ Deletes a user.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.UserApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.UserApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -210,11 +210,11 @@ Get a user.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.UserApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.UserApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -274,11 +274,11 @@ Return all users.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.UserApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.UserApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -334,11 +334,11 @@ Update the password of the current user.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.UserApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.UserApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -398,11 +398,11 @@ Update a user.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.UserApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.UserApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 

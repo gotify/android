@@ -24,11 +24,11 @@ __NOTE__: This API ONLY accepts an application token as authentication.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.MessageApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.MessageApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -83,11 +83,11 @@ Delete all messages from a specific application.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.MessageApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.MessageApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -147,11 +147,11 @@ Deletes a message with an id.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.MessageApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.MessageApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -211,11 +211,11 @@ Delete all messages.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.MessageApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.MessageApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -271,11 +271,11 @@ Return all messages from a specific application.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.MessageApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.MessageApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -339,11 +339,11 @@ Return all messages.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.MessageApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.MessageApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -405,11 +405,11 @@ Websocket, return newly created messages.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.MessageApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.MessageApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 

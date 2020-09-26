@@ -36,11 +36,11 @@ script:
 
 before_deploy:
 - openssl aes-256-cbc -K $encrypted_f6e0f94759d3_key -iv $encrypted_f6e0f94759d3_iv
-  -in gotify-release-key.jks.enc -out gotify-release-key.jks -d
-- cp $TRAVIS_BUILD_DIR/gotify-release-key.jks $HOME
+  -in alertify-release-key.jks.enc -out alertify-release-key.jks -d
+- cp $TRAVIS_BUILD_DIR/alertify-release-key.jks $HOME
 - cd app/build/outputs/apk/release
-- jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/gotify-release-key.jks
-  -storepass $STOREPASS -keypass $KEYPASS app-release-unsigned.apk gotify-release-key
+- jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/alertify-release-key.jks
+  -storepass $STOREPASS -keypass $KEYPASS app-release-unsigned.apk alertify-release-key
 - jarsigner -verify app-release-unsigned.apk
 - "${ANDROID_HOME}/build-tools/29.0.2/zipalign -v 4 app-release-unsigned.apk Gotify.apk"
 
@@ -50,6 +50,6 @@ deploy:
   api_key: $GH_TOKEN
   skip_cleanup: true
   on:
-    repo: gotify/android
+    repo: alertify/android
     tags: true
     jdk: openjdk8

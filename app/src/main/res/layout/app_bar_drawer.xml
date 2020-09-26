@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:theme="@style/AppTheme.AppBarOverlay"
-    tools:context=".messages.MessagesActivity">
+    tools:context=".init.messages.MessagesActivity">
 
 
         <androidx.appcompat.widget.Toolbar

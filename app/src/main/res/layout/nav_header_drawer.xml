@@ -24,7 +24,7 @@
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toTopOf="@+id/header_user"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/gotify" />
+        app:srcCompat="@drawable/ic_alertify" />
 
     <TextView
         android:id="@+id/header_user"

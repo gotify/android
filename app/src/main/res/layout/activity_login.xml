@@ -65,8 +65,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/gotify"
-            android:contentDescription="@string/gotify_logo" />
+            app:srcCompat="@drawable/alertify"
+            android:contentDescription="@string/alertify_logo" />
 
         <EditText
             android:id="@+id/gotify_url"

@@ -19,11 +19,11 @@ Create a client.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.ClientApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.ClientApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -83,11 +83,11 @@ Delete a client.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.ClientApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.ClientApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -147,11 +147,11 @@ Return all clients.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.ClientApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.ClientApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
@@ -207,11 +207,11 @@ Update a client.
 ### Example
 ```java
 // Import classes:
-//import com.github.gotify.client.ApiClient;
-//import com.github.gotify.client.ApiException;
-//import com.github.gotify.client.Configuration;
-//import com.github.gotify.client.auth.*;
-//import com.github.gotify.client.api.ClientApi;
+//import alertify.client.ApiClient;
+//import alertify.client.ApiException;
+//import alertify.client.Configuration;
+//import alertify.client.auth.*;
+//import alertify.client.api.ClientApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
 
