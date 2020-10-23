@@ -40,8 +40,12 @@ public class Utils {
     public static String dateToRelative(OffsetDateTime data) {
         long time = data.toInstant().toEpochMilli();
         long now = System.currentTimeMillis();
-        return DateUtils.getRelativeTimeSpanString(time, now, DateUtils.MINUTE_IN_MILLIS)
-                .toString();
+        long relativeTimeSpan = DateUtils.getRelativeTimeSpanString(time, now, DateUtils.MINUTE_IN_MILLIS);
+        if(relativeTimeSpan == 0) {
+            return "Now";
+        } else {
+            return relativeTimeSpan.toString();
+        }
     }
 
     public static String resolveAbsoluteUrl(String baseURL, String target) {
