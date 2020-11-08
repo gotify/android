@@ -11,6 +11,8 @@ import com.github.gotify.api.ApiException
 import com.github.gotify.api.ClientFactory
 import com.github.gotify.client.api.ApplicationApi
 import com.github.gotify.log.Log
+import java.text.SimpleDateFormat
+import java.util.Date
 import kotlin.concurrent.thread
 
 /**
@@ -37,6 +39,7 @@ class GotifyRegisterService : Service() {
                     val msgData = msg.data
                     thread(start = true) {
                         registerApp(msgData, uid)
+                        Log.i("Registration is finished")
                     }.join()
                     sendInfo(msg)
                 }
@@ -45,6 +48,7 @@ class GotifyRegisterService : Service() {
                     val msgData = msg.data
                     thread(start = true) {
                         unregisterApp(msgData, uid)
+                        Log.i("Unregistration is finished")
                     }
                     simpleAnswer(msg, TYPE_UNREGISTERED_CLIENT)
                 }
@@ -149,8 +153,10 @@ class GotifyRegisterService : Service() {
         val client = ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token())
         val app = com.github.gotify.client.model.Application()
         app.name = appName
-        app.description = "automatically created"
+        val date = SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(Date())
+        app.description = "(auto) $date"
         try {
+            Log.i("Creating app")
             return Api.execute(client.createService(ApplicationApi::class.java).createApp(app));
         } catch (e: ApiException) {
             Log.e("Could not create app.", e);
@@ -163,7 +169,7 @@ class GotifyRegisterService : Service() {
         val client = ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token())
         try {
             val appId = db.getAppId(appName)
-            Log.i("appId: $appId")
+            Log.i("Deleting app with appId=$appId")
             Api.execute(client.createService(ApplicationApi::class.java).deleteApp(appId));
         } catch (e: ApiException) {
             Log.e("Could not delete app.", e);
