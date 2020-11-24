@@ -44,7 +44,7 @@ fun notifyClient(context: Context, clientPackage: String, message: com.github.go
                 )
                 msg.data = bundleOf("message" to message.message,
                         "title" to message.title,
-                        "priority" to message.priority.toInt())
+                        "priority" to message.priority)
                 gService.send(msg)
                 Log.i("Notification sent")
             } catch(e: RemoteException) {
