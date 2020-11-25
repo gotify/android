@@ -7,6 +7,7 @@ import android.content.ServiceConnection
 import android.os.*
 import androidx.core.os.bundleOf
 import com.github.gotify.log.Log
+import com.google.gson.Gson
 
 /**
  * THIS FUNC IS USED TO PUSH NOTIFICATIONS TO OTHER APPS
@@ -42,9 +43,7 @@ fun notifyClient(context: Context, clientPackage: String, message: com.github.go
                         null,
                         TYPE_MESSAGE, 0, 0
                 )
-                msg.data = bundleOf("message" to message.message,
-                        "title" to message.title,
-                        "priority" to message.priority)
+                msg.data = bundleOf("json" to Gson().toJson(message) )
                 gService.send(msg)
                 Log.i("Notification sent")
             } catch(e: RemoteException) {
