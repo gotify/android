@@ -18,7 +18,6 @@ import kotlin.concurrent.thread
 /**
  * THIS SERVICE IS USED BY OTHER APPS TO REGISTER
  */
-// TODO : in the app, implement forceUnregisterApp
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 class GotifyRegisterService : Service() {
@@ -79,7 +78,6 @@ class GotifyRegisterService : Service() {
                 Log.w("Trying to register an app without packageName")
                 return
             }
-            //TODO Send a notification to let the user acknowledge the registering
             Log.i("registering $clientPackageName uid: $clientUid")
             // The app is registered with the same uid : we re-register it
             // the client may need to create a new app in the server
@@ -94,7 +92,7 @@ class GotifyRegisterService : Service() {
                 Log.w("$clientPackageName already registered with a different uid")
                 return
             }
-            //
+
             val clientService = msg.getString("service").toString()
             if (clientService.isBlank()) {
                 Log.w("Cannot find the service for $clientPackageName")
@@ -165,7 +163,6 @@ class GotifyRegisterService : Service() {
     }
 
     private fun deleteApp(appName: String){
-        //TODO Send a notification to let the user choosing if the app will be deleted or not
         val client = ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token())
         try {
             val appId = db.getAppId(appName)

@@ -14,15 +14,9 @@ import com.google.gson.Gson
  * It is called from the thread in WebSocketService
  */
 
-
-//TODO : delete the notification once delivered
-//TODO: implement the URl change
-// For the moment, re-registering the client is enough
-
 /**
  * Function to notify client
  */
-
 fun notifyClient(context: Context, clientPackage: String, message: com.github.gotify.client.model.Message){
     val db = MessagingDatabase(context)
     val service = db.getServiceName(clientPackage)
