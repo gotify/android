@@ -9,19 +9,17 @@ private const val DB_NAME = "gotify_service"
 private const val DB_VERSION = 1
 
 class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION){
-    private val CREATE_TABLE_APPS = "CREATE TABLE apps (" +
-            "package_name TEXT," +
-            "uid INT," +
-            "service_name TEXT," +
-            "app_id INT," +
-            "token TEXT," +
-            "PRIMARY KEY (package_name));"
     private val TABLE_APPS = "apps"
     private val FIELD_PACKAGE_NAME = "package_name"
-    private val FIELD_UID = "uid"
-    private val FIELD_SERVICE_NAME = "service_name"
     private val FIELD_APP_ID = "app_id"
-    private val FIELD_TOKEN = "token"
+    private val FIELD_CONNECTOR_TOKEN = "connector_token"
+    private val FIELD_GOTIFY_TOKEN = "gotify_token"
+    private val CREATE_TABLE_APPS = "CREATE TABLE $TABLE_APPS (" +
+            "$FIELD_PACKAGE_NAME TEXT," +
+            "$FIELD_APP_ID INT," +
+            "$FIELD_GOTIFY_TOKEN TEXT," +
+            "$FIELD_CONNECTOR_TOKEN TEXT," +
+            "PRIMARY KEY ($FIELD_PACKAGE_NAME));"
 
     override fun onCreate(db: SQLiteDatabase){
         db.execSQL(CREATE_TABLE_APPS)
@@ -31,22 +29,21 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
         throw IllegalStateException("Upgrades not supported")
     }
 
-    fun registerApp(packageName: String, uid: Int, serviceName: String, appId :Int, token: String){
+    fun registerApp(packageName: String, appId :Int, gotify_token: String, connector_token: String){
         val db = writableDatabase
         val values = ContentValues().apply {
             put(FIELD_PACKAGE_NAME, packageName)
-            put(FIELD_UID, uid.toString())
-            put(FIELD_SERVICE_NAME,serviceName)
             put(FIELD_APP_ID,appId.toString())
-            put(FIELD_TOKEN,token)
+            put(FIELD_GOTIFY_TOKEN,gotify_token)
+            put(FIELD_CONNECTOR_TOKEN,connector_token)
         }
         db.insert(TABLE_APPS,null,values)
     }
 
-    fun unregisterApp(packageName: String, uid: Int){
+    fun unregisterApp(packageName: String, connector_token: String){
         val db = writableDatabase
-        val selection = "$FIELD_PACKAGE_NAME = ? AND $FIELD_UID = ?"
-        val selectionArgs = arrayOf(packageName,uid.toString())
+        val selection = "$FIELD_PACKAGE_NAME = ? AND $FIELD_CONNECTOR_TOKEN = ?"
+        val selectionArgs = arrayOf(packageName,connector_token)
         db.delete(TABLE_APPS,selection,selectionArgs)
     }
 
@@ -74,10 +71,10 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
         }
     }
 
-    fun strictIsRegistered(packageName: String, uid: Int): Boolean {
+    fun strictIsRegistered(packageName: String, connector_token: String): Boolean {
         val db = readableDatabase
-        val selection = "$FIELD_PACKAGE_NAME = ? AND $FIELD_UID = ?"
-        val selectionArgs = arrayOf(packageName,uid.toString())
+        val selection = "$FIELD_PACKAGE_NAME = ? AND $FIELD_CONNECTOR_TOKEN = ?"
+        val selectionArgs = arrayOf(packageName,connector_token)
         return db.query(
                 TABLE_APPS,
                 null,
@@ -88,24 +85,6 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
                 null
         ).use { cursor ->
             (cursor != null && cursor.count > 0)
-        }
-    }
-
-    fun getServiceName(packageName: String): String{
-        val db = readableDatabase
-        val projection = arrayOf(FIELD_SERVICE_NAME)
-        val selection = "$FIELD_PACKAGE_NAME = ?"
-        val selectionArgs = arrayOf(packageName)
-        return db.query(
-                TABLE_APPS,
-                projection,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                null
-        ).use { cursor ->
-            if (cursor.moveToFirst()) cursor.getString(cursor.getColumnIndex(FIELD_SERVICE_NAME)) else ""
         }
     }
 
@@ -145,9 +124,9 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
         }
     }
 
-    fun getToken(packageName: String): String{
+    fun getGotifyToken(packageName: String, remove: Boolean): String{
         val db = readableDatabase
-        val projection = arrayOf(FIELD_TOKEN)
+        val projection = arrayOf(FIELD_GOTIFY_TOKEN)
         val selection = "$FIELD_PACKAGE_NAME = ?"
         val selectionArgs = arrayOf(packageName)
         val token = db.query(
@@ -159,19 +138,57 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
                 null,
                 null
         ).use { cursor ->
-            if (cursor.moveToFirst()) cursor.getString(cursor.getColumnIndex(FIELD_TOKEN)) else ""
+            if (cursor.moveToFirst()) cursor.getString(cursor.getColumnIndex(FIELD_GOTIFY_TOKEN)) else ""
         }
-        removeToken(token)
+        if (remove)
+            removeGotifyToken(token)
         return token
     }
 
-    private fun removeToken(packageName: String){
+    private fun removeGotifyToken(packageName: String){
         val db = writableDatabase
         val values = ContentValues().apply {
-            put(FIELD_TOKEN,"null")
+            put(FIELD_GOTIFY_TOKEN,"null")
         }
         val selection = "$FIELD_PACKAGE_NAME = ?"
         val selectionArgs = arrayOf(packageName)
         db.update(TABLE_APPS,values,selection,selectionArgs)
+    }
+
+    fun getConnectorToken(packageName: String): String{
+        val db = readableDatabase
+        val projection = arrayOf(FIELD_CONNECTOR_TOKEN)
+        val selection = "$FIELD_PACKAGE_NAME = ?"
+        val selectionArgs = arrayOf(packageName)
+        val token = db.query(
+                TABLE_APPS,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        ).use { cursor ->
+            if (cursor.moveToFirst()) cursor.getString(cursor.getColumnIndex(FIELD_CONNECTOR_TOKEN)) else ""
+        }
+        return token
+    }
+
+    fun listApps(): List<String>{
+        val db = readableDatabase
+        val projection = arrayOf(FIELD_PACKAGE_NAME)
+        return db.query(
+                TABLE_APPS,
+                projection,
+                null,
+                null,
+                null,
+                null,
+                null
+        ).use{ cursor ->
+            generateSequence { if (cursor.moveToNext()) cursor else null }
+                    .map{ it.getString(it.getColumnIndex(FIELD_PACKAGE_NAME)) }
+                    .toList()
+        }
     }
 }

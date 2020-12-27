@@ -177,7 +177,7 @@ public class WebSocketService extends Service {
             db.close();
             if (!registeredAppName.isEmpty()) {
                 Log.i("Forward message to " + registeredAppName);
-                GotifyPushNotificationKt.notifyClient(this, registeredAppName, message);
+                PushNotificationKt.sendMessage(this, registeredAppName, message.getMessage());
                 return;
             }
         }

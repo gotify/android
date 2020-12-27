@@ -47,8 +47,12 @@
             android:label="@string/title_activity_settings" />
 
         <service android:name=".service.WebSocketService" />
-        <service android:name=".service.GotifyPushNotification" />
-        <service android:name=".service.GotifyRegisterService" android:exported="true" />
+        <receiver android:enabled="true" android:name=".service.RegisterBroadcastReceiver">
+            <intent-filter>
+                <action android:name="org.unifiedpush.android.distributor.REGISTER"/>
+                <action android:name="org.unifiedpush.android.distributor.UNREGISTER"/>
+            </intent-filter>
+        </receiver>
 
         <receiver android:name=".init.BootCompletedReceiver">
             <intent-filter>
