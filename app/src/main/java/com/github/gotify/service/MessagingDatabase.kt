@@ -29,7 +29,7 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
         throw IllegalStateException("Upgrades not supported")
     }
 
-    fun registerApp(packageName: String, appId :Int, gotify_token: String, connector_token: String){
+    fun registerApp(packageName: String, appId :Long, gotify_token: String, connector_token: String){
         val db = writableDatabase
         val values = ContentValues().apply {
             put(FIELD_PACKAGE_NAME, packageName)
@@ -88,7 +88,7 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
         }
     }
 
-    fun getAppFromId(appId: Int): String{
+    fun getAppFromId(appId: Long): String{
         val db = readableDatabase
         val projection = arrayOf(FIELD_PACKAGE_NAME)
         val selection = "$FIELD_APP_ID = ?"
@@ -106,7 +106,7 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
         }
     }
 
-    fun getAppId(packageName: String): Int{
+    fun getAppId(packageName: String): Long{
         val db = readableDatabase
         val projection = arrayOf(FIELD_APP_ID)
         val selection = "$FIELD_PACKAGE_NAME = ?"
@@ -120,7 +120,7 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
                 null,
                 null
         ).use { cursor ->
-            if (cursor.moveToFirst()) cursor.getInt(cursor.getColumnIndex(FIELD_APP_ID)) else -1
+            if (cursor.moveToFirst()) cursor.getLong(cursor.getColumnIndex(FIELD_APP_ID)) else -1
         }
     }
 
