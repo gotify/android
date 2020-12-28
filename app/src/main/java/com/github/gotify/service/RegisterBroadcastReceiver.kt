@@ -97,7 +97,7 @@ class RegisterBroadcastReceiver: BroadcastReceiver() {
                 }.join()
                 val token = db.getGotifyToken(application, false)
                 val endpoint = settings.url() +
-                        "/message?token=$token"
+                        "/UP?token=$token"
                 sendEndpoint(context,application,endpoint)
                 db.close()
             }
