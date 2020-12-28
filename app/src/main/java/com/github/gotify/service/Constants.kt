@@ -1,14 +1,14 @@
 package com.github.gotify.service
 
 /**
- * Command to the service to register a client, receiving callbacks
- * from the service.  The Message's replyTo field must be a Messenger of
- * the client where callbacks should be sent.
+ * Constants found here:
+ * https://github.com/UnifiedPush/UP-lib/blob/main/src/main/java/org/unifiedpush/connector/Constants.kt
  */
-const val TYPE_CLIENT_STARTED = 1
-const val TYPE_REGISTER_CLIENT = 2
-const val TYPE_REGISTERED_CLIENT = 3
-const val TYPE_UNREGISTER_CLIENT = 4
-const val TYPE_UNREGISTERED_CLIENT = 5
-const val TYPE_MESSAGE = 6
-const val TYPE_CHANGED_URL = 7
+
+const val NEW_ENDPOINT = "org.unifiedpush.android.connector.NEW_ENDPOINT"
+const val UNREGISTERED = "org.unifiedpush.android.connector.UNREGISTERED"
+const val MESSAGE = "org.unifiedpush.android.connector.MESSAGE"
+
+const val REGISTER = "org.unifiedpush.android.distributor.REGISTER"
+const val UNREGISTER = "org.unifiedpush.android.distributor.UNREGISTER"
+const val MESSAGE_ACK = "org.unifiedpush.android.distributor.MESSAGE_ACK"
