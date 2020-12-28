@@ -7,7 +7,7 @@ Name | Type | Description | Notes
 **author** | **String** | The author of the plugin. |  [optional]
 **capabilities** | **List&lt;String&gt;** | Capabilities the plugin provides | 
 **enabled** | **Boolean** | Whether the plugin instance is enabled. | 
-**id** | **Integer** | The plugin id. | 
+**id** | **Long** | The plugin id. | 
 **license** | **String** | The license of the plugin. |  [optional]
 **modulePath** | **String** | The module path of the plugin. | 
 **name** | **String** | The plugin name. | 

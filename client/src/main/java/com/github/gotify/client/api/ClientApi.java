@@ -42,7 +42,7 @@ public interface ClientApi {
   })
   @DELETE("client/{id}")
   Call<Void> deleteClient(
-    @retrofit2.http.Path("id") Integer id
+    @retrofit2.http.Path("id") Long id
   );
 
   /**
@@ -56,5 +56,20 @@ public interface ClientApi {
   @GET("client")
   Call<List<Client>> getClients();
     
+
+  /**
+   * Update a client.
+   * 
+   * @param body the client to update (required)
+   * @param id the client id (required)
+   * @return Call&lt;Client&gt;
+   */
+  @Headers({
+    "Content-Type:application/json"
+  })
+  @PUT("client/{id}")
+  Call<Client> updateClient(
+    @retrofit2.http.Body Client body, @retrofit2.http.Path("id") Long id
+  );
 
 }

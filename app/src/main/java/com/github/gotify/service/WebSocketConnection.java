@@ -1,7 +1,9 @@
 package com.github.gotify.service;
 
+import android.app.AlarmManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Handler;
 import com.github.gotify.SSLSettings;
 import com.github.gotify.Utils;
@@ -9,7 +11,9 @@ import com.github.gotify.api.Callback;
 import com.github.gotify.api.CertUtils;
 import com.github.gotify.client.model.Message;
 import com.github.gotify.log.Log;
+import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -17,8 +21,10 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
-public class WebSocketConnection {
+class WebSocketConnection {
+    private static final AtomicLong ID = new AtomicLong(0);
     private final ConnectivityManager connectivityManager;
+    private final AlarmManager alarmManager;
     private OkHttpClient client;
 
     private final Handler reconnectHandler = new Handler();
@@ -34,15 +40,17 @@ public class WebSocketConnection {
     private BadRequestRunnable onBadRequest;
     private OnNetworkFailureRunnable onNetworkFailure;
     private Runnable onReconnected;
-    private boolean isClosed;
+    private State state;
     private Runnable onDisconnect;
 
     WebSocketConnection(
             String baseUrl,
             SSLSettings settings,
             String token,
-            ConnectivityManager connectivityManager) {
+            ConnectivityManager connectivityManager,
+            AlarmManager alarmManager) {
         this.connectivityManager = connectivityManager;
+        this.alarmManager = alarmManager;
         OkHttpClient.Builder builder =
                 new OkHttpClient.Builder()
                         .readTimeout(0, TimeUnit.MILLISECONDS)
@@ -102,67 +110,97 @@ public class WebSocketConnection {
     }
 
     public synchronized WebSocketConnection start() {
+        if (state == State.Connecting || state == State.Connected) {
+            return this;
+        }
         close();
-        isClosed = false;
-        Log.i("WebSocket: starting...");
+        state = State.Connecting;
+        long nextId = ID.incrementAndGet();
+        Log.i("WebSocket(" + nextId + "): starting...");
 
-        webSocket = client.newWebSocket(request(), new Listener());
+        webSocket = client.newWebSocket(request(), new Listener(nextId));
         return this;
     }
 
     public synchronized void close() {
         if (webSocket != null) {
-            Log.i("WebSocket: closing existing connection.");
-            isClosed = true;
+            Log.i("WebSocket(" + ID.get() + "): closing existing connection.");
+            state = State.Disconnected;
             webSocket.close(1000, "");
             webSocket = null;
         }
     }
 
-    public synchronized void scheduleReconnect(long millis) {
-        reconnectHandler.removeCallbacks(reconnectCallback);
+    public synchronized void scheduleReconnect(long seconds) {
+        if (state == State.Connecting || state == State.Connected) {
+            return;
+        }
+        state = State.Scheduled;
 
-        Log.i(
-                "WebSocket: scheduling a restart in "
-                        + TimeUnit.SECONDS.convert(millis, TimeUnit.MILLISECONDS)
-                        + " second(s)");
-        reconnectHandler.postDelayed(reconnectCallback, millis);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Log.i(
+                    "WebSocket: scheduling a restart in "
+                            + seconds
+                            + " second(s) (via alarm manager)");
+            final Calendar future = Calendar.getInstance();
+            future.add(Calendar.SECOND, (int) seconds);
+            alarmManager.setExact(
+                    AlarmManager.RTC_WAKEUP,
+                    future.getTimeInMillis(),
+                    "reconnect-tag",
+                    this::start,
+                    null);
+        } else {
+            Log.i("WebSocket: scheduling a restart in " + seconds + " second(s)");
+            reconnectHandler.removeCallbacks(reconnectCallback);
+            reconnectHandler.postDelayed(reconnectCallback, TimeUnit.SECONDS.toMillis(seconds));
+        }
     }
 
     private class Listener extends WebSocketListener {
+        private final long id;
+
+        public Listener(long id) {
+            this.id = id;
+        }
 
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
-            Log.i("WebSocket: opened");
-            synchronized (this) {
-                onOpen.run();
+            syncExec(
+                    () -> {
+                        state = State.Connected;
+                        Log.i("WebSocket(" + id + "): opened");
+                        onOpen.run();
 
-                if (errorCount > 0) {
-                    onReconnected.run();
-                    errorCount = 0;
-                }
-            }
+                        if (errorCount > 0) {
+                            onReconnected.run();
+                            errorCount = 0;
+                        }
+                    });
             super.onOpen(webSocket, response);
         }
 
         @Override
         public void onMessage(WebSocket webSocket, String text) {
-            Log.i("WebSocket: received message " + text);
-            synchronized (this) {
-                Message message = Utils.JSON.fromJson(text, Message.class);
-                onMessage.onSuccess(message);
-            }
+            syncExec(
+                    () -> {
+                        Log.i("WebSocket(" + id + "): received message " + text);
+                        Message message = Utils.JSON.fromJson(text, Message.class);
+                        onMessage.onSuccess(message);
+                    });
             super.onMessage(webSocket, text);
         }
 
         @Override
         public void onClosed(WebSocket webSocket, int code, String reason) {
-            synchronized (this) {
-                if (!isClosed) {
-                    Log.w("WebSocket: closed");
-                    onClose.run();
-                }
-            }
+            syncExec(
+                    () -> {
+                        if (state == State.Connected) {
+                            Log.w("WebSocket(" + id + "): closed");
+                            onClose.run();
+                        }
+                        state = State.Disconnected;
+                    });
 
             super.onClosed(webSocket, code, reason);
         }
@@ -171,30 +209,40 @@ public class WebSocketConnection {
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
             String code = response != null ? "StatusCode: " + response.code() : "";
             String message = response != null ? response.message() : "";
-            Log.e("WebSocket: failure " + code + " Message: " + message, t);
-            synchronized (this) {
-                if (response != null && response.code() >= 400 && response.code() <= 499) {
-                    onBadRequest.execute(message);
-                    close();
-                    return;
-                }
+            Log.e("WebSocket(" + id + "): failure " + code + " Message: " + message, t);
+            syncExec(
+                    () -> {
+                        state = State.Disconnected;
+                        if (response != null && response.code() >= 400 && response.code() <= 499) {
+                            onBadRequest.execute(message);
+                            close();
+                            return;
+                        }
 
-                errorCount++;
+                        errorCount++;
 
-                NetworkInfo network = connectivityManager.getActiveNetworkInfo();
-                if (network == null || !network.isConnected()) {
-                    Log.i("WebSocket: Network not connected");
-                    onDisconnect.run();
-                    return;
-                }
+                        NetworkInfo network = connectivityManager.getActiveNetworkInfo();
+                        if (network == null || !network.isConnected()) {
+                            Log.i("WebSocket(" + id + "): Network not connected");
+                            onDisconnect.run();
+                            return;
+                        }
 
-                int minutes = Math.min(errorCount * 2 - 1, 20);
+                        int minutes = Math.min(errorCount * 2 - 1, 20);
 
-                onNetworkFailure.execute(minutes);
-                scheduleReconnect(TimeUnit.MINUTES.toMillis(minutes));
-            }
+                        onNetworkFailure.execute(minutes);
+                        scheduleReconnect(TimeUnit.MINUTES.toSeconds(minutes));
+                    });
 
             super.onFailure(webSocket, t, response);
+        }
+
+        private void syncExec(Runnable runnable) {
+            synchronized (this) {
+                if (ID.get() == id) {
+                    runnable.run();
+                }
+            }
         }
     }
 
@@ -204,5 +252,12 @@ public class WebSocketConnection {
 
     interface OnNetworkFailureRunnable {
         void execute(long millis);
+    }
+
+    enum State {
+        Scheduled,
+        Connecting,
+        Connected,
+        Disconnected
     }
 }

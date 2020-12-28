@@ -14,7 +14,7 @@ import java.util.List;
 import static com.github.gotify.api.Callback.call;
 
 public class MissedMessageUtil {
-    static final int NO_MESSAGES = 0;
+    static final long NO_MESSAGES = 0;
 
     private final MessageApi api;
 
@@ -22,8 +22,8 @@ public class MissedMessageUtil {
         this.api = api;
     }
 
-    public void lastReceivedMessage(Callback.SuccessCallback<Integer> successCallback) {
-        api.getMessages(1, 0)
+    public void lastReceivedMessage(Callback.SuccessCallback<Long> successCallback) {
+        api.getMessages(1, 0L)
                 .enqueue(
                         call(
                                 (messages) -> {
@@ -37,11 +37,11 @@ public class MissedMessageUtil {
                                 (e) -> {}));
     }
 
-    public List<Message> missingMessages(int till) {
+    public List<Message> missingMessages(long till) {
         List<Message> result = new ArrayList<>();
         try {
 
-            Integer since = null;
+            Long since = null;
             while (true) {
                 PagedMessages pagedMessages = Api.execute(api.getMessages(10, since));
                 List<Message> messages = pagedMessages.getMessages();
@@ -61,7 +61,7 @@ public class MissedMessageUtil {
         return result;
     }
 
-    private List<Message> filter(List<Message> messages, int till) {
+    private List<Message> filter(List<Message> messages, long till) {
         List<Message> result = new ArrayList<>();
 
         for (Message message : messages) {
