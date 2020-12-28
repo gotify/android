@@ -43,7 +43,7 @@ public class ApplicationApiTest {
      */
     @Test
     public void deleteAppTest() {
-        Integer id = null;
+        Long id = null;
         // Void response = api.deleteApp(id);
 
         // TODO: test validations
@@ -67,7 +67,7 @@ public class ApplicationApiTest {
     @Test
     public void updateApplicationTest() {
         Application body = null;
-        Integer id = null;
+        Long id = null;
         // Application response = api.updateApplication(body, id);
 
         // TODO: test validations
@@ -80,7 +80,7 @@ public class ApplicationApiTest {
     @Test
     public void uploadAppImageTest() {
         File file = null;
-        Integer id = null;
+        Long id = null;
         // Application response = api.uploadAppImage(file, id);
 
         // TODO: test validations

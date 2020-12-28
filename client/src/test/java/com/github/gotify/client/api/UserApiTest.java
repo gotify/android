@@ -55,7 +55,7 @@ public class UserApiTest {
      */
     @Test
     public void deleteUserTest() {
-        Integer id = null;
+        Long id = null;
         // Void response = api.deleteUser(id);
 
         // TODO: test validations
@@ -67,7 +67,7 @@ public class UserApiTest {
      */
     @Test
     public void getUserTest() {
-        Integer id = null;
+        Long id = null;
         // User response = api.getUser(id);
 
         // TODO: test validations
@@ -102,7 +102,7 @@ public class UserApiTest {
      */
     @Test
     public void updateUserTest() {
-        Integer id = null;
+        Long id = null;
         UserWithPass body = null;
         // User response = api.updateUser(id, body);
 

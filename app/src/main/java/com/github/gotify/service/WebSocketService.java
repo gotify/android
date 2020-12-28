@@ -1,5 +1,6 @@
 package com.github.gotify.service;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -22,40 +23,44 @@ import com.github.gotify.R;
 import com.github.gotify.Settings;
 import com.github.gotify.Utils;
 import com.github.gotify.api.ClientFactory;
+import com.github.gotify.client.ApiClient;
 import com.github.gotify.client.api.MessageApi;
 import com.github.gotify.client.model.Message;
 import com.github.gotify.log.Log;
 import com.github.gotify.log.UncaughtExceptionHandler;
 import com.github.gotify.messages.Extras;
 import com.github.gotify.messages.MessagesActivity;
+import com.github.gotify.picasso.PicassoHandler;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+
+import static com.github.gotify.api.Callback.call;
 
 public class WebSocketService extends Service {
 
     public static final String NEW_MESSAGE_BROADCAST =
             WebSocketService.class.getName() + ".NEW_MESSAGE";
 
-    private static final int NOT_LOADED = -2;
+    private static final long NOT_LOADED = -2;
 
     private Settings settings;
     private WebSocketConnection connection;
 
-    private AtomicInteger lastReceivedMessage = new AtomicInteger(NOT_LOADED);
+    private AtomicLong lastReceivedMessage = new AtomicLong(NOT_LOADED);
     private MissedMessageUtil missingMessageUtil;
+
+    private PicassoHandler picassoHandler;
 
     @Override
     public void onCreate() {
         super.onCreate();
         settings = new Settings(this);
-        missingMessageUtil =
-                new MissedMessageUtil(
-                        ClientFactory.clientToken(
-                                        settings.url(), settings.sslSettings(), settings.token())
-                                .createService(MessageApi.class));
+        ApiClient client =
+                ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
+        missingMessageUtil = new MissedMessageUtil(client.createService(MessageApi.class));
         Log.i("Create " + getClass().getSimpleName());
+        picassoHandler = new PicassoHandler(this, settings);
     }
 
     @Override
@@ -92,12 +97,17 @@ public class WebSocketService extends Service {
 
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         connection =
                 new WebSocketConnection(
-                                settings.url(), settings.sslSettings(), settings.token(), cm)
+                                settings.url(),
+                                settings.sslSettings(),
+                                settings.token(),
+                                cm,
+                                alarmManager)
                         .onOpen(this::onOpen)
-                        .onClose(() -> foreground(getString(R.string.websocket_closed)))
+                        .onClose(this::onClose)
                         .onBadRequest(this::onBadRequest)
                         .onNetworkFailure(
                                 (min) -> foreground(getString(R.string.websocket_failed, min)))
@@ -110,6 +120,26 @@ public class WebSocketService extends Service {
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         ReconnectListener receiver = new ReconnectListener(this::doReconnect);
         registerReceiver(receiver, intentFilter);
+
+        picassoHandler.updateAppIds();
+    }
+
+    private void onClose() {
+        foreground(getString(R.string.websocket_closed_try_reconnect));
+        ClientFactory.userApiWithToken(settings)
+                .currentUser()
+                .enqueue(
+                        call(
+                                (ignored) -> this.doReconnect(),
+                                (exception) -> {
+                                    if (exception.code() == 401) {
+                                        foreground(getString(R.string.websocket_closed_logout));
+                                    } else {
+                                        Log.i(
+                                                "WebSocket closed but the user still authenticated, trying to reconnect");
+                                        this.doReconnect();
+                                    }
+                                }));
     }
 
     private void onDisconnect() {
@@ -121,7 +151,7 @@ public class WebSocketService extends Service {
             return;
         }
 
-        connection.scheduleReconnect(TimeUnit.SECONDS.toMillis(5));
+        connection.scheduleReconnect(15);
     }
 
     private void onBadRequest(String message) {
@@ -133,7 +163,7 @@ public class WebSocketService extends Service {
     }
 
     private void notifyMissedNotifications() {
-        int messageId = lastReceivedMessage.get();
+        long messageId = lastReceivedMessage.get();
         if (messageId == NOT_LOADED) {
             return;
         }
@@ -171,6 +201,7 @@ public class WebSocketService extends Service {
         if (lastReceivedMessage.get() < message.getId()) {
             lastReceivedMessage.set(message.getId());
         }
+
         broadcast(message);
         try (MessagingDatabase db = new MessagingDatabase(this)) {
             String registeredAppName = db.getAppFromId(message.getAppid());
@@ -186,7 +217,8 @@ public class WebSocketService extends Service {
                 message.getTitle(),
                 message.getMessage(),
                 message.getPriority(),
-                message.getExtras());
+                message.getExtras(),
+                message.getAppid());
     }
 
     private void broadcast(Message message) {
@@ -228,6 +260,16 @@ public class WebSocketService extends Service {
 
     private void showNotification(
             int id, String title, String message, long priority, Map<String, Object> extras) {
+        showNotification(id, title, message, priority, extras, -1L);
+    }
+
+    private void showNotification(
+            long id,
+            String title,
+            String message,
+            long priority,
+            Map<String, Object> extras,
+            Long appid) {
 
         Intent intent;
 
@@ -267,6 +309,7 @@ public class WebSocketService extends Service {
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.drawable.ic_gotify)
+                .setLargeIcon(picassoHandler.getIcon(appid))
                 .setTicker(getString(R.string.app_name) + " - " + title)
                 .setGroup(NotificationSupport.Group.MESSAGES)
                 .setContentTitle(title)
@@ -279,7 +322,7 @@ public class WebSocketService extends Service {
 
         NotificationManager notificationManager =
                 (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(id, b.build());
+        notificationManager.notify(Utils.longToInt(id), b.build());
     }
 
     @RequiresApi(Build.VERSION_CODES.N)

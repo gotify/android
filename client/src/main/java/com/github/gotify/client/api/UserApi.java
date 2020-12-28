@@ -56,7 +56,7 @@ public interface UserApi {
   })
   @DELETE("user/{id}")
   Call<Void> deleteUser(
-    @retrofit2.http.Path("id") Integer id
+    @retrofit2.http.Path("id") Long id
   );
 
   /**
@@ -70,7 +70,7 @@ public interface UserApi {
   })
   @GET("user/{id}")
   Call<User> getUser(
-    @retrofit2.http.Path("id") Integer id
+    @retrofit2.http.Path("id") Long id
   );
 
   /**
@@ -111,7 +111,7 @@ public interface UserApi {
   })
   @POST("user/{id}")
   Call<User> updateUser(
-    @retrofit2.http.Path("id") Integer id, @retrofit2.http.Body UserWithPass body
+    @retrofit2.http.Path("id") Long id, @retrofit2.http.Body UserWithPass body
   );
 
 }

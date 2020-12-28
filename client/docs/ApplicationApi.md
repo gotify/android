@@ -110,7 +110,7 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 //clientTokenQuery.setApiKeyPrefix("Token");
 
 ApplicationApi apiInstance = new ApplicationApi();
-Integer id = 56; // Integer | the application id
+Long id = 789L; // Long | the application id
 try {
     Void result = apiInstance.deleteApp(id);
     System.out.println(result);
@@ -124,7 +124,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **id** | **Integer**| the application id |
+ **id** | **Long**| the application id |
 
 ### Return type
 
@@ -235,7 +235,7 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 
 ApplicationApi apiInstance = new ApplicationApi();
 Application body = new Application(); // Application | the application to update
-Integer id = 56; // Integer | the application id
+Long id = 789L; // Long | the application id
 try {
     Application result = apiInstance.updateApplication(body, id);
     System.out.println(result);
@@ -250,7 +250,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **body** | [**Application**](Application.md)| the application to update |
- **id** | **Integer**| the application id |
+ **id** | **Long**| the application id |
 
 ### Return type
 
@@ -301,7 +301,7 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 
 ApplicationApi apiInstance = new ApplicationApi();
 File file = new File("/path/to/file.txt"); // File | the application image
-Integer id = 56; // Integer | the application id
+Long id = 789L; // Long | the application id
 try {
     Application result = apiInstance.uploadAppImage(file, id);
     System.out.println(result);
@@ -316,7 +316,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **file** | **File**| the application image |
- **id** | **Integer**| the application id |
+ **id** | **Long**| the application id |
 
 ### Return type
 

@@ -33,6 +33,10 @@ public class Utils {
         Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT).show();
     }
 
+    public static int longToInt(long value) {
+        return (int) (value % Integer.MAX_VALUE);
+    }
+
     public static String dateToRelative(OffsetDateTime data) {
         long time = data.toInstant().toEpochMilli();
         long now = System.currentTimeMillis();
@@ -95,5 +99,12 @@ public class Utils {
     public static InputStream stringToInputStream(String str) {
         if (str == null) return null;
         return new Buffer().writeUtf8(str).inputStream();
+    }
+
+    public static <T> T first(T[] data) {
+        if (data.length != 1) {
+            throw new IllegalArgumentException("must be one element");
+        }
+        return data[0];
     }
 }

@@ -42,7 +42,7 @@ public class ClientApiTest {
      */
     @Test
     public void deleteClientTest() {
-        Integer id = null;
+        Long id = null;
         // Void response = api.deleteClient(id);
 
         // TODO: test validations
@@ -55,6 +55,19 @@ public class ClientApiTest {
     @Test
     public void getClientsTest() {
         // List<Client> response = api.getClients();
+
+        // TODO: test validations
+    }
+    /**
+     * Update a client.
+     *
+     * 
+     */
+    @Test
+    public void updateClientTest() {
+        Client body = null;
+        Long id = null;
+        // Client response = api.updateClient(body, id);
 
         // TODO: test validations
     }

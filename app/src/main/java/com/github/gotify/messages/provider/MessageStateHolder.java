@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 class MessageStateHolder {
-    private int lastReceivedMessage = -1;
-    private Map<Integer, MessageState> states = new HashMap<>();
+    private long lastReceivedMessage = -1;
+    private Map<Long, MessageState> states = new HashMap<>();
 
     private MessageDeletion pendingDeletion = null;
 
@@ -15,7 +15,7 @@ class MessageStateHolder {
         states = new HashMap<>();
     }
 
-    synchronized void newMessages(Integer appId, PagedMessages pagedMessages) {
+    synchronized void newMessages(Long appId, PagedMessages pagedMessages) {
         MessageState state = state(appId);
 
         if (!state.loaded && pagedMessages.getMessages().size() > 0) {
@@ -49,7 +49,7 @@ class MessageStateHolder {
         if (deletion != null) deleteMessage(deletion.getMessage());
     }
 
-    synchronized MessageState state(Integer appId) {
+    synchronized MessageState state(Long appId) {
         MessageState state = states.get(appId);
         if (state == null) {
             return emptyState(appId);
@@ -57,14 +57,14 @@ class MessageStateHolder {
         return state;
     }
 
-    synchronized void deleteAll(Integer appId) {
+    synchronized void deleteAll(Long appId) {
         clear();
         MessageState state = state(appId);
         state.loaded = true;
         states.put(appId, state);
     }
 
-    private MessageState emptyState(Integer appId) {
+    private MessageState emptyState(Long appId) {
         MessageState emptyState = new MessageState();
         emptyState.loaded = false;
         emptyState.hasNext = false;
@@ -73,7 +73,7 @@ class MessageStateHolder {
         return emptyState;
     }
 
-    synchronized int getLastReceivedMessage() {
+    synchronized long getLastReceivedMessage() {
         return lastReceivedMessage;
     }
 

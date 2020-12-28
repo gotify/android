@@ -172,7 +172,7 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 //clientTokenQuery.setApiKeyPrefix("Token");
 
 UserApi apiInstance = new UserApi();
-Integer id = 56; // Integer | the user id
+Long id = 789L; // Long | the user id
 try {
     Void result = apiInstance.deleteUser(id);
     System.out.println(result);
@@ -186,7 +186,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **id** | **Integer**| the user id |
+ **id** | **Long**| the user id |
 
 ### Return type
 
@@ -236,7 +236,7 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 //clientTokenQuery.setApiKeyPrefix("Token");
 
 UserApi apiInstance = new UserApi();
-Integer id = 56; // Integer | the user id
+Long id = 789L; // Long | the user id
 try {
     User result = apiInstance.getUser(id);
     System.out.println(result);
@@ -250,7 +250,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **id** | **Integer**| the user id |
+ **id** | **Long**| the user id |
 
 ### Return type
 
@@ -424,7 +424,7 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 //clientTokenQuery.setApiKeyPrefix("Token");
 
 UserApi apiInstance = new UserApi();
-Integer id = 56; // Integer | the user id
+Long id = 789L; // Long | the user id
 UserWithPass body = new UserWithPass(); // UserWithPass | the updated user
 try {
     User result = apiInstance.updateUser(id, body);
@@ -439,7 +439,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **id** | **Integer**| the user id |
+ **id** | **Long**| the user id |
  **body** | [**UserWithPass**](UserWithPass.md)| the updated user |
 
 ### Return type
