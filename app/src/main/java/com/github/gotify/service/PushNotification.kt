@@ -29,11 +29,8 @@ fun sendEndpoint(context: Context, application: String, endpoint: String) {
     context.sendBroadcast(broadcastIntent)
 }
 
-fun sendUnregistered(context: Context, application: String, needToken: Boolean){
-    val token = getToken(context,application).let{
-        if(it.isNullOrEmpty() and needToken) return else it
-    }
-
+fun sendUnregistered(context: Context, application: String, _token: String?){
+    val token = _token?: getToken(context,application)!!
     val broadcastIntent = Intent()
     broadcastIntent.`package` = application
     broadcastIntent.action = UNREGISTERED

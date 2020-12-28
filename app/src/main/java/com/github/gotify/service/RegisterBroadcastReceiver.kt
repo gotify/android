@@ -111,7 +111,7 @@ class RegisterBroadcastReceiver: BroadcastReceiver() {
                     db.close()
                     Log.i("RegisterService","Unregistration is finished")
                 }
-                sendUnregistered(context!!,application,false)
+                sendUnregistered(context!!,application,token)
             }
         }
     }
