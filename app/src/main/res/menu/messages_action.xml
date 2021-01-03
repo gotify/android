@@ -3,4 +3,8 @@
         android:title="@string/delete_all"
         android:id="@+id/action_delete_all"
         android:orderInCategory="100"/>
+    <item
+        android:title="@string/delete_app"
+        android:id="@+id/action_delete_app"
+        android:orderInCategory="101"/>
 </menu>

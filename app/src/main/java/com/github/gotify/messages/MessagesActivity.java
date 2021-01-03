@@ -45,6 +45,7 @@ import com.github.gotify.api.Api;
 import com.github.gotify.api.ApiException;
 import com.github.gotify.api.ClientFactory;
 import com.github.gotify.client.ApiClient;
+import com.github.gotify.client.api.ApplicationApi;
 import com.github.gotify.client.api.ClientApi;
 import com.github.gotify.client.api.MessageApi;
 import com.github.gotify.client.model.Application;
@@ -171,6 +172,7 @@ public class MessagesActivity extends AppCompatActivity
                             new SelectApplicationAndUpdateMessages(true)
                                     .execute(selectAppIdOnDrawerClose);
                             selectAppIdOnDrawerClose = null;
+                            invalidateOptionsMenu();
                         }
                     }
                 });
@@ -192,6 +194,10 @@ public class MessagesActivity extends AppCompatActivity
     }
 
     public void onRefreshAll(View view) {
+        refreshAll();
+    }
+
+    public void refreshAll(){
         try {
             picassoHandler.evict();
         } catch (IOException e) {
@@ -560,6 +566,7 @@ public class MessagesActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.messages_action, menu);
+        menu.findItem(R.id.action_delete_app).setVisible(appId != MessageState.ALL_MESSAGES);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -568,7 +575,33 @@ public class MessagesActivity extends AppCompatActivity
         if (item.getItemId() == R.id.action_delete_all) {
             new DeleteMessages().execute(appId);
         }
+        if (item.getItemId() == R.id.action_delete_app) {
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    deleteApp(appId);
+                }
+            });
+            thread.start();
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            refreshAll();
+        }
         return super.onContextItemSelected(item);
+    }
+
+
+    private void deleteApp(Long appId){
+        ApiClient client = ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
+        try {
+            Log.i("Deleting app with appId=" + appId);
+            Api.execute(client.createService(ApplicationApi.class).deleteApp(appId));
+        } catch (ApiException e) {
+            Log.e("Could not delete app.", e);
+        }
     }
 
     private class LoadMore extends AsyncTask<Long, Void, List<MessageWithImage>> {
