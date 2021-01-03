@@ -30,7 +30,7 @@ class RegisterBroadcastReceiver: BroadcastReceiver() {
         }
     }
 
-    private fun registerApp(db: MessagingDatabase, application: String, connector_token: String) {
+    private fun registerApp(context: Context?, db: MessagingDatabase, application: String, connector_token: String) {
         if (application.isBlank()) {
             Log.w("RegisterService","Trying to register an app without packageName")
             return
@@ -46,12 +46,16 @@ class RegisterBroadcastReceiver: BroadcastReceiver() {
         // User should unregister this app manually
         // to avoid an app to impersonate another one
         if (db.isRegistered(application)) {
-            Log.w("RegisterService","$application already registered with a different token")
+            val message = "$application already registered with a different token"
+            Log.w("RegisterService",message)
+            sendRegistrationRefused(context!!,application,connector_token,message)
             return
         }
         val app = createApp(application)
         if(app == null){
-            Log.w("RegisterService","Cannot create a new app to register")
+            val message = "Cannot create a new app to register"
+            Log.w("RegisterService", message)
+            sendRegistrationFailed(context!!,application,connector_token,message)
             return
         }
         db.registerApp(application, app.id, app.token, connector_token)
@@ -86,13 +90,13 @@ class RegisterBroadcastReceiver: BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         settings = Settings(context)
         when (intent!!.action) {
-            REGISTER ->{
+            ACTION_REGISTER ->{
                 val db = MessagingDatabase(context!!)
                 Log.i("Register","REGISTER")
-                val internalToken = intent.getStringExtra("token")?: ""
-                val application = intent.getStringExtra("application")?: ""
+                val internalToken = intent.getStringExtra(EXTRA_TOKEN)?: ""
+                val application = intent.getStringExtra(EXTRA_APPLICATION)?: ""
                 thread(start = true) {
-                    registerApp(db, application, internalToken)
+                    registerApp(context, db, application, internalToken)
                     Log.i("RegisterService","Registration is finished")
                 }.join()
                 val token = db.getGotifyToken(application, false)
@@ -101,10 +105,10 @@ class RegisterBroadcastReceiver: BroadcastReceiver() {
                 sendEndpoint(context,application,endpoint)
                 db.close()
             }
-            UNREGISTER ->{
+            ACTION_UNREGISTER ->{
                 Log.i("Register","UNREGISTER")
-                val token = intent.getStringExtra("token")?: ""
-                val application = intent.getStringExtra("application")?: ""
+                val token = intent.getStringExtra(EXTRA_TOKEN)?: ""
+                val application = intent.getStringExtra(EXTRA_APPLICATION)?: ""
                 thread(start = true) {
                     val db = MessagingDatabase(context!!)
                     unregisterApp(db,application, token)
