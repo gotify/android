@@ -576,32 +576,47 @@ public class MessagesActivity extends AppCompatActivity
             new DeleteMessages().execute(appId);
         }
         if (item.getItemId() == R.id.action_delete_app) {
-            Thread thread = new Thread(new Runnable() {
+            android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(
+                    this);
+            alert.setTitle(R.string.delete_app);
+            alert.setMessage("Are you sure?");
+            alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                 @Override
-                public void run() {
+                public void onClick(DialogInterface dialog, int which) {
                     deleteApp(appId);
                 }
             });
-            thread.start();
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            refreshAll();
+            alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            alert.show();
         }
         return super.onContextItemSelected(item);
     }
 
 
-    private void deleteApp(Long appId){
-        ApiClient client = ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
+    private void deleteApp(Long appId) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ApiClient client = ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
+                try {
+                    Log.i("Deleting app with appId=" + appId);
+                    Api.execute(client.createService(ApplicationApi.class).deleteApp(appId));
+                } catch (ApiException e) {
+                    Log.e("Could not delete app.", e);
+                }
+            }
+        });
+        thread.start();
         try {
-            Log.i("Deleting app with appId=" + appId);
-            Api.execute(client.createService(ApplicationApi.class).deleteApp(appId));
-        } catch (ApiException e) {
-            Log.e("Could not delete app.", e);
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+        refreshAll();
     }
 
     private class LoadMore extends AsyncTask<Long, Void, List<MessageWithImage>> {
