@@ -43,6 +43,7 @@ import com.github.gotify.Settings;
 import com.github.gotify.Utils;
 import com.github.gotify.api.Api;
 import com.github.gotify.api.ApiException;
+import com.github.gotify.api.Callback;
 import com.github.gotify.api.ClientFactory;
 import com.github.gotify.client.ApiClient;
 import com.github.gotify.client.api.ApplicationApi;
@@ -578,54 +579,27 @@ public class MessagesActivity extends AppCompatActivity
         if (item.getItemId() == R.id.action_delete_app) {
             android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(this);
             alert.setTitle(R.string.delete_app);
-            alert.setMessage("Are you sure?");
-            alert.setPositiveButton(
-                    "YES",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            deleteApp(appId);
-                        }
-                    });
-            alert.setNegativeButton(
-                    "NO",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {}
-                    });
+            alert.setMessage(R.string.ack);
+            alert.setPositiveButton(R.string.yes, (dialog, which) -> deleteApp(appId));
+            alert.setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss());
             alert.show();
         }
         return super.onContextItemSelected(item);
     }
 
     private void deleteApp(Long appId) {
-        Thread thread =
-                new Thread(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                ApiClient client =
-                                        ClientFactory.clientToken(
-                                                settings.url(),
-                                                settings.sslSettings(),
-                                                settings.token());
-                                try {
-                                    Log.i("Deleting app with appId=" + appId);
-                                    Api.execute(
-                                            client.createService(ApplicationApi.class)
-                                                    .deleteApp(appId));
-                                } catch (ApiException e) {
-                                    Log.e("Could not delete app.", e);
-                                }
-                            }
-                        });
-        thread.start();
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        refreshAll();
+        ApiClient client =
+                ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
+
+        client.createService(ApplicationApi.class)
+                .deleteApp(appId)
+                .enqueue(
+                        Callback.callInUI(
+                                this,
+                                (ignored) -> refreshAll(),
+                                (e) ->
+                                        Utils.showSnackBar(
+                                                this, getString(R.string.error_delete_app))));
     }
 
     private class LoadMore extends AsyncTask<Long, Void, List<MessageWithImage>> {

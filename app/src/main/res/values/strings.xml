@@ -26,6 +26,7 @@
     <string name="grouped_message">Received %d messages while being disconnected</string>
     <string name="delete_all">Delete all</string>
     <string name="delete_app">Delete this application</string>
+    <string name="error_delete_app">Could not delete this app</string>
     <string name="delete_logs">Delete logs</string>
     <string name="copy_logs">Copy logs</string>
     <string name="logs_copied">Logs copied</string>
@@ -49,6 +50,8 @@
     <string name="refresh_all">Refresh all</string>
     <string name="logout_confirm">Do you really want to logout?</string>
     <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="ack">Are you sure?</string>
     <string name="missed_messages">Missed messages</string>
     <string name="grouped_notification_text">New Messages</string>
     <string name="websocket_listening">Listening to %s</string>
