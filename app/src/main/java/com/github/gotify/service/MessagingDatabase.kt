@@ -47,10 +47,10 @@ class MessagingDatabase(context: Context) : SQLiteOpenHelper(context, DB_NAME, n
         db.delete(TABLE_APPS,selection,selectionArgs)
     }
 
-    fun forceUnregisterApp(packageName: String){
+    fun forceUnregisterApp(appId: Long){
         val db = writableDatabase
-        val selection = "$FIELD_PACKAGE_NAME = ?"
-        val selectionArgs = arrayOf(packageName)
+        val selection = "$FIELD_APP_ID = ?"
+        val selectionArgs = arrayOf(appId.toString())
         db.delete(TABLE_APPS,selection,selectionArgs)
     }
 

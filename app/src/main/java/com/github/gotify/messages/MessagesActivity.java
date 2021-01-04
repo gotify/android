@@ -62,6 +62,7 @@ import com.github.gotify.messages.provider.MessageFacade;
 import com.github.gotify.messages.provider.MessageState;
 import com.github.gotify.messages.provider.MessageWithImage;
 import com.github.gotify.picasso.PicassoHandler;
+import com.github.gotify.service.MessagingDatabase;
 import com.github.gotify.service.WebSocketService;
 import com.github.gotify.settings.SettingsActivity;
 import com.github.gotify.sharing.ShareActivity;
@@ -588,6 +589,10 @@ public class MessagesActivity extends AppCompatActivity
     }
 
     private void deleteApp(Long appId) {
+        MessagingDatabase db = new MessagingDatabase(this);
+        db.forceUnregisterApp(appId);
+        db.close();
+
         ApiClient client =
                 ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
 
