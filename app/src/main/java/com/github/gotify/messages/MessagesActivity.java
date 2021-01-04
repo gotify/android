@@ -43,8 +43,10 @@ import com.github.gotify.Settings;
 import com.github.gotify.Utils;
 import com.github.gotify.api.Api;
 import com.github.gotify.api.ApiException;
+import com.github.gotify.api.Callback;
 import com.github.gotify.api.ClientFactory;
 import com.github.gotify.client.ApiClient;
+import com.github.gotify.client.api.ApplicationApi;
 import com.github.gotify.client.api.ClientApi;
 import com.github.gotify.client.api.MessageApi;
 import com.github.gotify.client.model.Application;
@@ -171,6 +173,7 @@ public class MessagesActivity extends AppCompatActivity
                             new SelectApplicationAndUpdateMessages(true)
                                     .execute(selectAppIdOnDrawerClose);
                             selectAppIdOnDrawerClose = null;
+                            invalidateOptionsMenu();
                         }
                     }
                 });
@@ -192,6 +195,10 @@ public class MessagesActivity extends AppCompatActivity
     }
 
     public void onRefreshAll(View view) {
+        refreshAll();
+    }
+
+    public void refreshAll() {
         try {
             picassoHandler.evict();
         } catch (IOException e) {
@@ -560,6 +567,7 @@ public class MessagesActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.messages_action, menu);
+        menu.findItem(R.id.action_delete_app).setVisible(appId != MessageState.ALL_MESSAGES);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -568,7 +576,30 @@ public class MessagesActivity extends AppCompatActivity
         if (item.getItemId() == R.id.action_delete_all) {
             new DeleteMessages().execute(appId);
         }
+        if (item.getItemId() == R.id.action_delete_app) {
+            android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(this);
+            alert.setTitle(R.string.delete_app);
+            alert.setMessage(R.string.ack);
+            alert.setPositiveButton(R.string.yes, (dialog, which) -> deleteApp(appId));
+            alert.setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss());
+            alert.show();
+        }
         return super.onContextItemSelected(item);
+    }
+
+    private void deleteApp(Long appId) {
+        ApiClient client =
+                ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
+
+        client.createService(ApplicationApi.class)
+                .deleteApp(appId)
+                .enqueue(
+                        Callback.callInUI(
+                                this,
+                                (ignored) -> refreshAll(),
+                                (e) ->
+                                        Utils.showSnackBar(
+                                                this, getString(R.string.error_delete_app))));
     }
 
     private class LoadMore extends AsyncTask<Long, Void, List<MessageWithImage>> {
