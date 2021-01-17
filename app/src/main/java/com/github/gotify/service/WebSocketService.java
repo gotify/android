@@ -170,10 +170,23 @@ public class WebSocketService extends Service {
 
         List<Message> messages = missingMessageUtil.missingMessages(messageId);
 
-        if (messages.size() > 5) {
-            onGroupedMessages(messages);
-        } else {
+        List<Message> filteredMessages = null;
+
+        try (MessagingDatabase db = new MessagingDatabase(this)) {
             for (Message message : messages) {
+                String registeredAppName = db.getAppFromId(message.getAppid());
+                if (!registeredAppName.isEmpty()) {
+                    forward(message,registeredAppName);
+                } else {
+                    filteredMessages.add(message);
+                }
+            }
+        }
+
+        if (filteredMessages.size() > 5) {
+            onGroupedMessages(filteredMessages);
+        } else {
+            for (Message message : filteredMessages) {
                 onMessage(message);
             }
         }
@@ -202,16 +215,16 @@ public class WebSocketService extends Service {
             lastReceivedMessage.set(message.getId());
         }
 
-        broadcast(message);
         try (MessagingDatabase db = new MessagingDatabase(this)) {
             String registeredAppName = db.getAppFromId(message.getAppid());
-            db.close();
             if (!registeredAppName.isEmpty()) {
-                Log.i("Forward message to " + registeredAppName);
-                PushNotificationKt.sendMessage(this, registeredAppName, message.getMessage());
+                forward(message, registeredAppName);
                 return;
             }
         }
+
+        broadcast(message);
+
         showNotification(
                 message.getId(),
                 message.getTitle(),
@@ -219,6 +232,11 @@ public class WebSocketService extends Service {
                 message.getPriority(),
                 message.getExtras(),
                 message.getAppid());
+    }
+
+    private void forward(Message message, String registeredAppName) {
+        Log.i("Forward message to " + registeredAppName);
+        PushNotificationKt.sendMessage(this, registeredAppName, message.getMessage());
     }
 
     private void broadcast(Message message) {
