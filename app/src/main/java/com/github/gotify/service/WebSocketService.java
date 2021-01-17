@@ -176,7 +176,7 @@ public class WebSocketService extends Service {
             for (Message message : messages) {
                 String registeredAppName = db.getAppFromId(message.getAppid());
                 if (!registeredAppName.isEmpty()) {
-                    forward(message,registeredAppName);
+                    forward(message, registeredAppName);
                 } else {
                     filteredMessages.add(message);
                 }
