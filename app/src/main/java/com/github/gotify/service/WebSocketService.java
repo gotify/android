@@ -237,6 +237,7 @@ public class WebSocketService extends Service {
     private void forward(Message message, String registeredAppName) {
         Log.i("Forward message to " + registeredAppName);
         PushNotificationKt.sendMessage(this, registeredAppName, message.getMessage());
+        broadcast(message);
     }
 
     private void broadcast(Message message) {
