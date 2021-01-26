@@ -30,6 +30,7 @@ import com.github.gotify.log.Log;
 import com.github.gotify.log.UncaughtExceptionHandler;
 import com.github.gotify.messages.Extras;
 import com.github.gotify.messages.MessagesActivity;
+import com.github.gotify.messages.provider.MessageFacade;
 import com.github.gotify.picasso.PicassoHandler;
 import java.util.List;
 import java.util.Map;
@@ -238,6 +239,17 @@ public class WebSocketService extends Service {
         Log.i("Forward message to " + registeredAppName);
         PushNotificationKt.sendMessage(this, registeredAppName, message.getMessage());
         broadcast(message);
+        deleteMessage(message);
+    }
+
+    private void deleteMessage(Message message) {
+        Log.i("Deleting " + message.getId());
+        ApiClient client =
+                ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
+
+        MessageFacade messages = new MessageFacade(client.createService(MessageApi.class), null);
+        messages.deleteLocal(message);
+        messages.commitDelete();
     }
 
     private void broadcast(Message message) {
