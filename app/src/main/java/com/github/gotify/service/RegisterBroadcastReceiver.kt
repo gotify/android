@@ -39,8 +39,8 @@ class RegisterBroadcastReceiver: BroadcastReceiver() {
         // The app is registered with the same token : we re-register it
         // the client may need its endpoint again
         if (db.strictIsRegistered(application, connector_token)) {
-            Log.i("RegisterService","$application already registered : unregistering to register again")
-            unregisterApp(db,application,connector_token)
+            Log.i("RegisterService","$application already registered")
+            return
         }
         // The app is registered with a new token.
         // User should unregister this app manually
