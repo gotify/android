@@ -29,14 +29,10 @@ import io.noties.markwon.core.CorePlugin;
 import io.noties.markwon.ext.tables.TablePlugin;
 import io.noties.markwon.image.picasso.PicassoImagesPlugin;
 import io.noties.markwon.movement.MovementMethodPlugin;
-
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import org.threeten.bp.OffsetDateTime;
-import org.threeten.bp.format.DateTimeFormatter;
-import org.threeten.bp.temporal.ChronoUnit;
 
 public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.ViewHolder> {
 
@@ -103,7 +99,9 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
                 .into(holder.image);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean preciseDateDefault = prefs.getBoolean(context.getResources().getString(R.string.setting_key_precise_date), false);
+        boolean preciseDateDefault =
+                prefs.getBoolean(
+                        context.getResources().getString(R.string.setting_key_precise_date), false);
         holder.setDateTime(message.message.getDate(), preciseDateDefault);
         holder.date.setOnClickListener((ignored) -> holder.switchPreciseDate());
 
@@ -169,7 +167,9 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
                     if (DateUtils.isToday(time)) {
                         text = DateFormat.getTimeInstance(DateFormat.SHORT).format(date);
                     } else {
-                        text = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(date);
+                        text =
+                                DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
+                                        .format(date);
                     }
                 } else {
                     text = Utils.dateToRelative(dateTime);
