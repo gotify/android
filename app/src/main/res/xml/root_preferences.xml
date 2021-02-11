@@ -8,6 +8,11 @@
             android:entryValues="@array/mode"
             android:key="@string/setting_key_theme"
             android:title="@string/setting_theme" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/setting_key_precise_date"
+            android:title="@string/setting_precise_date"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

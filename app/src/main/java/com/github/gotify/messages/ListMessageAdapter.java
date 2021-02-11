@@ -3,6 +3,8 @@ package com.github.gotify.messages;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.text.format.DateUtils;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,8 +29,13 @@ import io.noties.markwon.core.CorePlugin;
 import io.noties.markwon.ext.tables.TablePlugin;
 import io.noties.markwon.image.picasso.PicassoImagesPlugin;
 import io.noties.markwon.movement.MovementMethodPlugin;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import org.threeten.bp.OffsetDateTime;
+import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.temporal.ChronoUnit;
 
 public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.ViewHolder> {
@@ -94,7 +102,9 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
                 .placeholder(R.drawable.ic_placeholder)
                 .into(holder.image);
 
-        holder.setDateTime(message.message.getDate());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean preciseDateDefault = prefs.getBoolean(context.getResources().getString(R.string.setting_key_precise_date), false);
+        holder.setDateTime(message.message.getDate(), preciseDateDefault);
         holder.date.setOnClickListener((ignored) -> holder.switchPreciseDate());
 
         holder.delete.setOnClickListener(
@@ -144,9 +154,9 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
             updateDate();
         }
 
-        void setDateTime(OffsetDateTime dateTime) {
+        void setDateTime(OffsetDateTime dateTime, boolean preciseDateDefault) {
             this.dateTime = dateTime;
-            preciseDate = false;
+            preciseDate = preciseDateDefault;
             updateDate();
         }
 
@@ -154,7 +164,13 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
             String text = "?";
             if (dateTime != null) {
                 if (preciseDate) {
-                    text = dateTime.truncatedTo(ChronoUnit.SECONDS).toString();
+                    long time = dateTime.toInstant().toEpochMilli();
+                    Date date = new Date(time);
+                    if (DateUtils.isToday(time)) {
+                        text = DateFormat.getTimeInstance(DateFormat.SHORT).format(date);
+                    } else {
+                        text = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(date);
+                    }
                 } else {
                     text = Utils.dateToRelative(dateTime);
                 }
