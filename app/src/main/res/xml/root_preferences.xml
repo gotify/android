@@ -9,10 +9,12 @@
             android:key="@string/setting_key_theme"
             android:title="@string/setting_theme" />
 
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="@string/setting_key_precise_date"
-            android:title="@string/setting_precise_date"/>
+        <ListPreference
+            android:defaultValue="@string/time_format_entry_relative"
+            android:entries="@array/time_format_entries"
+            android:entryValues="@array/time_format_values"
+            android:key="@string/setting_key_time_format"
+            android:title="@string/setting_time_format"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

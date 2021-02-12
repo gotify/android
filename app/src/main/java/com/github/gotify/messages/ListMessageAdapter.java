@@ -43,6 +43,9 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
     private Settings settings;
     private Markwon markwon;
 
+    private final String TIME_FORMAT_RELATIVE;
+    private final String TIME_FORMAT_PREFS_KEY;
+
     ListMessageAdapter(
             Context context,
             Settings settings,
@@ -63,6 +66,10 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
                         .usePlugin(PicassoImagesPlugin.create(picasso))
                         .usePlugin(TablePlugin.create(context))
                         .build();
+
+        TIME_FORMAT_RELATIVE =
+                context.getResources().getString(R.string.time_format_value_relative);
+        TIME_FORMAT_PREFS_KEY = context.getResources().getString(R.string.setting_key_time_format);
     }
 
     public List<MessageWithImage> getItems() {
@@ -99,11 +106,9 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
                 .into(holder.image);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean preciseDateDefault =
-                prefs.getBoolean(
-                        context.getResources().getString(R.string.setting_key_precise_date), false);
-        holder.setDateTime(message.message.getDate(), preciseDateDefault);
-        holder.date.setOnClickListener((ignored) -> holder.switchPreciseDate());
+        String timeFormat = prefs.getString(TIME_FORMAT_PREFS_KEY, TIME_FORMAT_RELATIVE);
+        holder.setDateTime(message.message.getDate(), timeFormat.equals(TIME_FORMAT_RELATIVE));
+        holder.date.setOnClickListener((ignored) -> holder.switchTimeFormat());
 
         holder.delete.setOnClickListener(
                 (ignored) -> delete.delete(holder.getAdapterPosition(), message.message, false));
@@ -136,32 +141,36 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
         @BindView(R.id.message_delete)
         ImageButton delete;
 
-        private boolean preciseDate;
+        private boolean relativeTimeFormat;
         private OffsetDateTime dateTime;
 
         ViewHolder(final View view) {
             super(view);
             ButterKnife.bind(this, view);
-            preciseDate = false;
+            relativeTimeFormat = true;
             dateTime = null;
             enableCopyToClipboard();
         }
 
-        void switchPreciseDate() {
-            preciseDate = !preciseDate;
+        void switchTimeFormat() {
+            relativeTimeFormat = !relativeTimeFormat;
             updateDate();
         }
 
-        void setDateTime(OffsetDateTime dateTime, boolean preciseDateDefault) {
+        void setDateTime(OffsetDateTime dateTime, boolean relativeTimeFormatPreference) {
             this.dateTime = dateTime;
-            preciseDate = preciseDateDefault;
+            relativeTimeFormat = relativeTimeFormatPreference;
             updateDate();
         }
 
         void updateDate() {
             String text = "?";
             if (dateTime != null) {
-                if (preciseDate) {
+                if (relativeTimeFormat) {
+                    // Relative time format
+                    text = Utils.dateToRelative(dateTime);
+                } else {
+                    // Absolute time format
                     long time = dateTime.toInstant().toEpochMilli();
                     Date date = new Date(time);
                     if (DateUtils.isToday(time)) {
@@ -171,8 +180,6 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
                                 DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
                                         .format(date);
                     }
-                } else {
-                    text = Utils.dateToRelative(dateTime);
                 }
             }
             date.setText(text);

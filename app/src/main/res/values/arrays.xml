@@ -1,4 +1,5 @@
 <resources>
+    <!--  Theme  -->
     <string-array name="mode">
         <item>@string/theme_light</item>
         <item>@string/theme_dark</item>
@@ -7,4 +8,17 @@
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
     <string name="theme_default">System Default</string>
+    <!--  Time Format  -->
+    <string-array name="time_format_entries">
+        <item>@string/time_format_entry_absolute</item>
+        <item>@string/time_format_entry_relative</item>
+    </string-array>
+    <string name="time_format_entry_absolute">Absolute time</string>
+    <string name="time_format_entry_relative">Relative time</string>
+    <string-array name="time_format_values">
+        <item>@string/time_format_value_absolute</item>
+        <item>@string/time_format_value_relative</item>
+    </string-array>
+    <string name="time_format_value_absolute">time_format_absolute</string>
+    <string name="time_format_value_relative">time_format_relative</string>
 </resources>
