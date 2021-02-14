@@ -1,0 +1,33 @@
+on: [push, pull_request]
+
+name: Build
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - run: ./gradlew build --stacktrace
+      - if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          cd app/build/outputs/apk/release
+          echo $RELEASE_KEY | base64 -d > gotify-release-key.jks
+          jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore gotify-release-key.jks -storepass $STOREPASS -keypass $KEYPASS app-release-unsigned.apk gotify-release-key
+          jarsigner -verify app-release-unsigned.apk
+          sudo apt-get install zipalign -y
+          zipalign -v 4 app-release-unsigned.apk Gotify.apk
+        env:
+          RELEASE_KEY: ${{ secrets.RELEASE_KEY }}
+          KEYPASS: ${{ secrets.KEYPASS }}
+          STOREPASS: ${{ secrets.STOREPASS }}
+      - if: startsWith(github.ref, 'refs/tags/v')
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: app/build/outputs/apk/release/Gotify.apk
+          tag: ${{ github.ref }}
+          overwrite: true
