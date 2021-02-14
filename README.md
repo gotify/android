@@ -1,4 +1,4 @@
-# Gotify Android [![Build Status][travis-badge]][travis] [![FOSSA Status][fossa-badge]][fossa] [![latest release version][release-badge]][release] [![F-Droid][fdroid-badge]][fdroid]
+# Gotify Android [![Build Status][github-action-badge]][github-action] [![FOSSA Status][fossa-badge]][fossa] [![latest release version][release-badge]][release] [![F-Droid][fdroid-badge]][fdroid]
 
 <img align="right" src="app.gif" width="250" />
 
@@ -72,8 +72,8 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
- [travis-badge]: https://travis-ci.org/gotify/android.svg?branch=master
- [travis]: https://travis-ci.org/gotify/android
+ [github-action-badge]: https://github.com/gotify/android/workflows/Build/badge.svg
+ [github-action]: https://github.com/gotify/android/actions?query=workflow%3ABuild
  [playstore]: https://play.google.com/store/apps/details?id=com.github.gotify
  [fdroid-badge]: https://img.shields.io/f-droid/v/com.github.gotify.svg
  [fdroid]: https://f-droid.org/de/packages/com.github.gotify/
