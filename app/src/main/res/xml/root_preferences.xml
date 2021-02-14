@@ -10,7 +10,7 @@
             android:title="@string/setting_theme" />
 
         <ListPreference
-            android:defaultValue="@string/time_format_entry_relative"
+            android:defaultValue="@string/time_format_value_relative"
             android:entries="@array/time_format_entries"
             android:entryValues="@array/time_format_values"
             android:key="@string/setting_key_time_format"
