@@ -3,6 +3,8 @@ package com.github.gotify.messages;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.text.format.DateUtils;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,12 +26,14 @@ import com.github.gotify.messages.provider.MessageWithImage;
 import com.squareup.picasso.Picasso;
 import io.noties.markwon.Markwon;
 import io.noties.markwon.core.CorePlugin;
+import io.noties.markwon.ext.tables.TableAwareMovementMethod;
 import io.noties.markwon.ext.tables.TablePlugin;
 import io.noties.markwon.image.picasso.PicassoImagesPlugin;
 import io.noties.markwon.movement.MovementMethodPlugin;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.List;
 import org.threeten.bp.OffsetDateTime;
-import org.threeten.bp.temporal.ChronoUnit;
 
 public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.ViewHolder> {
 
@@ -38,6 +43,9 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
     private Delete delete;
     private Settings settings;
     private Markwon markwon;
+
+    private final String TIME_FORMAT_RELATIVE;
+    private final String TIME_FORMAT_PREFS_KEY;
 
     ListMessageAdapter(
             Context context,
@@ -55,10 +63,14 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
         this.markwon =
                 Markwon.builder(context)
                         .usePlugin(CorePlugin.create())
-                        .usePlugin(MovementMethodPlugin.create())
+                        .usePlugin(MovementMethodPlugin.create(TableAwareMovementMethod.create()))
                         .usePlugin(PicassoImagesPlugin.create(picasso))
                         .usePlugin(TablePlugin.create(context))
                         .build();
+
+        TIME_FORMAT_RELATIVE =
+                context.getResources().getString(R.string.time_format_value_relative);
+        TIME_FORMAT_PREFS_KEY = context.getResources().getString(R.string.setting_key_time_format);
     }
 
     public List<MessageWithImage> getItems() {
@@ -94,8 +106,10 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
                 .placeholder(R.drawable.ic_placeholder)
                 .into(holder.image);
 
-        holder.setDateTime(message.message.getDate());
-        holder.date.setOnClickListener((ignored) -> holder.switchPreciseDate());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String timeFormat = prefs.getString(TIME_FORMAT_PREFS_KEY, TIME_FORMAT_RELATIVE);
+        holder.setDateTime(message.message.getDate(), timeFormat.equals(TIME_FORMAT_RELATIVE));
+        holder.date.setOnClickListener((ignored) -> holder.switchTimeFormat());
 
         holder.delete.setOnClickListener(
                 (ignored) -> delete.delete(holder.getAdapterPosition(), message.message, false));
@@ -128,35 +142,45 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
         @BindView(R.id.message_delete)
         ImageButton delete;
 
-        private boolean preciseDate;
+        private boolean relativeTimeFormat;
         private OffsetDateTime dateTime;
 
         ViewHolder(final View view) {
             super(view);
             ButterKnife.bind(this, view);
-            preciseDate = false;
+            relativeTimeFormat = true;
             dateTime = null;
             enableCopyToClipboard();
         }
 
-        void switchPreciseDate() {
-            preciseDate = !preciseDate;
+        void switchTimeFormat() {
+            relativeTimeFormat = !relativeTimeFormat;
             updateDate();
         }
 
-        void setDateTime(OffsetDateTime dateTime) {
+        void setDateTime(OffsetDateTime dateTime, boolean relativeTimeFormatPreference) {
             this.dateTime = dateTime;
-            preciseDate = false;
+            relativeTimeFormat = relativeTimeFormatPreference;
             updateDate();
         }
 
         void updateDate() {
             String text = "?";
             if (dateTime != null) {
-                if (preciseDate) {
-                    text = dateTime.truncatedTo(ChronoUnit.SECONDS).toString();
-                } else {
+                if (relativeTimeFormat) {
+                    // Relative time format
                     text = Utils.dateToRelative(dateTime);
+                } else {
+                    // Absolute time format
+                    long time = dateTime.toInstant().toEpochMilli();
+                    Date date = new Date(time);
+                    if (DateUtils.isToday(time)) {
+                        text = DateFormat.getTimeInstance(DateFormat.SHORT).format(date);
+                    } else {
+                        text =
+                                DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
+                                        .format(date);
+                    }
                 }
             }
             date.setText(text);

@@ -124,6 +124,8 @@ public class MessagesActivity extends AppCompatActivity
 
     private PicassoHandler picassoHandler;
 
+    private ListMessageAdapter listMessageAdapter;
+
     // we need to keep the target references otherwise they get gc'ed before they can be called.
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private final List<Target> targetReferences = new ArrayList<>();
@@ -151,7 +153,7 @@ public class MessagesActivity extends AppCompatActivity
         DividerItemDecoration dividerItemDecoration =
                 new DividerItemDecoration(
                         messagesView.getContext(), layoutManager.getOrientation());
-        ListMessageAdapter adapter =
+        listMessageAdapter =
                 new ListMessageAdapter(
                         this, settings, picassoHandler.get(), emptyList(), this::scheduleDeletion);
 
@@ -159,9 +161,10 @@ public class MessagesActivity extends AppCompatActivity
         messagesView.setHasFixedSize(true);
         messagesView.setLayoutManager(layoutManager);
         messagesView.addOnScrollListener(new MessageListOnScrollListener());
-        messagesView.setAdapter(adapter);
+        messagesView.setAdapter(listMessageAdapter);
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(adapter));
+        ItemTouchHelper itemTouchHelper =
+                new ItemTouchHelper(new SwipeToDeleteCallback(listMessageAdapter));
         itemTouchHelper.attachToRecyclerView(messagesView);
 
         swipeRefreshLayout.setOnRefreshListener(this::onRefresh);
@@ -357,6 +360,8 @@ public class MessagesActivity extends AppCompatActivity
                 }
             }
         }
+
+        listMessageAdapter.notifyDataSetChanged();
 
         navigationView.getMenu().findItem(selectedIndex).setChecked(true);
         super.onResume();
