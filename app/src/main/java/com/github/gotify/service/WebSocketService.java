@@ -32,6 +32,8 @@ import com.github.gotify.messages.Extras;
 import com.github.gotify.messages.MessagesActivity;
 import com.github.gotify.messages.provider.MessageFacade;
 import com.github.gotify.picasso.PicassoHandler;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -171,7 +173,7 @@ public class WebSocketService extends Service {
 
         List<Message> messages = missingMessageUtil.missingMessages(messageId);
 
-        List<Message> filteredMessages = null;
+        List<Message> filteredMessages = new ArrayList<>();
 
         try (MessagingDatabase db = new MessagingDatabase(this)) {
             for (Message message : messages) {
