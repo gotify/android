@@ -177,9 +177,9 @@ public class WebSocketService extends Service {
 
         try (MessagingDatabase db = new MessagingDatabase(this)) {
             for (Message message : messages) {
-                String registeredAppName = db.getAppFromId(message.getAppid());
-                if (!registeredAppName.isEmpty()) {
-                    forward(message, registeredAppName);
+                String connectorToken = db.getTokenFromId(message.getAppid());
+                if (!connectorToken.isEmpty()) {
+                    forward(message, connectorToken);
                 } else {
                     filteredMessages.add(message);
                 }
@@ -219,9 +219,9 @@ public class WebSocketService extends Service {
         }
 
         try (MessagingDatabase db = new MessagingDatabase(this)) {
-            String registeredAppName = db.getAppFromId(message.getAppid());
-            if (!registeredAppName.isEmpty()) {
-                forward(message, registeredAppName);
+            String connectorToken = db.getTokenFromId(message.getAppid());
+            if (!connectorToken.isEmpty()) {
+                forward(message, connectorToken);
                 return;
             }
         }
@@ -237,9 +237,9 @@ public class WebSocketService extends Service {
                 message.getAppid());
     }
 
-    private void forward(Message message, String registeredAppName) {
-        Log.i("Forward message to " + registeredAppName);
-        PushNotificationKt.sendMessage(this, registeredAppName, message.getMessage());
+    private void forward(Message message, String token) {
+        Log.i("Forward message to " + token);
+        PushNotificationKt.sendMessage(this, token, message.getMessage());
         broadcast(message);
         deleteMessage(message);
     }
