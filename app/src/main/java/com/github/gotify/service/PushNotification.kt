@@ -9,8 +9,8 @@ import android.util.Log
  * These functions are used to send messages to other apps
  */
 
-fun sendMessage(context: Context, application: String, message: String){
-    val token = getToken(context,application)!!
+fun sendMessage(context: Context, token: String, message: String){
+    val application = getApp(context, token)!!
     val broadcastIntent = Intent()
     broadcastIntent.`package` = application
     broadcastIntent.action = ACTION_MESSAGE
@@ -19,8 +19,8 @@ fun sendMessage(context: Context, application: String, message: String){
     context.sendBroadcast(broadcastIntent)
 }
 
-fun sendEndpoint(context: Context, application: String, endpoint: String) {
-    val token = getToken(context,application)!!
+fun sendEndpoint(context: Context, token: String, endpoint: String) {
+    val application = getApp(context, token)!!
     val broadcastIntent = Intent()
     broadcastIntent.`package` = application
     broadcastIntent.action = ACTION_NEW_ENDPOINT
@@ -29,8 +29,8 @@ fun sendEndpoint(context: Context, application: String, endpoint: String) {
     context.sendBroadcast(broadcastIntent)
 }
 
-fun sendUnregistered(context: Context, application: String, _token: String?){
-    val token = _token?: getToken(context, application)!!
+fun sendUnregistered(context: Context, token: String){
+    val application = getApp(context, token)
     val broadcastIntent = Intent()
     broadcastIntent.`package` = application
     broadcastIntent.action = ACTION_UNREGISTERED
@@ -56,13 +56,13 @@ fun sendRegistrationRefused(context: Context, application: String, token: String
     context.sendBroadcast(broadcastIntent)
 }
 
-fun getToken(context: Context, application: String): String?{
+fun getApp(context: Context, token: String): String?{
     val db = MessagingDatabase(context)
-    val token = db.getConnectorToken(application)
+    val application = db.getAppFromToken(token)
     db.close()
-    if (token.isBlank()) {
-        Log.w("notifyClient", "No token found for $application")
+    if (application.isBlank()) {
+        Log.w("getApp", "No app found for $token")
         return null
     }
-    return token
+    return application
 }

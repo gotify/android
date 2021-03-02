@@ -30,35 +30,27 @@ class RegisterBroadcastReceiver: BroadcastReceiver() {
         }
     }
 
-    private fun registerApp(context: Context?, db: MessagingDatabase, application: String, connector_token: String) {
+    private fun registerApp(context: Context?, db: MessagingDatabase, application: String, connectorToken: String) {
         if (application.isBlank()) {
             Log.w("RegisterService","Trying to register an app without packageName")
             return
         }
-        Log.i("RegisterService","registering $application token: $connector_token")
+        Log.i("RegisterService","registering $application token: $connectorToken")
         // The app is registered with the same token : we re-register it
         // the client may need its endpoint again
-        if (db.strictIsRegistered(application, connector_token)) {
+        if (db.strictIsRegistered(application, connectorToken)) {
             Log.i("RegisterService","$application already registered")
             return
         }
-        // The app is registered with a new token.
-        // User should unregister this app manually
-        // to avoid an app to impersonate another one
-        if (db.isRegistered(application)) {
-            val message = "$application already registered with a different token"
-            Log.w("RegisterService",message)
-            sendRegistrationRefused(context!!,application,connector_token,message)
-            return
-        }
+
         val app = createApp(application)
         if(app == null){
             val message = "Cannot create a new app to register"
             Log.w("RegisterService", message)
-            sendRegistrationFailed(context!!,application,connector_token,message)
+            sendRegistrationFailed(context!!,application,connectorToken,message)
             return
         }
-        db.registerApp(application, app.id, app.token, connector_token)
+        db.registerApp(application, app.id, app.token, connectorToken)
     }
 
     private fun createApp(appName: String): com.github.gotify.client.model.Application? {
@@ -93,17 +85,17 @@ class RegisterBroadcastReceiver: BroadcastReceiver() {
             ACTION_REGISTER ->{
                 val db = MessagingDatabase(context!!)
                 Log.i("Register","REGISTER")
-                val internalToken = intent.getStringExtra(EXTRA_TOKEN)?: ""
+                val connectorToken = intent.getStringExtra(EXTRA_TOKEN)?: ""
                 val application = intent.getStringExtra(EXTRA_APPLICATION)?: ""
                 thread(start = true) {
-                    registerApp(context, db, application, internalToken)
+                    registerApp(context, db, application, connectorToken)
                     Log.i("RegisterService","Registration is finished")
                 }.join()
-                val token = db.getGotifyToken(application, false)
+                val token = db.getGotifyToken(connectorToken)
+                db.close()
                 val endpoint = settings.url() +
                         "/UP?token=$token"
-                sendEndpoint(context,application,endpoint)
-                db.close()
+                sendEndpoint(context, connectorToken, endpoint)
             }
             ACTION_UNREGISTER ->{
                 Log.i("Register","UNREGISTER")
@@ -115,7 +107,7 @@ class RegisterBroadcastReceiver: BroadcastReceiver() {
                     db.close()
                     Log.i("RegisterService","Unregistration is finished")
                 }
-                sendUnregistered(context!!,application,token)
+                sendUnregistered(context!!, token)
             }
         }
     }
