@@ -50,7 +50,10 @@ public class PicassoHandler {
         builder.cache(picassoCache);
         CertUtils.applySslSettings(builder, settings.sslSettings());
         OkHttp3Downloader downloader = new OkHttp3Downloader(builder.build());
-        return new Picasso.Builder(context).downloader(downloader).build();
+        return new Picasso.Builder(context)
+                .addRequestHandler(new PicassoDataRequestHandler())
+                .downloader(downloader)
+                .build();
     }
 
     public Bitmap getIcon(Long appId) {
