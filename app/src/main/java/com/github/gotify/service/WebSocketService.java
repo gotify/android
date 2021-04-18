@@ -111,15 +111,12 @@ public class WebSocketService extends Service {
                         .onBadRequest(this::onBadRequest)
                         .onNetworkFailure(
                                 (min) -> foreground(getString(R.string.websocket_failed, min)))
-                        .onDisconnect(this::onDisconnect)
                         .onMessage(this::onMessage)
                         .onReconnected(this::notifyMissedNotifications)
                         .start();
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        ReconnectListener receiver = new ReconnectListener(this::doReconnect);
-        registerReceiver(receiver, intentFilter);
 
         picassoHandler.updateAppIds();
     }
@@ -140,10 +137,6 @@ public class WebSocketService extends Service {
                                         this.doReconnect();
                                     }
                                 }));
-    }
-
-    private void onDisconnect() {
-        foreground(getString(R.string.websocket_no_network));
     }
 
     private void doReconnect() {

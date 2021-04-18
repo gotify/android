@@ -41,7 +41,6 @@ class WebSocketConnection {
     private OnNetworkFailureRunnable onNetworkFailure;
     private Runnable onReconnected;
     private State state;
-    private Runnable onDisconnect;
 
     WebSocketConnection(
             String baseUrl,
@@ -81,11 +80,6 @@ class WebSocketConnection {
 
     synchronized WebSocketConnection onBadRequest(BadRequestRunnable onBadRequest) {
         this.onBadRequest = onBadRequest;
-        return this;
-    }
-
-    synchronized WebSocketConnection onDisconnect(Runnable onDisconnect) {
-        this.onDisconnect = onDisconnect;
         return this;
     }
 
@@ -224,8 +218,6 @@ class WebSocketConnection {
                         NetworkInfo network = connectivityManager.getActiveNetworkInfo();
                         if (network == null || !network.isConnected()) {
                             Log.i("WebSocket(" + id + "): Network not connected");
-                            onDisconnect.run();
-                            return;
                         }
 
                         int minutes = Math.min(errorCount * 2 - 1, 20);
