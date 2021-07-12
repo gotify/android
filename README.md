@@ -29,6 +29,8 @@ Here is one way to disable battery optimization for Gotify.
 * Search for "Battery Optimization"
 * Find "Gotify" and disable battery optimization
 
+See also https://dontkillmyapp.com for phone manufacturer specific instructions to disable battery optimizations.
+
 ### Minimize the Gotify foreground notification
 
 *Only possible for Android version >= 8*
