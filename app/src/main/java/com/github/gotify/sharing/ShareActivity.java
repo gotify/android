@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -46,6 +47,9 @@ public class ShareActivity extends AppCompatActivity {
     @BindView(R.id.appSpinner)
     Spinner appSpinner;
 
+    @BindView(R.id.push_button)
+    Button pushMessageButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,7 +77,11 @@ public class ShareActivity extends AppCompatActivity {
         ApiClient client =
                 ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
         appsHolder = new ApplicationHolder(this, client);
-        appsHolder.onUpdate(() -> populateSpinner(appsHolder.get()));
+        appsHolder.onUpdate(() -> {
+            List<Application> apps = appsHolder.get();
+            populateSpinner(apps);
+            pushMessageButton.setEnabled(apps.size() > 0);
+        });
         appsHolder.request();
     }
 
