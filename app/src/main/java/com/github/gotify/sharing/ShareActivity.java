@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -50,6 +51,9 @@ public class ShareActivity extends AppCompatActivity {
     @BindView(R.id.push_button)
     Button pushMessageButton;
 
+    @BindView(R.id.infoMissingApps)
+    TextView missingAppsInfo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,9 +84,14 @@ public class ShareActivity extends AppCompatActivity {
         appsHolder.onUpdate(() -> {
             List<Application> apps = appsHolder.get();
             populateSpinner(apps);
-            pushMessageButton.setEnabled(apps.size() > 0);
+            preventPushing(apps.size() == 0);
         });
         appsHolder.request();
+    }
+
+    private void preventPushing(boolean prevent) {
+        pushMessageButton.setEnabled(!prevent);
+        missingAppsInfo.setVisibility(prevent ? View.VISIBLE : View.GONE);
     }
 
     @Override

@@ -81,6 +81,17 @@
             android:textSize="18sp" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/infoMissingApps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="20dp"
+        android:text="@string/push_missing_app_info"
+        android:textAlignment="center"
+        android:textColor="#BDBDBD"
+        android:visibility="gone" />
+
     <Button
         android:id="@+id/push_button"
         android:layout_width="match_parent"
@@ -89,4 +100,5 @@
         android:layout_marginBottom="20dp"
         android:layout_marginHorizontal="20dp"
         android:text="@string/push_button" />
+
 </LinearLayout>
