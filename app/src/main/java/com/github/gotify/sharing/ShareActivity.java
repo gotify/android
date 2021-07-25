@@ -84,14 +84,12 @@ public class ShareActivity extends AppCompatActivity {
         appsHolder.onUpdate(() -> {
             List<Application> apps = appsHolder.get();
             populateSpinner(apps);
-            preventPushing(apps.size() == 0);
+
+            boolean appsAvailable = apps.size() > 0;
+            pushMessageButton.setEnabled(appsAvailable);
+            missingAppsInfo.setVisibility(appsAvailable ? View.GONE : View.VISIBLE);
         });
         appsHolder.request();
-    }
-
-    private void preventPushing(boolean prevent) {
-        pushMessageButton.setEnabled(!prevent);
-        missingAppsInfo.setVisibility(prevent ? View.VISIBLE : View.GONE);
     }
 
     @Override
