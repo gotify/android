@@ -85,10 +85,11 @@ public class ShareActivity extends AppCompatActivity {
             List<Application> apps = appsHolder.get();
             populateSpinner(apps);
 
-            boolean appsAvailable = apps.size() > 0;
+            boolean appsAvailable = !apps.isEmpty();
             pushMessageButton.setEnabled(appsAvailable);
             missingAppsInfo.setVisibility(appsAvailable ? View.GONE : View.VISIBLE);
         });
+        appsHolder.onUpdateFailed(() -> pushMessageButton.setEnabled(false));
         appsHolder.request();
     }
 
@@ -112,6 +113,11 @@ public class ShareActivity extends AppCompatActivity {
             return;
         } else if (priority.isEmpty()) {
             Toast.makeText(this, "Priority should be number.", Toast.LENGTH_LONG).show();
+            return;
+        } else if (appIndex == Spinner.INVALID_POSITION) {
+            //For safety, e.g. loading the apps needs too much time (maybe a timeout) and
+            //the user tries to push without an app selected.
+            Toast.makeText(this, "An app must be selected.", Toast.LENGTH_LONG).show();
             return;
         }
 
