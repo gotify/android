@@ -36,14 +36,12 @@ public class ApplicationHolder {
 
     private void onReceiveApps(List<Application> apps) {
         state = apps;
-        if (onUpdate != null)
-            onUpdate.run();
+        if (onUpdate != null) onUpdate.run();
     }
 
     private void onFailedApps(ApiException e) {
         Utils.showSnackBar(activity, "Could not request applications, see logs.");
-        if (onUpdateFailed != null)
-            onUpdateFailed.run();
+        if (onUpdateFailed != null) onUpdateFailed.run();
     }
 
     public List<Application> get() {

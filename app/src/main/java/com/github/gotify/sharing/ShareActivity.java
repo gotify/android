@@ -81,14 +81,15 @@ public class ShareActivity extends AppCompatActivity {
         ApiClient client =
                 ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
         appsHolder = new ApplicationHolder(this, client);
-        appsHolder.onUpdate(() -> {
-            List<Application> apps = appsHolder.get();
-            populateSpinner(apps);
+        appsHolder.onUpdate(
+                () -> {
+                    List<Application> apps = appsHolder.get();
+                    populateSpinner(apps);
 
-            boolean appsAvailable = !apps.isEmpty();
-            pushMessageButton.setEnabled(appsAvailable);
-            missingAppsInfo.setVisibility(appsAvailable ? View.GONE : View.VISIBLE);
-        });
+                    boolean appsAvailable = !apps.isEmpty();
+                    pushMessageButton.setEnabled(appsAvailable);
+                    missingAppsInfo.setVisibility(appsAvailable ? View.GONE : View.VISIBLE);
+                });
         appsHolder.onUpdateFailed(() -> pushMessageButton.setEnabled(false));
         appsHolder.request();
     }
@@ -115,8 +116,8 @@ public class ShareActivity extends AppCompatActivity {
             Toast.makeText(this, "Priority should be number.", Toast.LENGTH_LONG).show();
             return;
         } else if (appIndex == Spinner.INVALID_POSITION) {
-            //For safety, e.g. loading the apps needs too much time (maybe a timeout) and
-            //the user tries to push without an app selected.
+            // For safety, e.g. loading the apps needs too much time (maybe a timeout) and
+            // the user tries to push without an app selected.
             Toast.makeText(this, "An app must be selected.", Toast.LENGTH_LONG).show();
             return;
         }
