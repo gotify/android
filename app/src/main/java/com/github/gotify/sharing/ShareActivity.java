@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
@@ -46,6 +48,12 @@ public class ShareActivity extends AppCompatActivity {
     @BindView(R.id.appSpinner)
     Spinner appSpinner;
 
+    @BindView(R.id.push_button)
+    Button pushMessageButton;
+
+    @BindView(R.id.missingAppsContainer)
+    LinearLayout missingAppsInfo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,7 +81,16 @@ public class ShareActivity extends AppCompatActivity {
         ApiClient client =
                 ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
         appsHolder = new ApplicationHolder(this, client);
-        appsHolder.onUpdate(() -> populateSpinner(appsHolder.get()));
+        appsHolder.onUpdate(
+                () -> {
+                    List<Application> apps = appsHolder.get();
+                    populateSpinner(apps);
+
+                    boolean appsAvailable = !apps.isEmpty();
+                    pushMessageButton.setEnabled(appsAvailable);
+                    missingAppsInfo.setVisibility(appsAvailable ? View.GONE : View.VISIBLE);
+                });
+        appsHolder.onUpdateFailed(() -> pushMessageButton.setEnabled(false));
         appsHolder.request();
     }
 
@@ -97,6 +114,11 @@ public class ShareActivity extends AppCompatActivity {
             return;
         } else if (priority.isEmpty()) {
             Toast.makeText(this, "Priority should be number.", Toast.LENGTH_LONG).show();
+            return;
+        } else if (appIndex == Spinner.INVALID_POSITION) {
+            // For safety, e.g. loading the apps needs too much time (maybe a timeout) and
+            // the user tries to push without an app selected.
+            Toast.makeText(this, "An app must be selected.", Toast.LENGTH_LONG).show();
             return;
         }
 

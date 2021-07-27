@@ -13,6 +13,7 @@ import java.util.List;
 public class ApplicationHolder {
     private List<Application> state;
     private Runnable onUpdate;
+    private Runnable onUpdateFailed;
     private Activity activity;
     private ApiClient client;
 
@@ -35,11 +36,12 @@ public class ApplicationHolder {
 
     private void onReceiveApps(List<Application> apps) {
         state = apps;
-        onUpdate.run();
+        if (onUpdate != null) onUpdate.run();
     }
 
     private void onFailedApps(ApiException e) {
         Utils.showSnackBar(activity, "Could not request applications, see logs.");
+        if (onUpdateFailed != null) onUpdateFailed.run();
     }
 
     public List<Application> get() {
@@ -48,5 +50,9 @@ public class ApplicationHolder {
 
     public void onUpdate(Runnable runnable) {
         this.onUpdate = runnable;
+    }
+
+    public void onUpdateFailed(Runnable runnable) {
+        this.onUpdateFailed = runnable;
     }
 }

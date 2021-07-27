@@ -81,5 +81,6 @@
     <string name="push_title_hint">Title</string>
     <string name="push_content_hint">Content</string>
     <string name="push_priority_hint">Priority</string>
+    <string name="push_missing_app_info">There are no applications available on the server to push a message to.</string>
     <string name="message_copied_to_clipboard">Content copied to clipboard</string>
 </resources>
