@@ -13,10 +13,13 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
+
+import com.github.gotify.MarkwonFactory;
 import com.github.gotify.MissedMessageUtil;
 import com.github.gotify.NotificationSupport;
 import com.github.gotify.R;
@@ -35,6 +38,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import io.noties.markwon.Markwon;
+
 import static com.github.gotify.api.Callback.call;
 
 public class WebSocketService extends Service {
@@ -51,6 +56,7 @@ public class WebSocketService extends Service {
     private MissedMessageUtil missingMessageUtil;
 
     private PicassoHandler picassoHandler;
+    private Markwon markwon;
 
     @Override
     public void onCreate() {
@@ -61,6 +67,7 @@ public class WebSocketService extends Service {
         missingMessageUtil = new MissedMessageUtil(client.createService(MessageApi.class));
         Log.i("Create " + getClass().getSimpleName());
         picassoHandler = new PicassoHandler(this, settings);
+        markwon = MarkwonFactory.create(this, picassoHandler.get());
     }
 
     @Override
@@ -288,6 +295,8 @@ public class WebSocketService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             showNotificationGroup(priority);
         }
+
+        if (Extras.useMarkdown(extras)) message = markwon.toMarkdown(message).toString();
 
         b.setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)

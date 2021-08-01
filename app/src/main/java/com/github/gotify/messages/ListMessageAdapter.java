@@ -18,6 +18,8 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import com.github.gotify.MarkwonFactory;
 import com.github.gotify.R;
 import com.github.gotify.Settings;
 import com.github.gotify.Utils;
@@ -25,11 +27,6 @@ import com.github.gotify.client.model.Message;
 import com.github.gotify.messages.provider.MessageWithImage;
 import com.squareup.picasso.Picasso;
 import io.noties.markwon.Markwon;
-import io.noties.markwon.core.CorePlugin;
-import io.noties.markwon.ext.tables.TableAwareMovementMethod;
-import io.noties.markwon.ext.tables.TablePlugin;
-import io.noties.markwon.image.picasso.PicassoImagesPlugin;
-import io.noties.markwon.movement.MovementMethodPlugin;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
@@ -60,13 +57,7 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
         this.items = items;
         this.delete = delete;
 
-        this.markwon =
-                Markwon.builder(context)
-                        .usePlugin(CorePlugin.create())
-                        .usePlugin(MovementMethodPlugin.create(TableAwareMovementMethod.create()))
-                        .usePlugin(PicassoImagesPlugin.create(picasso))
-                        .usePlugin(TablePlugin.create(context))
-                        .build();
+        this.markwon = MarkwonFactory.create(context, picasso);
 
         TIME_FORMAT_RELATIVE =
                 context.getResources().getString(R.string.time_format_value_relative);
