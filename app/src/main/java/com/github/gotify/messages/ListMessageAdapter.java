@@ -26,6 +26,7 @@ import com.github.gotify.messages.provider.MessageWithImage;
 import com.squareup.picasso.Picasso;
 import io.noties.markwon.Markwon;
 import io.noties.markwon.core.CorePlugin;
+import io.noties.markwon.ext.strikethrough.StrikethroughPlugin;
 import io.noties.markwon.ext.tables.TableAwareMovementMethod;
 import io.noties.markwon.ext.tables.TablePlugin;
 import io.noties.markwon.image.picasso.PicassoImagesPlugin;
@@ -65,6 +66,7 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
                         .usePlugin(CorePlugin.create())
                         .usePlugin(MovementMethodPlugin.create(TableAwareMovementMethod.create()))
                         .usePlugin(PicassoImagesPlugin.create(picasso))
+                        .usePlugin(StrikethroughPlugin.create())
                         .usePlugin(TablePlugin.create(context))
                         .build();
 
