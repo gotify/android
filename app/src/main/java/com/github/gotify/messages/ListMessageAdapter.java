@@ -18,7 +18,6 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
 import com.github.gotify.MarkwonFactory;
 import com.github.gotify.R;
 import com.github.gotify.Settings;
