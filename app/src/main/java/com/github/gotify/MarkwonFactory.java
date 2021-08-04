@@ -25,6 +25,7 @@ import org.commonmark.node.BlockQuote;
 import org.commonmark.node.Code;
 import org.commonmark.node.Emphasis;
 import org.commonmark.node.Heading;
+import org.commonmark.node.Link;
 import org.commonmark.node.ListItem;
 import org.commonmark.node.StrongEmphasis;
 
@@ -80,7 +81,8 @@ public class MarkwonFactory {
                                         .setFactory(
                                                 ListItem.class,
                                                 (configuration, props) ->
-                                                        new BulletSpan(bulletGapWidth));
+                                                        new BulletSpan(bulletGapWidth))
+                                        .setFactory(Link.class, ((configuration, props) -> null));
                             }
                         })
                 .build();
