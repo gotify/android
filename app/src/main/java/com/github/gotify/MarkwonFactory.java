@@ -14,6 +14,7 @@ import com.squareup.picasso.Picasso;
 import io.noties.markwon.AbstractMarkwonPlugin;
 import io.noties.markwon.Markwon;
 import io.noties.markwon.MarkwonSpansFactory;
+import io.noties.markwon.MarkwonVisitor;
 import io.noties.markwon.core.CorePlugin;
 import io.noties.markwon.core.CoreProps;
 import io.noties.markwon.ext.strikethrough.StrikethroughPlugin;
@@ -21,6 +22,9 @@ import io.noties.markwon.ext.tables.TableAwareMovementMethod;
 import io.noties.markwon.ext.tables.TablePlugin;
 import io.noties.markwon.image.picasso.PicassoImagesPlugin;
 import io.noties.markwon.movement.MovementMethodPlugin;
+import java.util.Collections;
+import org.commonmark.ext.gfm.tables.TableCell;
+import org.commonmark.ext.gfm.tables.TablesExtension;
 import org.commonmark.node.BlockQuote;
 import org.commonmark.node.Code;
 import org.commonmark.node.Emphasis;
@@ -28,10 +32,17 @@ import org.commonmark.node.Heading;
 import org.commonmark.node.Link;
 import org.commonmark.node.ListItem;
 import org.commonmark.node.StrongEmphasis;
+import org.commonmark.parser.Parser;
 
 public class MarkwonFactory {
-    public static Markwon create(Context context, Picasso picasso) {
-        return createBuilderBase(context, picasso).build();
+    public static Markwon createForMessage(Context context, Picasso picasso) {
+        return Markwon.builder(context)
+                .usePlugin(CorePlugin.create())
+                .usePlugin(MovementMethodPlugin.create(TableAwareMovementMethod.create()))
+                .usePlugin(PicassoImagesPlugin.create(picasso))
+                .usePlugin(StrikethroughPlugin.create())
+                .usePlugin(TablePlugin.create(context))
+                .build();
     }
 
     public static Markwon createForNotification(Context context, Picasso picasso) {
@@ -42,7 +53,10 @@ public class MarkwonFactory {
         final int bulletGapWidth =
                 (int) (8 * context.getResources().getDisplayMetrics().density + 0.5F);
 
-        return createBuilderBase(context, picasso)
+        return Markwon.builder(context)
+                .usePlugin(CorePlugin.create())
+                .usePlugin(PicassoImagesPlugin.create(picasso))
+                .usePlugin(StrikethroughPlugin.create())
                 .usePlugin(
                         new AbstractMarkwonPlugin() {
                             @Override
@@ -84,16 +98,22 @@ public class MarkwonFactory {
                                                         new BulletSpan(bulletGapWidth))
                                         .setFactory(Link.class, ((configuration, props) -> null));
                             }
+
+                            @Override
+                            public void configureParser(@NonNull Parser.Builder builder) {
+                                builder.extensions(Collections.singleton(TablesExtension.create()));
+                            }
+
+                            @Override
+                            public void configureVisitor(@NonNull MarkwonVisitor.Builder builder) {
+                                builder.on(
+                                        TableCell.class,
+                                        (visitor, node) -> {
+                                            visitor.visitChildren(node);
+                                            visitor.builder().append(' ');
+                                        });
+                            }
                         })
                 .build();
-    }
-
-    private static Markwon.Builder createBuilderBase(Context context, Picasso picasso) {
-        return Markwon.builder(context)
-                .usePlugin(CorePlugin.create())
-                .usePlugin(MovementMethodPlugin.create(TableAwareMovementMethod.create()))
-                .usePlugin(PicassoImagesPlugin.create(picasso))
-                .usePlugin(StrikethroughPlugin.create())
-                .usePlugin(TablePlugin.create(context));
     }
 }

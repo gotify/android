@@ -56,7 +56,7 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
         this.items = items;
         this.delete = delete;
 
-        this.markwon = MarkwonFactory.create(context, picasso);
+        this.markwon = MarkwonFactory.createForMessage(context, picasso);
 
         TIME_FORMAT_RELATIVE =
                 context.getResources().getString(R.string.time_format_value_relative);
