@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
+import com.github.gotify.MarkwonFactory;
 import com.github.gotify.MissedMessageUtil;
 import com.github.gotify.NotificationSupport;
 import com.github.gotify.R;
@@ -31,6 +32,7 @@ import com.github.gotify.log.UncaughtExceptionHandler;
 import com.github.gotify.messages.Extras;
 import com.github.gotify.messages.MessagesActivity;
 import com.github.gotify.picasso.PicassoHandler;
+import io.noties.markwon.Markwon;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -51,6 +53,7 @@ public class WebSocketService extends Service {
     private MissedMessageUtil missingMessageUtil;
 
     private PicassoHandler picassoHandler;
+    private Markwon markwon;
 
     @Override
     public void onCreate() {
@@ -61,6 +64,7 @@ public class WebSocketService extends Service {
         missingMessageUtil = new MissedMessageUtil(client.createService(MessageApi.class));
         Log.i("Create " + getClass().getSimpleName());
         picassoHandler = new PicassoHandler(this, settings);
+        markwon = MarkwonFactory.createForNotification(this, picassoHandler.get());
     }
 
     @Override
@@ -297,12 +301,18 @@ public class WebSocketService extends Service {
                 .setTicker(getString(R.string.app_name) + " - " + title)
                 .setGroup(NotificationSupport.Group.MESSAGES)
                 .setContentTitle(title)
-                .setContentText(message)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                 .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
                 .setLights(Color.CYAN, 1000, 5000)
                 .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary))
                 .setContentIntent(contentIntent);
+
+        CharSequence formattedMessage = message;
+        if (Extras.useMarkdown(extras)) {
+            formattedMessage = markwon.toMarkdown(message);
+            message = formattedMessage.toString();
+        }
+        b.setContentText(message);
+        b.setStyle(new NotificationCompat.BigTextStyle().bigText(formattedMessage));
 
         NotificationManager notificationManager =
                 (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);

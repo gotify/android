@@ -7,11 +7,15 @@ public final class Extras {
     private Extras() {}
 
     public static boolean useMarkdown(Message message) {
-        if (message.getExtras() == null) {
+        return useMarkdown(message.getExtras());
+    }
+
+    public static boolean useMarkdown(Map<String, Object> extras) {
+        if (extras == null) {
             return false;
         }
 
-        Object display = message.getExtras().get("client::display");
+        Object display = extras.get("client::display");
         if (!(display instanceof Map)) {
             return false;
         }
