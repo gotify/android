@@ -14,6 +14,7 @@ public class NotificationSupport {
 
     public static final class Channel {
         public static final String FOREGROUND = "gotify_foreground";
+        public static final String SOCKET_STATUS = "gotify-socket_status";
         public static final String MESSAGES_IMPORTANCE_MIN = "gotify_messages_min_importance";
         public static final String MESSAGES_IMPORTANCE_LOW = "gotify_messages_low_importance";
         public static final String MESSAGES_IMPORTANCE_DEFAULT =
@@ -24,6 +25,7 @@ public class NotificationSupport {
     public static final class ID {
         public static final int FOREGROUND = -1;
         public static final int GROUPED = -2;
+        public static final int SOCKET_STATUS = -3;
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -37,6 +39,12 @@ public class NotificationSupport {
                             "Gotify foreground notification",
                             NotificationManager.IMPORTANCE_LOW);
             foreground.setShowBadge(false);
+
+            NotificationChannel socketStatus =
+                    new NotificationChannel(
+                            Channel.SOCKET_STATUS,
+                            "Gotify socket status",
+                            NotificationManager.IMPORTANCE_DEFAULT);
 
             NotificationChannel messagesImportanceMin =
                     new NotificationChannel(
@@ -69,6 +77,7 @@ public class NotificationSupport {
             messagesImportanceHigh.enableVibration(true);
 
             notificationManager.createNotificationChannel(foreground);
+            notificationManager.createNotificationChannel(socketStatus);
             notificationManager.createNotificationChannel(messagesImportanceMin);
             notificationManager.createNotificationChannel(messagesImportanceLow);
             notificationManager.createNotificationChannel(messagesImportanceDefault);

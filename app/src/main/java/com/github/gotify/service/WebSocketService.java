@@ -113,8 +113,7 @@ public class WebSocketService extends Service {
                         .onOpen(this::onOpen)
                         .onClose(this::onClose)
                         .onBadRequest(this::onBadRequest)
-                        .onNetworkFailure(
-                                (min) -> foreground(getString(R.string.websocket_failed, min)))
+                        .onNetworkFailure(this::onNetworkFailure)
                         .onMessage(this::onMessage)
                         .onReconnected(this::notifyMissedNotifications)
                         .start();
@@ -155,8 +154,14 @@ public class WebSocketService extends Service {
         foreground(getString(R.string.websocket_could_not_connect, message));
     }
 
+    private void onNetworkFailure(long nextTryMin) {
+        foreground(getString(R.string.websocket_failed, nextTryMin));
+        socketStatusNotification(getString(R.string.websocket_status_connection_lost));
+    }
+
     private void onOpen() {
         foreground(getString(R.string.websocket_listening, settings.url()));
+        cancelSocketStatusNotification();
     }
 
     private void notifyMissedNotifications() {
@@ -244,6 +249,33 @@ public class WebSocketService extends Service {
                         .build();
 
         startForeground(NotificationSupport.ID.FOREGROUND, notification);
+    }
+
+    private void socketStatusNotification(String message) {
+
+        NotificationCompat.Builder b =
+                new NotificationCompat.Builder(
+                        this, NotificationSupport.Channel.SOCKET_STATUS);
+
+        b.setAutoCancel(true)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setWhen(System.currentTimeMillis())
+                .setSmallIcon(R.drawable.ic_gotify)
+                .setTicker(getString(R.string.app_name) + " - " + getString(R.string.websocket_status_message_title))
+                .setContentTitle(getString(R.string.websocket_status_message_title))
+                .setLights(Color.CYAN, 1000, 5000)
+                .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary))
+                .setContentText(message);
+
+        NotificationManager notificationManager =
+                (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(NotificationSupport.ID.SOCKET_STATUS, b.build());
+    }
+
+    private void cancelSocketStatusNotification() {
+        NotificationManager notificationManager =
+                (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(NotificationSupport.ID.SOCKET_STATUS);
     }
 
     private void showNotification(
