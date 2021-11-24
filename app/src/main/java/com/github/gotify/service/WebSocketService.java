@@ -314,6 +314,19 @@ public class WebSocketService extends Service {
         b.setContentText(message);
         b.setStyle(new NotificationCompat.BigTextStyle().bigText(formattedMessage));
 
+        String notificationImageUrl =
+                Extras.getNestedValue(String.class, extras, "client::notification", "bigImageUrl");
+
+        if (notificationImageUrl != null) {
+            try {
+                b.setStyle(
+                        new NotificationCompat.BigPictureStyle()
+                                .bigPicture(picassoHandler.getImageFromUrl(notificationImageUrl)));
+            } catch (Exception e) {
+                Log.e("Error loading bigImageUrl", e);
+            }
+        }
+
         NotificationManager notificationManager =
                 (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(Utils.longToInt(id), b.build());
