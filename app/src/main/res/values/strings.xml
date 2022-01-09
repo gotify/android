@@ -83,4 +83,5 @@
     <string name="push_priority_hint">Priority</string>
     <string name="push_missing_app_info">There are no applications available on the server to push a message to.</string>
     <string name="message_copied_to_clipboard">Content copied to clipboard</string>
+    <string name="not_loggedin_share">Cannot share to Gotify, because you aren\'t logged in.</string>
 </resources>

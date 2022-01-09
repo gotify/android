@@ -78,6 +78,13 @@ public class ShareActivity extends AppCompatActivity {
             }
         }
 
+        if (!settings.tokenExists()) {
+            Toast.makeText(getApplicationContext(), R.string.not_loggedin_share, Toast.LENGTH_SHORT)
+                    .show();
+            finish();
+            return;
+        }
+
         ApiClient client =
                 ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
         appsHolder = new ApplicationHolder(this, client);
