@@ -90,7 +90,8 @@ public class MessagesActivity extends AppCompatActivity
                 }
             };
 
-    private int APPLICATION_ORDER = 1;
+    private static final String APPID_RESTOREKEY = "AppId";
+    private static final int APPLICATION_ORDER = 1;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -138,6 +139,10 @@ public class MessagesActivity extends AppCompatActivity
         settings = new Settings(this);
 
         picassoHandler = new PicassoHandler(this, settings);
+
+        if (savedInstanceState != null) {
+            appId = savedInstanceState.getLong(APPID_RESTOREKEY);
+        }
 
         client =
                 ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
@@ -232,10 +237,13 @@ public class MessagesActivity extends AppCompatActivity
         menu.removeGroup(R.id.apps);
         targetReferences.clear();
         updateMessagesAndStopLoading(messages.get(appId));
+
+        MenuItem selectedItem = menu.findItem(R.id.nav_all_messages);
         for (int i = 0; i < applications.size(); i++) {
             Application app = applications.get(i);
             MenuItem item = menu.add(R.id.apps, i, APPLICATION_ORDER, app.getName());
             item.setCheckable(true);
+            if (app.getId() == appId) selectedItem = item;
             Target t = Utils.toDrawable(getResources(), item::setIcon);
             targetReferences.add(t);
             picassoHandler
@@ -246,6 +254,9 @@ public class MessagesActivity extends AppCompatActivity
                     .resize(100, 100)
                     .into(t);
         }
+
+        selectedItem.setChecked(true);
+        onNavigationItemSelected(selectedItem);
     }
 
     private void initDrawer() {
@@ -376,6 +387,12 @@ public class MessagesActivity extends AppCompatActivity
     protected void onDestroy() {
         super.onDestroy();
         picassoHandler.get().shutdown();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putLong(APPID_RESTOREKEY, appId);
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     private void scheduleDeletion(int position, Message message, boolean listAnimation) {
