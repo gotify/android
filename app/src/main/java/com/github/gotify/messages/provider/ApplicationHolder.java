@@ -22,10 +22,8 @@ public class ApplicationHolder {
         this.client = client;
     }
 
-    public void requestIfMissing() {
-        if (state == null) {
-            request();
-        }
+    public boolean wasRequested() {
+        return state != null;
     }
 
     public void request() {
