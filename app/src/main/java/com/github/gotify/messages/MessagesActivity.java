@@ -28,6 +28,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -61,7 +62,6 @@ import com.github.gotify.messages.provider.MessageDeletion;
 import com.github.gotify.messages.provider.MessageFacade;
 import com.github.gotify.messages.provider.MessageState;
 import com.github.gotify.messages.provider.MessageWithImage;
-import com.github.gotify.picasso.PicassoHandler;
 import com.github.gotify.service.WebSocketService;
 import com.github.gotify.settings.SettingsActivity;
 import com.github.gotify.sharing.ShareActivity;
@@ -70,7 +70,6 @@ import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Target;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -80,7 +79,7 @@ import static java.util.Collections.emptyList;
 public class MessagesActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private BroadcastReceiver receiver =
+    private final BroadcastReceiver receiver =
             new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
@@ -90,7 +89,7 @@ public class MessagesActivity extends AppCompatActivity
                 }
             };
 
-    private int APPLICATION_ORDER = 1;
+    private static final int APPLICATION_ORDER = 1;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -110,43 +109,24 @@ public class MessagesActivity extends AppCompatActivity
     @BindView(R.id.flipper)
     ViewFlipper flipper;
 
-    private MessageFacade messages;
-
-    private ApiClient client;
-    private Settings settings;
-    protected ApplicationHolder appsHolder;
-
-    private long appId = MessageState.ALL_MESSAGES;
+    private MessagesModel viewModel;
 
     private boolean isLoadMore = false;
-    private Long selectAppIdOnDrawerClose = null;
-
-    private PicassoHandler picassoHandler;
+    private Long updateAppOnDrawerClose = null;
 
     private ListMessageAdapter listMessageAdapter;
-
-    // we need to keep the target references otherwise they get gc'ed before they can be called.
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    private final List<Target> targetReferences = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messages);
         ButterKnife.bind(this);
+        viewModel =
+                new ViewModelProvider(this, new MessagesModelFactory(this))
+                        .get(MessagesModel.class);
         Log.i("Entering " + getClass().getSimpleName());
-        settings = new Settings(this);
 
-        picassoHandler = new PicassoHandler(this, settings);
-
-        client =
-                ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
-        appsHolder = new ApplicationHolder(this, client);
-        appsHolder.onUpdate(() -> onUpdateApps(appsHolder.get()));
-        appsHolder.request();
         initDrawer();
-
-        messages = new MessageFacade(client.createService(MessageApi.class), appsHolder);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         DividerItemDecoration dividerItemDecoration =
@@ -154,13 +134,22 @@ public class MessagesActivity extends AppCompatActivity
                         messagesView.getContext(), layoutManager.getOrientation());
         listMessageAdapter =
                 new ListMessageAdapter(
-                        this, settings, picassoHandler.get(), emptyList(), this::scheduleDeletion);
+                        this,
+                        viewModel.getSettings(),
+                        viewModel.getPicassoHandler().get(),
+                        emptyList(),
+                        this::scheduleDeletion);
 
         messagesView.addItemDecoration(dividerItemDecoration);
         messagesView.setHasFixedSize(true);
         messagesView.setLayoutManager(layoutManager);
         messagesView.addOnScrollListener(new MessageListOnScrollListener());
         messagesView.setAdapter(listMessageAdapter);
+
+        ApplicationHolder appsHolder = viewModel.getAppsHolder();
+        appsHolder.onUpdate(() -> onUpdateApps(appsHolder.get()));
+        if (appsHolder.wasRequested()) onUpdateApps(appsHolder.get());
+        else appsHolder.request();
 
         ItemTouchHelper itemTouchHelper =
                 new ItemTouchHelper(new SwipeToDeleteCallback(listMessageAdapter));
@@ -171,11 +160,10 @@ public class MessagesActivity extends AppCompatActivity
                 new DrawerLayout.SimpleDrawerListener() {
                     @Override
                     public void onDrawerClosed(View drawerView) {
-                        if (selectAppIdOnDrawerClose != null) {
-                            appId = selectAppIdOnDrawerClose;
-                            new SelectApplicationAndUpdateMessages(true)
-                                    .execute(selectAppIdOnDrawerClose);
-                            selectAppIdOnDrawerClose = null;
+                        if (updateAppOnDrawerClose != null) {
+                            viewModel.setAppId(updateAppOnDrawerClose);
+                            new UpdateMessagesForApplication(true).execute(updateAppOnDrawerClose);
+                            updateAppOnDrawerClose = null;
                             invalidateOptionsMenu();
                         }
                     }
@@ -194,7 +182,7 @@ public class MessagesActivity extends AppCompatActivity
                             }
                         });
 
-        new SelectApplicationAndUpdateMessages(true).execute(appId);
+        new UpdateMessagesForApplication(true).execute(viewModel.getAppId());
     }
 
     public void onRefreshAll(View view) {
@@ -203,7 +191,7 @@ public class MessagesActivity extends AppCompatActivity
 
     public void refreshAll() {
         try {
-            picassoHandler.evict();
+            viewModel.getPicassoHandler().evict();
         } catch (IOException e) {
             Log.e("Problem evicting Picasso cache", e);
         }
@@ -212,8 +200,8 @@ public class MessagesActivity extends AppCompatActivity
     }
 
     private void onRefresh() {
-        messages.clear();
-        new LoadMore().execute(appId);
+        viewModel.getMessages().clear();
+        new LoadMore().execute(viewModel.getAppId());
     }
 
     @OnClick(R.id.learn_gotify)
@@ -230,22 +218,29 @@ public class MessagesActivity extends AppCompatActivity
     protected void onUpdateApps(List<Application> applications) {
         Menu menu = navigationView.getMenu();
         menu.removeGroup(R.id.apps);
-        targetReferences.clear();
-        updateMessagesAndStopLoading(messages.get(appId));
+        viewModel.getTargetReferences().clear();
+        updateMessagesAndStopLoading(viewModel.getMessages().get(viewModel.getAppId()));
+
+        MenuItem selectedItem = menu.findItem(R.id.nav_all_messages);
         for (int i = 0; i < applications.size(); i++) {
             Application app = applications.get(i);
             MenuItem item = menu.add(R.id.apps, i, APPLICATION_ORDER, app.getName());
             item.setCheckable(true);
+            if (app.getId() == viewModel.getAppId()) selectedItem = item;
             Target t = Utils.toDrawable(getResources(), item::setIcon);
-            targetReferences.add(t);
-            picassoHandler
+            viewModel.getTargetReferences().add(t);
+            viewModel
+                    .getPicassoHandler()
                     .get()
-                    .load(Utils.resolveAbsoluteUrl(settings.url() + "/", app.getImage()))
+                    .load(
+                            Utils.resolveAbsoluteUrl(
+                                    viewModel.getSettings().url() + "/", app.getImage()))
                     .error(R.drawable.ic_alarm)
                     .placeholder(R.drawable.ic_placeholder)
                     .resize(100, 100)
                     .into(t);
         }
+        selectAppInMenu(selectedItem);
     }
 
     private void initDrawer() {
@@ -263,6 +258,8 @@ public class MessagesActivity extends AppCompatActivity
 
         navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);
+
+        Settings settings = viewModel.getSettings();
 
         TextView user = headerView.findViewById(R.id.header_user);
         user.setText(settings.user().getName());
@@ -288,19 +285,18 @@ public class MessagesActivity extends AppCompatActivity
         }
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (item.getGroupId() == R.id.apps) {
-            Application app = appsHolder.get().get(id);
-            selectAppIdOnDrawerClose = app != null ? app.getId() : MessageState.ALL_MESSAGES;
+            Application app = viewModel.getAppsHolder().get().get(id);
+            updateAppOnDrawerClose = app != null ? app.getId() : MessageState.ALL_MESSAGES;
             startLoading();
             toolbar.setSubtitle(item.getTitle());
         } else if (id == R.id.nav_all_messages) {
-            selectAppIdOnDrawerClose = MessageState.ALL_MESSAGES;
+            updateAppOnDrawerClose = MessageState.ALL_MESSAGES;
             startLoading();
             toolbar.setSubtitle("");
         } else if (id == R.id.logout) {
@@ -349,20 +345,21 @@ public class MessagesActivity extends AppCompatActivity
         IntentFilter filter = new IntentFilter();
         filter.addAction(WebSocketService.NEW_MESSAGE_BROADCAST);
         registerReceiver(receiver, filter);
-        new UpdateMissedMessages().execute(messages.getLastReceivedMessage());
+        new UpdateMissedMessages().execute(viewModel.getMessages().getLastReceivedMessage());
 
         int selectedIndex = R.id.nav_all_messages;
+        long appId = viewModel.getAppId();
         if (appId != MessageState.ALL_MESSAGES) {
-            for (int i = 0; i < appsHolder.get().size(); i++) {
-                if (appsHolder.get().get(i).getId() == appId) {
+            List<Application> apps = viewModel.getAppsHolder().get();
+            for (int i = 0; i < apps.size(); i++) {
+                if (apps.get(i).getId() == appId) {
                     selectedIndex = i;
                 }
             }
         }
 
         listMessageAdapter.notifyDataSetChanged();
-
-        navigationView.getMenu().findItem(selectedIndex).setChecked(true);
+        selectAppInMenu(navigationView.getMenu().findItem(selectedIndex));
         super.onResume();
     }
 
@@ -372,17 +369,20 @@ public class MessagesActivity extends AppCompatActivity
         super.onPause();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        picassoHandler.get().shutdown();
+    private void selectAppInMenu(MenuItem appItem) {
+        if (appItem != null) {
+            appItem.setChecked(true);
+            if (appItem.getItemId() != R.id.nav_all_messages)
+                toolbar.setSubtitle(appItem.getTitle());
+        }
     }
 
     private void scheduleDeletion(int position, Message message, boolean listAnimation) {
         ListMessageAdapter adapter = (ListMessageAdapter) messagesView.getAdapter();
 
+        MessageFacade messages = viewModel.getMessages();
         messages.deleteLocal(message);
-        adapter.setItems(messages.get(appId));
+        adapter.setItems(messages.get(viewModel.getAppId()));
 
         if (listAnimation) adapter.notifyItemRemoved(position);
         else adapter.notifyDataSetChanged();
@@ -391,10 +391,11 @@ public class MessagesActivity extends AppCompatActivity
     }
 
     private void undoDelete() {
+        MessageFacade messages = viewModel.getMessages();
         MessageDeletion deletion = messages.undoDeleteLocal();
-
         if (deletion != null) {
             ListMessageAdapter adapter = (ListMessageAdapter) messagesView.getAdapter();
+            long appId = viewModel.getAppId();
             adapter.setItems(messages.get(appId));
             int insertPosition =
                     appId == MessageState.ALL_MESSAGES
@@ -428,7 +429,7 @@ public class MessagesActivity extends AppCompatActivity
     }
 
     private class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback {
-        private ListMessageAdapter adapter;
+        private final ListMessageAdapter adapter;
         private Drawable icon;
         private final ColorDrawable background;
 
@@ -525,7 +526,7 @@ public class MessagesActivity extends AppCompatActivity
 
     private class MessageListOnScrollListener extends RecyclerView.OnScrollListener {
         @Override
-        public void onScrollStateChanged(RecyclerView view, int scrollState) {}
+        public void onScrollStateChanged(@NonNull RecyclerView view, int scrollState) {}
 
         @Override
         public void onScrolled(RecyclerView view, int dx, int dy) {
@@ -536,10 +537,10 @@ public class MessagesActivity extends AppCompatActivity
 
                 if (lastVisibleItem > totalItemCount - 15
                         && totalItemCount != 0
-                        && messages.canLoadMore(appId)) {
+                        && viewModel.getMessages().canLoadMore(viewModel.getAppId())) {
                     if (!isLoadMore) {
                         isLoadMore = true;
-                        new LoadMore().execute(appId);
+                        new LoadMore().execute(viewModel.getAppId());
                     }
                 }
             }
@@ -555,16 +556,16 @@ public class MessagesActivity extends AppCompatActivity
             }
 
             List<Message> newMessages =
-                    new MissedMessageUtil(client.createService(MessageApi.class))
+                    new MissedMessageUtil(viewModel.getClient().createService(MessageApi.class))
                             .missingMessages(id);
-            messages.addMessages(newMessages);
+            viewModel.getMessages().addMessages(newMessages);
             return !newMessages.isEmpty();
         }
 
         @Override
         protected void onPostExecute(Boolean update) {
             if (update) {
-                new SelectApplicationAndUpdateMessages(true).execute(appId);
+                new UpdateMessagesForApplication(true).execute(viewModel.getAppId());
             }
         }
     }
@@ -572,20 +573,22 @@ public class MessagesActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.messages_action, menu);
-        menu.findItem(R.id.action_delete_app).setVisible(appId != MessageState.ALL_MESSAGES);
+        menu.findItem(R.id.action_delete_app)
+                .setVisible(viewModel.getAppId() != MessageState.ALL_MESSAGES);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_delete_all) {
-            new DeleteMessages().execute(appId);
+            new DeleteMessages().execute(viewModel.getAppId());
         }
         if (item.getItemId() == R.id.action_delete_app) {
             android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(this);
             alert.setTitle(R.string.delete_app);
             alert.setMessage(R.string.ack);
-            alert.setPositiveButton(R.string.yes, (dialog, which) -> deleteApp(appId));
+            alert.setPositiveButton(
+                    R.string.yes, (dialog, which) -> deleteApp(viewModel.getAppId()));
             alert.setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss());
             alert.show();
         }
@@ -593,6 +596,7 @@ public class MessagesActivity extends AppCompatActivity
     }
 
     private void deleteApp(Long appId) {
+        Settings settings = viewModel.getSettings();
         ApiClient client =
                 ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token());
 
@@ -611,7 +615,7 @@ public class MessagesActivity extends AppCompatActivity
 
         @Override
         protected List<MessageWithImage> doInBackground(Long... appId) {
-            return messages.loadMore(first(appId));
+            return viewModel.getMessages().loadMore(first(appId));
         }
 
         @Override
@@ -620,9 +624,9 @@ public class MessagesActivity extends AppCompatActivity
         }
     }
 
-    private class SelectApplicationAndUpdateMessages extends AsyncTask<Long, Void, Long> {
+    private class UpdateMessagesForApplication extends AsyncTask<Long, Void, Long> {
 
-        private SelectApplicationAndUpdateMessages(boolean withLoadingSpinner) {
+        private UpdateMessagesForApplication(boolean withLoadingSpinner) {
             if (withLoadingSpinner) {
                 startLoading();
             }
@@ -631,13 +635,13 @@ public class MessagesActivity extends AppCompatActivity
         @Override
         protected Long doInBackground(Long... appIds) {
             Long appId = first(appIds);
-            messages.loadMoreIfNotPresent(appId);
+            viewModel.getMessages().loadMoreIfNotPresent(appId);
             return appId;
         }
 
         @Override
         protected void onPostExecute(Long appId) {
-            updateMessagesAndStopLoading(messages.get(appId));
+            updateMessagesAndStopLoading(viewModel.getMessages().get(appId));
         }
     }
 
@@ -645,13 +649,13 @@ public class MessagesActivity extends AppCompatActivity
 
         @Override
         protected Void doInBackground(Message... newMessages) {
-            messages.addMessages(Arrays.asList(newMessages));
+            viewModel.getMessages().addMessages(Arrays.asList(newMessages));
             return null;
         }
 
         @Override
         protected void onPostExecute(Void data) {
-            new SelectApplicationAndUpdateMessages(false).execute(appId);
+            new UpdateMessagesForApplication(false).execute(viewModel.getAppId());
         }
     }
 
@@ -659,13 +663,13 @@ public class MessagesActivity extends AppCompatActivity
 
         @Override
         protected Void doInBackground(Void... messages) {
-            MessagesActivity.this.messages.commitDelete();
+            viewModel.getMessages().commitDelete();
             return null;
         }
 
         @Override
         protected void onPostExecute(Void data) {
-            new SelectApplicationAndUpdateMessages(false).execute(appId);
+            new UpdateMessagesForApplication(false).execute(viewModel.getAppId());
         }
     }
 
@@ -677,7 +681,7 @@ public class MessagesActivity extends AppCompatActivity
 
         @Override
         protected Boolean doInBackground(Long... appId) {
-            return messages.deleteAll(first(appId));
+            return viewModel.getMessages().deleteAll(first(appId));
         }
 
         @Override
@@ -685,7 +689,7 @@ public class MessagesActivity extends AppCompatActivity
             if (!success) {
                 Utils.showSnackBar(MessagesActivity.this, "Delete failed :(");
             }
-            new SelectApplicationAndUpdateMessages(false).execute(appId);
+            new UpdateMessagesForApplication(false).execute(viewModel.getAppId());
         }
     }
 
@@ -693,6 +697,7 @@ public class MessagesActivity extends AppCompatActivity
 
         @Override
         protected Void doInBackground(Void... ignore) {
+            Settings settings = viewModel.getSettings();
             ClientApi api =
                     ClientFactory.clientToken(
                                     settings.url(), settings.sslSettings(), settings.token())
@@ -724,7 +729,7 @@ public class MessagesActivity extends AppCompatActivity
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            settings.clear();
+            viewModel.getSettings().clear();
             startActivity(new Intent(MessagesActivity.this, LoginActivity.class));
             finish();
             super.onPostExecute(aVoid);
