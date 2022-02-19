@@ -42,27 +42,27 @@ public class NotificationSupport {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public static void createChannels(Context context, NotificationManager notificationManager, String groupid) {
+    public static void createChannel(Context context, NotificationManager notificationManager, String groupid, String groupname) {
         try {
-            notificationManager.createNotificationChannelGroup(new NotificationChannelGroup(groupid, groupid));
+            notificationManager.createNotificationChannelGroup(new NotificationChannelGroup(groupid, groupname));
 
             NotificationChannel messagesImportanceMin =
                     new NotificationChannel(
-                            Channel.MESSAGES_IMPORTANCE_MIN,
+                            Channel.MESSAGES_IMPORTANCE_MIN+"::"+groupid,
                             context.getString(R.string.notification_channel_title_min),
                             NotificationManager.IMPORTANCE_MIN);
             messagesImportanceMin.setGroup(groupid);
 
             NotificationChannel messagesImportanceLow =
                     new NotificationChannel(
-                            Channel.MESSAGES_IMPORTANCE_LOW,
+                            Channel.MESSAGES_IMPORTANCE_LOW+"::"+groupid,
                             context.getString(R.string.notification_channel_title_low),
                             NotificationManager.IMPORTANCE_LOW);
             messagesImportanceLow.setGroup(groupid);
 
             NotificationChannel messagesImportanceDefault =
                     new NotificationChannel(
-                            Channel.MESSAGES_IMPORTANCE_DEFAULT,
+                            Channel.MESSAGES_IMPORTANCE_DEFAULT+"::"+groupid,
                             context.getString(R.string.notification_channel_title_normal),
                             NotificationManager.IMPORTANCE_DEFAULT);
             messagesImportanceDefault.enableLights(true);
@@ -72,7 +72,7 @@ public class NotificationSupport {
 
             NotificationChannel messagesImportanceHigh =
                     new NotificationChannel(
-                            Channel.MESSAGES_IMPORTANCE_HIGH,
+                            Channel.MESSAGES_IMPORTANCE_HIGH+"::"+groupid,
                             context.getString(R.string.notification_channel_title_high),
                             NotificationManager.IMPORTANCE_HIGH);
             messagesImportanceHigh.enableLights(true);

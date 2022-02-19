@@ -199,14 +199,6 @@ public class WebSocketService extends Service {
             lastReceivedMessage.set(message.getId());
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationSupport.createChannels(
-                    this,
-                    (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE),
-                    message.getAppid().toString()
-            );
-        }
-
         broadcast(message);
         showNotification(
                 message.getId(),
