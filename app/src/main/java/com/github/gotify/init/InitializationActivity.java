@@ -43,8 +43,10 @@ public class InitializationActivity extends AppCompatActivity {
         setContentView(R.layout.splash);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationSupport.createChannels(
-                    (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE));
+            NotificationSupport.createForegroundChannel(
+                    this,
+                    (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)
+            );
         }
 
         UncaughtExceptionHandler.registerCurrentThread();

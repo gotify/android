@@ -1,7 +1,9 @@
 package com.github.gotify;
 
 import android.app.NotificationChannel;
+import android.app.NotificationChannelGroup;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import androidx.annotation.RequiresApi;
@@ -27,52 +29,62 @@ public class NotificationSupport {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    public static void createChannels(NotificationManager notificationManager) {
+    public static void createForegroundChannel(Context context, NotificationManager notificationManager) {
+        // Low importance so that persistent notification can be sorted towards bottom of
+        // notification shade. Also prevents vibrations caused by persistent notification
+        NotificationChannel foreground =
+                new NotificationChannel(
+                        Channel.FOREGROUND,
+                        context.getString(R.string.notification_channel_title_foreground),
+                        NotificationManager.IMPORTANCE_LOW);
+        foreground.setShowBadge(false);
+        notificationManager.createNotificationChannel(foreground);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static void createChannels(Context context, NotificationManager notificationManager, String groupid) {
         try {
-            // Low importance so that persistent notification can be sorted towards bottom of
-            // notification shade. Also prevents vibrations caused by persistent notification
-            NotificationChannel foreground =
-                    new NotificationChannel(
-                            Channel.FOREGROUND,
-                            "Gotify foreground notification",
-                            NotificationManager.IMPORTANCE_LOW);
-            foreground.setShowBadge(false);
+            notificationManager.createNotificationChannelGroup(new NotificationChannelGroup(groupid, groupid));
 
             NotificationChannel messagesImportanceMin =
                     new NotificationChannel(
                             Channel.MESSAGES_IMPORTANCE_MIN,
-                            "Min priority messages (<1)",
+                            context.getString(R.string.notification_channel_title_min),
                             NotificationManager.IMPORTANCE_MIN);
+            messagesImportanceMin.setGroup(groupid);
 
             NotificationChannel messagesImportanceLow =
                     new NotificationChannel(
                             Channel.MESSAGES_IMPORTANCE_LOW,
-                            "Low priority messages (1-3)",
+                            context.getString(R.string.notification_channel_title_low),
                             NotificationManager.IMPORTANCE_LOW);
+            messagesImportanceLow.setGroup(groupid);
 
             NotificationChannel messagesImportanceDefault =
                     new NotificationChannel(
                             Channel.MESSAGES_IMPORTANCE_DEFAULT,
-                            "Normal priority messages (4-7)",
+                            context.getString(R.string.notification_channel_title_normal),
                             NotificationManager.IMPORTANCE_DEFAULT);
             messagesImportanceDefault.enableLights(true);
             messagesImportanceDefault.setLightColor(Color.CYAN);
             messagesImportanceDefault.enableVibration(true);
+            messagesImportanceDefault.setGroup(groupid);
 
             NotificationChannel messagesImportanceHigh =
                     new NotificationChannel(
                             Channel.MESSAGES_IMPORTANCE_HIGH,
-                            "High priority messages (>7)",
+                            context.getString(R.string.notification_channel_title_high),
                             NotificationManager.IMPORTANCE_HIGH);
             messagesImportanceHigh.enableLights(true);
             messagesImportanceHigh.setLightColor(Color.CYAN);
             messagesImportanceHigh.enableVibration(true);
+            messagesImportanceHigh.setGroup(groupid);
 
-            notificationManager.createNotificationChannel(foreground);
             notificationManager.createNotificationChannel(messagesImportanceMin);
             notificationManager.createNotificationChannel(messagesImportanceLow);
             notificationManager.createNotificationChannel(messagesImportanceDefault);
             notificationManager.createNotificationChannel(messagesImportanceHigh);
+
         } catch (Exception e) {
             Log.e("Could not create channel", e);
         }
