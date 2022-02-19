@@ -48,21 +48,21 @@ public class NotificationSupport {
 
             NotificationChannel messagesImportanceMin =
                     new NotificationChannel(
-                            Channel.MESSAGES_IMPORTANCE_MIN+"::"+groupid,
+                            getChannelID(Channel.MESSAGES_IMPORTANCE_MIN, groupid),
                             context.getString(R.string.notification_channel_title_min),
                             NotificationManager.IMPORTANCE_MIN);
             messagesImportanceMin.setGroup(groupid);
 
             NotificationChannel messagesImportanceLow =
                     new NotificationChannel(
-                            Channel.MESSAGES_IMPORTANCE_LOW+"::"+groupid,
+                            getChannelID(Channel.MESSAGES_IMPORTANCE_LOW, groupid),
                             context.getString(R.string.notification_channel_title_low),
                             NotificationManager.IMPORTANCE_LOW);
             messagesImportanceLow.setGroup(groupid);
 
             NotificationChannel messagesImportanceDefault =
                     new NotificationChannel(
-                            Channel.MESSAGES_IMPORTANCE_DEFAULT+"::"+groupid,
+                            getChannelID(Channel.MESSAGES_IMPORTANCE_DEFAULT, groupid),
                             context.getString(R.string.notification_channel_title_normal),
                             NotificationManager.IMPORTANCE_DEFAULT);
             messagesImportanceDefault.enableLights(true);
@@ -72,7 +72,7 @@ public class NotificationSupport {
 
             NotificationChannel messagesImportanceHigh =
                     new NotificationChannel(
-                            Channel.MESSAGES_IMPORTANCE_HIGH+"::"+groupid,
+                            getChannelID(Channel.MESSAGES_IMPORTANCE_HIGH, groupid),
                             context.getString(R.string.notification_channel_title_high),
                             NotificationManager.IMPORTANCE_HIGH);
             messagesImportanceHigh.enableLights(true);
@@ -115,5 +115,13 @@ public class NotificationSupport {
         } else {
             return Channel.MESSAGES_IMPORTANCE_HIGH;
         }
+    }
+
+    public static String getChannelID(String importance, String groupid){
+        return importance+"::"+groupid;
+    }
+
+    public static String getChannelID(long priority, String groupid){
+        return getChannelID(convertPriorityToChannel(priority), groupid);
     }
 }

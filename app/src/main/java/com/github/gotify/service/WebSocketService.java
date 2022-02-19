@@ -287,10 +287,10 @@ public class WebSocketService extends Service {
 
         NotificationCompat.Builder b =
                 new NotificationCompat.Builder(
-                        this, NotificationSupport.convertPriorityToChannel(priority));
+                        this, NotificationSupport.getChannelID(priority, appid.toString()));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            showNotificationGroup(priority);
+            showNotificationGroup(priority, appid);
         }
 
         b.setAutoCancel(true)
@@ -333,14 +333,14 @@ public class WebSocketService extends Service {
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    public void showNotificationGroup(long priority) {
+    public void showNotificationGroup(long priority, Long appid) {
         Intent intent = new Intent(this, MessagesActivity.class);
         PendingIntent contentIntent =
                 PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder b =
                 new NotificationCompat.Builder(
-                        this, NotificationSupport.convertPriorityToChannel(priority));
+                        this, NotificationSupport.getChannelID(priority, appid.toString()));
 
         b.setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
