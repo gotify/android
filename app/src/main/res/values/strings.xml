@@ -89,4 +89,5 @@
     <string name="notification_channel_title_low">Low priority messages (1-3)</string>
     <string name="notification_channel_title_normal">Normal priority messages (4-7)</string>
     <string name="notification_channel_title_high"><![CDATA[High priority messages (>7)]]></string>
+    <string name="Fallback">Fallback Group</string>
 </resources>

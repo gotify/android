@@ -43,7 +43,7 @@ public class InitializationActivity extends AppCompatActivity {
         setContentView(R.layout.splash);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationSupport.createForegroundChannel(
+            NotificationSupport.createDefaultChannels(
                     this,
                     (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)
             );

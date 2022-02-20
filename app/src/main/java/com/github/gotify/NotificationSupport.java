@@ -1,5 +1,7 @@
 package com.github.gotify;
 
+import static com.github.gotify.NotificationSupport.Channel.FALLBACK_CHANNEL;
+
 import android.app.NotificationChannel;
 import android.app.NotificationChannelGroup;
 import android.app.NotificationManager;
@@ -16,6 +18,7 @@ public class NotificationSupport {
 
     public static final class Channel {
         public static final String FOREGROUND = "gotify_foreground";
+        public static final String FALLBACK_CHANNEL = "gotify_fallback_channel";
         public static final String MESSAGES_IMPORTANCE_MIN = "gotify_messages_min_importance";
         public static final String MESSAGES_IMPORTANCE_LOW = "gotify_messages_low_importance";
         public static final String MESSAGES_IMPORTANCE_DEFAULT =
@@ -28,6 +31,12 @@ public class NotificationSupport {
         public static final int GROUPED = -2;
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    public static void createDefaultChannels(Context context, NotificationManager notificationManager) {
+        createForegroundChannel(context, notificationManager);
+        createChannel(context, notificationManager, FALLBACK_CHANNEL, context.getString(R.string.Fallback));
+    }
+    
     @RequiresApi(Build.VERSION_CODES.O)
     public static void createForegroundChannel(Context context, NotificationManager notificationManager) {
         // Low importance so that persistent notification can be sorted towards bottom of
@@ -90,6 +99,13 @@ public class NotificationSupport {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private static boolean doesNotificationChannelExist(Context context, String channelId){
+        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationChannel channel = manager.getNotificationChannel(channelId);
+        return channel.getImportance() != NotificationManager.IMPORTANCE_NONE;
+    }
+
     /**
      * Map {@link com.github.gotify.client.model.Message#getPriority() Gotify message priorities to
      * Android channels.
@@ -123,5 +139,14 @@ public class NotificationSupport {
 
     public static String getChannelID(long priority, String groupid){
         return getChannelID(convertPriorityToChannel(priority), groupid);
+    }
+
+    public static String getChannelIDorFallback(Context context, long priority, String groupid){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if(doesNotificationChannelExist(context, groupid)) {
+                return getChannelID(convertPriorityToChannel(priority), groupid);
+            }
+        }
+        return FALLBACK_CHANNEL;
     }
 }

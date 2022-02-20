@@ -287,7 +287,7 @@ public class WebSocketService extends Service {
 
         NotificationCompat.Builder b =
                 new NotificationCompat.Builder(
-                        this, NotificationSupport.getChannelID(priority, appid.toString()));
+                        this, NotificationSupport.getChannelIDorFallback(this, priority, appid.toString()));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             showNotificationGroup(priority, appid);
@@ -340,7 +340,7 @@ public class WebSocketService extends Service {
 
         NotificationCompat.Builder b =
                 new NotificationCompat.Builder(
-                        this, NotificationSupport.getChannelID(priority, appid.toString()));
+                        this, NotificationSupport.getChannelIDorFallback(this, priority, appid.toString()));
 
         b.setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
