@@ -1,7 +1,5 @@
 package com.github.gotify;
 
-import static com.github.gotify.NotificationSupport.Channel.FALLBACK_CHANNEL;
-
 import android.app.NotificationChannel;
 import android.app.NotificationChannelGroup;
 import android.app.NotificationManager;
@@ -18,7 +16,6 @@ public class NotificationSupport {
 
     public static final class Channel {
         public static final String FOREGROUND = "gotify_foreground";
-        public static final String FALLBACK_CHANNEL = "gotify_fallback_channel";
         public static final String MESSAGES_IMPORTANCE_MIN = "gotify_messages_min_importance";
         public static final String MESSAGES_IMPORTANCE_LOW = "gotify_messages_low_importance";
         public static final String MESSAGES_IMPORTANCE_DEFAULT =
@@ -29,12 +26,6 @@ public class NotificationSupport {
     public static final class ID {
         public static final int FOREGROUND = -1;
         public static final int GROUPED = -2;
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    public static void createDefaultChannels(Context context, NotificationManager notificationManager) {
-        createForegroundChannel(context, notificationManager);
-        createChannel(context, notificationManager, FALLBACK_CHANNEL, context.getString(R.string.Fallback));
     }
     
     @RequiresApi(Build.VERSION_CODES.O)
@@ -51,6 +42,13 @@ public class NotificationSupport {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
+    public static void createChannelIfNonexistent(Context context, NotificationManager notificationManager, String groupid, String groupname) {
+        if(!doesNotificationChannelExist(context, groupid)){
+            createChannel(context, notificationManager, groupid, groupname);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public static void createChannel(Context context, NotificationManager notificationManager, String groupid, String groupname) {
         try {
             notificationManager.createNotificationChannelGroup(new NotificationChannelGroup(groupid, groupname));
@@ -61,6 +59,7 @@ public class NotificationSupport {
                             context.getString(R.string.notification_channel_title_min),
                             NotificationManager.IMPORTANCE_MIN);
             messagesImportanceMin.setGroup(groupid);
+            messagesImportanceMin.setDescription(context.getString(R.string.notification_channel_description_min));
 
             NotificationChannel messagesImportanceLow =
                     new NotificationChannel(
@@ -68,6 +67,7 @@ public class NotificationSupport {
                             context.getString(R.string.notification_channel_title_low),
                             NotificationManager.IMPORTANCE_LOW);
             messagesImportanceLow.setGroup(groupid);
+            messagesImportanceLow.setDescription(context.getString(R.string.notification_channel_description_low));
 
             NotificationChannel messagesImportanceDefault =
                     new NotificationChannel(
@@ -78,6 +78,7 @@ public class NotificationSupport {
             messagesImportanceDefault.setLightColor(Color.CYAN);
             messagesImportanceDefault.enableVibration(true);
             messagesImportanceDefault.setGroup(groupid);
+            messagesImportanceDefault.setDescription(context.getString(R.string.notification_channel_description_normal));
 
             NotificationChannel messagesImportanceHigh =
                     new NotificationChannel(
@@ -88,6 +89,7 @@ public class NotificationSupport {
             messagesImportanceHigh.setLightColor(Color.CYAN);
             messagesImportanceHigh.enableVibration(true);
             messagesImportanceHigh.setGroup(groupid);
+            messagesImportanceHigh.setDescription(context.getString(R.string.notification_channel_description_high));
 
             notificationManager.createNotificationChannel(messagesImportanceMin);
             notificationManager.createNotificationChannel(messagesImportanceLow);
@@ -139,14 +141,5 @@ public class NotificationSupport {
 
     public static String getChannelID(long priority, String groupid){
         return getChannelID(convertPriorityToChannel(priority), groupid);
-    }
-
-    public static String getChannelIDorFallback(Context context, long priority, String groupid){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if(doesNotificationChannelExist(context, groupid)) {
-                return getChannelID(convertPriorityToChannel(priority), groupid);
-            }
-        }
-        return FALLBACK_CHANNEL;
     }
 }

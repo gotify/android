@@ -285,9 +285,19 @@ public class WebSocketService extends Service {
         PendingIntent contentIntent =
                 PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationSupport.createChannelIfNonexistent(
+                    this,
+                    (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE),
+                    appid.toString(),
+                    appid.toString()
+            );
+        }
+
         NotificationCompat.Builder b =
                 new NotificationCompat.Builder(
-                        this, NotificationSupport.getChannelIDorFallback(this, priority, appid.toString()));
+                        this, NotificationSupport.getChannelID(priority, appid.toString()));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             showNotificationGroup(priority, appid);
@@ -340,7 +350,7 @@ public class WebSocketService extends Service {
 
         NotificationCompat.Builder b =
                 new NotificationCompat.Builder(
-                        this, NotificationSupport.getChannelIDorFallback(this, priority, appid.toString()));
+                        this, NotificationSupport.getChannelID(priority, appid.toString()));
 
         b.setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)

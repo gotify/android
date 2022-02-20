@@ -85,9 +85,13 @@
     <string name="message_copied_to_clipboard">Content copied to clipboard</string>
     <string name="not_loggedin_share">Cannot share to Gotify, because you aren\'t logged in.</string>
     <string name="notification_channel_title_foreground">Gotify foreground notification</string>
-    <string name="notification_channel_title_min"><![CDATA[Min priority messages (<1)]]></string>
-    <string name="notification_channel_title_low">Low priority messages (1-3)</string>
-    <string name="notification_channel_title_normal">Normal priority messages (4-7)</string>
-    <string name="notification_channel_title_high"><![CDATA[High priority messages (>7)]]></string>
+    <string name="notification_channel_title_min">Minimum Priority</string>
+    <string name="notification_channel_description_min"><![CDATA[Min priority messages (<1)]]></string>
+    <string name="notification_channel_title_low">Low priority</string>
+    <string name="notification_channel_description_low">Low priority messages (1-3)</string>
+    <string name="notification_channel_title_normal">Normal priority</string>
+    <string name="notification_channel_description_normal">Normal priority messages (4-7)</string>
+    <string name="notification_channel_title_high">High priority</string>
+    <string name="notification_channel_description_high"><![CDATA[High priority messages (>7)]]></string>
     <string name="Fallback">Fallback Group</string>
 </resources>
