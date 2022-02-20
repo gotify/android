@@ -113,8 +113,7 @@ public class WebSocketService extends Service {
                         .onOpen(this::onOpen)
                         .onClose(this::onClose)
                         .onBadRequest(this::onBadRequest)
-                        .onNetworkFailure(
-                                (min) -> foreground(getString(R.string.websocket_failed, min)))
+                        .onNetworkFailure(this::onNetworkFailure)
                         .onMessage(this::onMessage)
                         .onReconnected(this::notifyMissedNotifications)
                         .start();
@@ -155,8 +154,14 @@ public class WebSocketService extends Service {
         foreground(getString(R.string.websocket_could_not_connect, message));
     }
 
+    private void onNetworkFailure(int minutes) {
+        String intervalUnit =
+                getResources().getQuantityString(R.plurals.retry_interval, minutes, minutes);
+        foreground(getString(R.string.websocket_failed, intervalUnit));
+    }
+
     private void onOpen() {
-        foreground(getString(R.string.websocket_listening, settings.url()));
+        foreground(getString(R.string.websocket_listening));
     }
 
     private void notifyMissedNotifications() {
