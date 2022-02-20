@@ -232,23 +232,24 @@ public class WebSocketService extends Service {
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
-        Notification notification =
-                new NotificationCompat.Builder(this, NotificationSupport.Channel.FOREGROUND)
-                        .setSmallIcon(R.drawable.ic_gotify)
-                        .setOngoing(true)
-                        .setPriority(NotificationCompat.PRIORITY_MIN)
-                        .setShowWhen(false)
-                        .setWhen(0)
-                        .setContentTitle(getString(R.string.app_name))
-                        .setContentText(message)
-                        .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
-                        .setContentIntent(pendingIntent)
-                        .setColor(
-                                ContextCompat.getColor(
-                                        getApplicationContext(), R.color.colorPrimary))
-                        .build();
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this, NotificationSupport.Channel.FOREGROUND);
+        notificationBuilder.setSmallIcon(R.drawable.ic_gotify);
+        notificationBuilder.setOngoing(true);
+        notificationBuilder.setPriority(NotificationCompat.PRIORITY_MIN);
+        notificationBuilder.setShowWhen(false);
+        notificationBuilder.setWhen(0);
+        notificationBuilder.setContentText(message);
+        notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(message));
+        notificationBuilder.setContentIntent(pendingIntent);
+        notificationBuilder.setColor(
+                ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
 
-        startForeground(NotificationSupport.ID.FOREGROUND, notification);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            notificationBuilder.setContentTitle(getString(R.string.app_name));
+        }
+
+        startForeground(NotificationSupport.ID.FOREGROUND, notificationBuilder.build());
     }
 
     private void showNotification(
