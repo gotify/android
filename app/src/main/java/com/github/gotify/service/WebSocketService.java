@@ -160,8 +160,10 @@ public class WebSocketService extends Service {
     private void onNetworkFailure(int minutes) {
         String status = getString(R.string.websocket_not_connected);
         String intervalUnit =
-                getResources().getQuantityString(R.plurals.websocket_retry_interval, minutes, minutes);
-        showForegroundNotification(status, getString(R.string.websocket_reconnect) + ' ' + intervalUnit);
+                getResources()
+                        .getQuantityString(R.plurals.websocket_retry_interval, minutes, minutes);
+        showForegroundNotification(
+                status, getString(R.string.websocket_reconnect) + ' ' + intervalUnit);
     }
 
     private void onOpen() {
