@@ -20,9 +20,9 @@
     <string name="not_available">Cannot connect to %s</string>
     <string name="auth_failed">Server returned 401 unauthorized while trying to get current user. This can be caused by deleting the client for this session.</string>
     <string name="other_error">Could not get current user. Server (%s) responded with code %d: body (first 200 chars): %s</string>
-    <string name="websocket_failed">Connection failed, trying again in %d minutes</string>
-    <string name="websocket_closed_logout">User action required: Please login, the authentication token isn\'t valid anymore.</string>
-    <string name="websocket_closed_try_reconnect">Connection closed, trying to establish a new one.</string>
+    <string name="user_action">User action required</string>
+    <string name="websocket_closed_logout">Please login, the authentication token isn\'t valid anymore.</string>
+    <string name="websocket_closed">Connection closed</string>
     <string name="grouped_message">Received %d messages while being disconnected</string>
     <string name="delete_all">Delete all</string>
     <string name="delete_app">Delete this application</string>
@@ -54,8 +54,8 @@
     <string name="ack">Are you sure?</string>
     <string name="missed_messages">Missed messages</string>
     <string name="grouped_notification_text">New Messages</string>
-    <string name="websocket_listening">Listening to %s</string>
-    <string name="websocket_could_not_connect">Could not connect %s</string>
+    <string name="websocket_listening">Connected</string>
+    <string name="websocket_could_not_connect">Could not connect</string>
     <string name="websocket_init">Initializing</string>
     <string name="versions">gotify/android v%s; gotify/server v%s</string>
     <string name="advanced_settings">Advanced Settings</string>
@@ -65,7 +65,6 @@
     <string name="warning">Warning</string>
     <string name="http_warning">Using http is insecure and it\'s recommend to use https instead. Use your favorite search engine to get more information about this topic.</string>
     <string name="i_understand">I Understand</string>
-    <string name="websocket_no_network">Waiting for network</string>
     <string name="connection">%s@%s</string>
     <string name="no_messages_yet">There are no messages, yet.\nSend a message to Gotify\nand it will appear here.</string>
     <string name="title_activity_settings">Settings</string>
@@ -84,4 +83,11 @@
     <string name="push_missing_app_info">There are no applications available on the server to push a message to.</string>
     <string name="message_copied_to_clipboard">Content copied to clipboard</string>
     <string name="not_loggedin_share">Cannot share to Gotify, because you aren\'t logged in.</string>
+
+    <string name="websocket_not_connected">Not connected</string>
+    <string name="websocket_reconnect">Trying to reconnect</string>
+    <plurals name="websocket_retry_interval">
+        <item quantity="one">in %d minute</item>
+        <item quantity="other">in %d minutes</item>
+    </plurals>
 </resources>

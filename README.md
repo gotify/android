@@ -35,7 +35,7 @@ See also https://dontkillmyapp.com for phone manufacturer specific instructions 
 
 *Only possible for Android version >= 8*
 
-The foreground notification with content like `Listening to https://push.yourdomain.eu` can be manually minimized to be less intrusive:
+The foreground notification showing the connection status can be manually minimized to be less intrusive:
 
 * Open Settings -> Apps -> Gotify
 * Click Notifications

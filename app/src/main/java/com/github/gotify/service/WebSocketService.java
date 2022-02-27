@@ -93,7 +93,7 @@ public class WebSocketService extends Service {
 
     private void startPushService() {
         UncaughtExceptionHandler.registerCurrentThread();
-        foreground(getString(R.string.websocket_init));
+        showForegroundNotification(getString(R.string.websocket_init));
 
         if (lastReceivedMessage.get() == NOT_LOADED) {
             missingMessageUtil.lastReceivedMessage(lastReceivedMessage::set);
@@ -113,8 +113,7 @@ public class WebSocketService extends Service {
                         .onOpen(this::onOpen)
                         .onClose(this::onClose)
                         .onBadRequest(this::onBadRequest)
-                        .onNetworkFailure(
-                                (min) -> foreground(getString(R.string.websocket_failed, min)))
+                        .onNetworkFailure(this::onNetworkFailure)
                         .onMessage(this::onMessage)
                         .onReconnected(this::notifyMissedNotifications)
                         .start();
@@ -126,7 +125,8 @@ public class WebSocketService extends Service {
     }
 
     private void onClose() {
-        foreground(getString(R.string.websocket_closed_try_reconnect));
+        showForegroundNotification(
+                getString(R.string.websocket_closed), getString(R.string.websocket_reconnect));
         ClientFactory.userApiWithToken(settings)
                 .currentUser()
                 .enqueue(
@@ -134,7 +134,9 @@ public class WebSocketService extends Service {
                                 (ignored) -> this.doReconnect(),
                                 (exception) -> {
                                     if (exception.code() == 401) {
-                                        foreground(getString(R.string.websocket_closed_logout));
+                                        showForegroundNotification(
+                                                getString(R.string.user_action),
+                                                getString(R.string.websocket_closed_logout));
                                     } else {
                                         Log.i(
                                                 "WebSocket closed but the user still authenticated, trying to reconnect");
@@ -152,11 +154,20 @@ public class WebSocketService extends Service {
     }
 
     private void onBadRequest(String message) {
-        foreground(getString(R.string.websocket_could_not_connect, message));
+        showForegroundNotification(getString(R.string.websocket_could_not_connect), message);
+    }
+
+    private void onNetworkFailure(int minutes) {
+        String status = getString(R.string.websocket_not_connected);
+        String intervalUnit =
+                getResources()
+                        .getQuantityString(R.plurals.websocket_retry_interval, minutes, minutes);
+        showForegroundNotification(
+                status, getString(R.string.websocket_reconnect) + ' ' + intervalUnit);
     }
 
     private void onOpen() {
-        foreground(getString(R.string.websocket_listening, settings.url()));
+        showForegroundNotification(getString(R.string.websocket_listening));
     }
 
     private void notifyMissedNotifications() {
@@ -222,28 +233,34 @@ public class WebSocketService extends Service {
         return null;
     }
 
-    private void foreground(String message) {
+    private void showForegroundNotification(String title) {
+        showForegroundNotification(title, null);
+    }
+
+    private void showForegroundNotification(String title, String message) {
         Intent notificationIntent = new Intent(this, MessagesActivity.class);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
-        Notification notification =
-                new NotificationCompat.Builder(this, NotificationSupport.Channel.FOREGROUND)
-                        .setSmallIcon(R.drawable.ic_gotify)
-                        .setOngoing(true)
-                        .setPriority(NotificationCompat.PRIORITY_MIN)
-                        .setShowWhen(false)
-                        .setWhen(0)
-                        .setContentTitle(getString(R.string.app_name))
-                        .setContentText(message)
-                        .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
-                        .setContentIntent(pendingIntent)
-                        .setColor(
-                                ContextCompat.getColor(
-                                        getApplicationContext(), R.color.colorPrimary))
-                        .build();
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this, NotificationSupport.Channel.FOREGROUND);
+        notificationBuilder.setSmallIcon(R.drawable.ic_gotify);
+        notificationBuilder.setOngoing(true);
+        notificationBuilder.setPriority(NotificationCompat.PRIORITY_MIN);
+        notificationBuilder.setShowWhen(false);
+        notificationBuilder.setWhen(0);
+        notificationBuilder.setContentTitle(title);
 
-        startForeground(NotificationSupport.ID.FOREGROUND, notification);
+        if (message != null) {
+            notificationBuilder.setContentText(message);
+            notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(message));
+        }
+
+        notificationBuilder.setContentIntent(pendingIntent);
+        notificationBuilder.setColor(
+                ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+
+        startForeground(NotificationSupport.ID.FOREGROUND, notificationBuilder.build());
     }
 
     private void showNotification(
