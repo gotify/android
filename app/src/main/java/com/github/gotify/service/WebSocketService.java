@@ -276,77 +276,98 @@ public class WebSocketService extends Service {
             Map<String, Object> extras,
             Long appid) {
 
-        Intent intent;
+        String tag = Extras.getNestedValue(String.class, extras, "tag");
+        String cancel = Extras.getNestedValue(String.class, extras, "cancel");
 
-        String intentUrl =
-                Extras.getNestedValue(
-                        String.class, extras, "android::action", "onReceive", "intentUrl");
-
-        if (intentUrl != null) {
-            intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(intentUrl));
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        }
-
-        String url =
-                Extras.getNestedValue(String.class, extras, "client::notification", "click", "url");
-
-        if (url != null) {
-            intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(url));
+        if (cancel != null) {
+            if (cancel.equals("true")) {
+                if (tag != null) {
+                    NotificationManager notificationManager =
+                            (NotificationManager)
+                                    this.getSystemService(Context.NOTIFICATION_SERVICE);
+                    notificationManager.cancel(tag, 0);
+                }
+            }
         } else {
-            intent = new Intent(this, MessagesActivity.class);
-        }
+            Intent intent;
 
-        PendingIntent contentIntent =
-                PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            String intentUrl =
+                    Extras.getNestedValue(
+                            String.class, extras, "android::action", "onReceive", "intentUrl");
 
-        NotificationCompat.Builder b =
-                new NotificationCompat.Builder(
-                        this, NotificationSupport.convertPriorityToChannel(priority));
+            if (intentUrl != null) {
+                intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(intentUrl));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            showNotificationGroup(priority);
-        }
+            String url =
+                    Extras.getNestedValue(
+                            String.class, extras, "client::notification", "click", "url");
 
-        b.setAutoCancel(true)
-                .setDefaults(Notification.DEFAULT_ALL)
-                .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.drawable.ic_gotify)
-                .setLargeIcon(picassoHandler.getIcon(appid))
-                .setTicker(getString(R.string.app_name) + " - " + title)
-                .setGroup(NotificationSupport.Group.MESSAGES)
-                .setContentTitle(title)
-                .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
-                .setLights(Color.CYAN, 1000, 5000)
-                .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary))
-                .setContentIntent(contentIntent);
+            if (url != null) {
+                intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(url));
+            } else {
+                intent = new Intent(this, MessagesActivity.class);
+            }
 
-        CharSequence formattedMessage = message;
-        if (Extras.useMarkdown(extras)) {
-            formattedMessage = markwon.toMarkdown(message);
-            message = formattedMessage.toString();
-        }
-        b.setContentText(message);
-        b.setStyle(new NotificationCompat.BigTextStyle().bigText(formattedMessage));
+            PendingIntent contentIntent =
+                    PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        String notificationImageUrl =
-                Extras.getNestedValue(String.class, extras, "client::notification", "bigImageUrl");
+            NotificationCompat.Builder b =
+                    new NotificationCompat.Builder(
+                            this, NotificationSupport.convertPriorityToChannel(priority));
 
-        if (notificationImageUrl != null) {
-            try {
-                b.setStyle(
-                        new NotificationCompat.BigPictureStyle()
-                                .bigPicture(picassoHandler.getImageFromUrl(notificationImageUrl)));
-            } catch (Exception e) {
-                Log.e("Error loading bigImageUrl", e);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                showNotificationGroup(priority);
+            }
+
+            b.setAutoCancel(true)
+                    .setDefaults(Notification.DEFAULT_ALL)
+                    .setWhen(System.currentTimeMillis())
+                    .setSmallIcon(R.drawable.ic_gotify)
+                    .setLargeIcon(picassoHandler.getIcon(appid))
+                    .setTicker(getString(R.string.app_name) + " - " + title)
+                    .setGroup(NotificationSupport.Group.MESSAGES)
+                    .setContentTitle(title)
+                    .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
+                    .setLights(Color.CYAN, 1000, 5000)
+                    .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary))
+                    .setContentIntent(contentIntent);
+
+            CharSequence formattedMessage = message;
+            if (Extras.useMarkdown(extras)) {
+                formattedMessage = markwon.toMarkdown(message);
+                message = formattedMessage.toString();
+            }
+            b.setContentText(message);
+            b.setStyle(new NotificationCompat.BigTextStyle().bigText(formattedMessage));
+
+            String notificationImageUrl =
+                    Extras.getNestedValue(
+                            String.class, extras, "client::notification", "bigImageUrl");
+
+            if (notificationImageUrl != null) {
+                try {
+                    b.setStyle(
+                            new NotificationCompat.BigPictureStyle()
+                                    .bigPicture(
+                                            picassoHandler.getImageFromUrl(notificationImageUrl)));
+                } catch (Exception e) {
+                    Log.e("Error loading bigImageUrl", e);
+                }
+            }
+
+            NotificationManager notificationManager =
+                    (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+            if (tag != null) {
+                notificationManager.notify(tag, 0, b.build());
+            } else {
+                notificationManager.notify(Utils.longToInt(id), b.build());
             }
         }
-
-        NotificationManager notificationManager =
-                (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(Utils.longToInt(id), b.build());
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
