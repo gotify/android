@@ -32,7 +32,9 @@ public class MessageFacade {
         MessageState state = this.state.state(appId);
         if (state.hasNext || !state.loaded) {
             PagedMessages pagedMessages = requester.loadMore(state);
-            this.state.newMessages(appId, pagedMessages);
+            if (pagedMessages != null) {
+                this.state.newMessages(appId, pagedMessages);
+            }
         }
         return get(appId);
     }

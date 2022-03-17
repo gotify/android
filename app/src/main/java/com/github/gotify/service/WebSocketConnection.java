@@ -243,7 +243,7 @@ class WebSocketConnection {
     }
 
     interface OnNetworkFailureRunnable {
-        void execute(long millis);
+        void execute(int minutes);
     }
 
     enum State {

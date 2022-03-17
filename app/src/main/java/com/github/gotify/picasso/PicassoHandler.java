@@ -56,16 +56,18 @@ public class PicassoHandler {
                 .build();
     }
 
+    public Bitmap getImageFromUrl(String url) throws IOException {
+        return picasso.load(url).get();
+    }
+
     public Bitmap getIcon(Long appId) {
         if (appId == -1) {
             return BitmapFactory.decodeResource(context.getResources(), R.drawable.gotify);
         }
 
         try {
-            return picasso.load(
-                            Utils.resolveAbsoluteUrl(
-                                    settings.url() + "/", appIdToAppImage.get(appId)))
-                    .get();
+            return getImageFromUrl(
+                    Utils.resolveAbsoluteUrl(settings.url() + "/", appIdToAppImage.get(appId)));
         } catch (IOException e) {
             Log.e("Could not load image for notification", e);
         }
