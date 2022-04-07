@@ -7,4 +7,5 @@
     <color name="icons">#797979</color>
     <color name="swipeBackground">#E74C3C</color>
     <color name="swipeIcon">#FFFFFF</color>
+    <color name="hyperLink">#FF7F50</color>
 </resources>

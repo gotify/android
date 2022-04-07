@@ -10,6 +10,7 @@ import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.text.style.TypefaceSpan;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import com.squareup.picasso.Picasso;
 import io.noties.markwon.AbstractMarkwonPlugin;
 import io.noties.markwon.Markwon;
@@ -17,6 +18,7 @@ import io.noties.markwon.MarkwonSpansFactory;
 import io.noties.markwon.MarkwonVisitor;
 import io.noties.markwon.core.CorePlugin;
 import io.noties.markwon.core.CoreProps;
+import io.noties.markwon.core.MarkwonTheme;
 import io.noties.markwon.ext.strikethrough.StrikethroughPlugin;
 import io.noties.markwon.ext.tables.TableAwareMovementMethod;
 import io.noties.markwon.ext.tables.TablePlugin;
@@ -42,6 +44,15 @@ public class MarkwonFactory {
                 .usePlugin(PicassoImagesPlugin.create(picasso))
                 .usePlugin(StrikethroughPlugin.create())
                 .usePlugin(TablePlugin.create(context))
+                .usePlugin(
+                        new AbstractMarkwonPlugin() {
+                            @Override
+                            public void configureTheme(@NonNull MarkwonTheme.Builder builder) {
+                                builder.linkColor(
+                                                ContextCompat.getColor(context, R.color.hyperLink))
+                                        .isLinkUnderlined(true);
+                            }
+                        })
                 .build();
     }
 
