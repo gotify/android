@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
@@ -46,7 +47,8 @@ import static com.github.gotify.api.Callback.callInUI;
 public class LoginActivity extends AppCompatActivity {
 
     // return value from startActivityForResult when choosing a certificate
-    private final int FILE_SELECT_CODE = 1;
+    private final int CA_FILE_SELECT_CODE = 1;
+    private final int CLI_CERT_FILE_SELECT_CODE = 2;
 
     @BindView(R.id.username)
     EditText usernameField;
@@ -76,6 +78,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean disableSSLValidation;
     private String caCertContents;
+    private String clientCertContents;
+    private String clientCertPassword;
     private AdvancedDialog advancedDialog;
 
     @Override
@@ -153,6 +157,9 @@ public class LoginActivity extends AppCompatActivity {
     void toggleShowAdvanced() {
         String selectedCertName =
                 caCertContents != null ? getNameOfCertContent(caCertContents) : null;
+        String selectedClientCertUri = settings.clientCertUri();
+        clientCertContents = settings.clientCert();
+        clientCertPassword = settings.clientCertPass();
 
         advancedDialog =
                 new AdvancedDialog(this)
@@ -164,17 +171,24 @@ public class LoginActivity extends AppCompatActivity {
                         .onClickSelectCaCertificate(
                                 () -> {
                                     invalidateUrl();
-                                    doSelectCACertificate();
+                                    doSelectCertificate(R.string.select_ca_file, CA_FILE_SELECT_CODE);
                                 })
                         .onClickRemoveCaCertificate(
                                 () -> {
                                     invalidateUrl();
                                     caCertContents = null;
                                 })
-                        .show(disableSSLValidation, selectedCertName);
+                        .onClickSelectClientCertificate(() ->
+                                doSelectCertificate(R.string.select_client_cert_file, CLI_CERT_FILE_SELECT_CODE))
+                        .onClickRemoveClientCertificate(() -> {
+                            clientCertContents = null;
+                            settings.clientCertPass("");
+                            clientCertPassword = "";
+                        })
+                        .show(disableSSLValidation, selectedCertName, selectedClientCertUri, clientCertPassword, settings);
     }
 
-    private void doSelectCACertificate() {
+    private void doSelectCertificate(int intentChooserDescriptionCode, int FILE_SELECT_CODE) {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         // we don't really care what kind of file it is as long as we can parse it
         intent.setType("*/*");
@@ -182,7 +196,7 @@ public class LoginActivity extends AppCompatActivity {
 
         try {
             startActivityForResult(
-                    Intent.createChooser(intent, getString(R.string.select_ca_file)),
+                    Intent.createChooser(intent, getString(intentChooserDescriptionCode)),
                     FILE_SELECT_CODE);
         } catch (ActivityNotFoundException e) {
             // case for user not having a file browser installed
@@ -190,11 +204,12 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         try {
-            if (requestCode == FILE_SELECT_CODE) {
+            if (requestCode == CA_FILE_SELECT_CODE || requestCode ==  CLI_CERT_FILE_SELECT_CODE) {
                 if (resultCode != RESULT_OK) {
                     throw new IllegalArgumentException(String.format("result was %d", resultCode));
                 } else if (data == null) {
@@ -211,12 +226,22 @@ public class LoginActivity extends AppCompatActivity {
                     throw new IllegalArgumentException("file path was invalid");
                 }
 
-                String content = Utils.readFileFromStream(fileStream);
-                String name = getNameOfCertContent(content);
+                if (requestCode == CA_FILE_SELECT_CODE) {
+                    String content = Utils.readFileFromStream(fileStream);
+                    String name = getNameOfCertContent(content);
+                    // temporarily set the contents (don't store to settings until they decide to login)
+                    caCertContents = content;
+                    advancedDialog.showRemoveCACertificate(name);
+                } else if (requestCode ==  CLI_CERT_FILE_SELECT_CODE) {
+                    String content = Utils.binaryFileToBase64(fileStream);
 
-                // temporarily set the contents (don't store to settings until they decide to login)
-                caCertContents = content;
-                advancedDialog.showRemoveCACertificate(name);
+                    clientCertContents = content;
+                    String path = uri.toString();
+
+                    settings.clientCert(clientCertContents);
+                    settings.clientCertUri(path);
+                    advancedDialog.showRemoveClientCertificate(path);
+                }
             }
         } catch (Exception e) {
             Utils.showSnackBar(this, getString(R.string.select_ca_failed, e.getMessage()));
@@ -249,6 +274,7 @@ public class LoginActivity extends AppCompatActivity {
         };
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @OnClick(R.id.login)
     public void doLogin() {
         String username = usernameField.getText().toString();
@@ -296,6 +322,7 @@ public class LoginActivity extends AppCompatActivity {
         settings.token(client.getToken());
         settings.validateSSL(!disableSSLValidation);
         settings.cert(caCertContents);
+        settings.clientCert(clientCertContents);
 
         Utils.showSnackBar(this, getString(R.string.created_client));
         startActivity(new Intent(this, InitializationActivity.class));
@@ -318,6 +345,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private SSLSettings tempSSLSettings() {
-        return new SSLSettings(!disableSSLValidation, caCertContents);
+        return new SSLSettings(!disableSSLValidation, caCertContents, clientCertContents, clientCertPassword);
     }
 }

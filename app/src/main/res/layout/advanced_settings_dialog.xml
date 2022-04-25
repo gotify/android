@@ -17,8 +17,29 @@
         android:text="@string/select_ca_certificate" />
 
     <TextView
-        android:id="@+id/seleceted_ca_cert"
+        android:id="@+id/selected_ca_cert"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/no_certificate_selected" />
+        android:text="@string/no_ca_certificate_selected" />
+
+    <Button
+        android:id="@+id/toggle_client_cert"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/select_client_certificate" />
+
+    <TextView
+        android:id="@+id/selected_client_cert"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/no_client_certificate_selected" />
+
+    <EditText
+        android:id="@+id/edit_client_cert_pass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/client_cert_password_hint"
+        android:inputType="textPassword"
+        android:minHeight="48dp" />
 </LinearLayout>

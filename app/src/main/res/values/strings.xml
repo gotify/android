@@ -40,7 +40,10 @@
     <string name="password">Password</string>
     <string name="disabled_validate_ssl">Disable SSL Validation</string>
     <string name="select_ca_certificate">Select CA Certificate</string>
+    <string name="select_client_certificate">Select Client Certificate</string>
     <string name="select_ca_file">Select a Certificate File</string>
+    <string name="select_client_cert_file">Select a Client Certificate File</string>
+    <string name="client_cert_password_hint">Client Certificate Password</string>
     <string name="please_install_file_browser">Please install a file browser</string>
     <string name="select_ca_failed">Failed to read CA: %s</string>
     <string name="login">Login</string>
@@ -59,8 +62,10 @@
     <string name="versions">gotify/android v%s; gotify/server v%s</string>
     <string name="advanced_settings">Advanced Settings</string>
     <string name="done">Done</string>
-    <string name="no_certificate_selected">No certificate selected</string>
+    <string name="no_ca_certificate_selected">No CA certificate selected</string>
     <string name="remove_ca_certificate">Remove CA Certificate</string>
+    <string name="no_client_certificate_selected">No client certificate selected</string>
+    <string name="remove_client_certificate">Remove Client Certificate</string>
     <string name="warning">Warning</string>
     <string name="http_warning">Using http is insecure and it\'s recommend to use https instead. Use your favorite search engine to get more information about this topic.</string>
     <string name="i_understand">I Understand</string>

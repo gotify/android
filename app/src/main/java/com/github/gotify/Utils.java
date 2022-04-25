@@ -5,9 +5,12 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.text.format.DateUtils;
+import java.util.Base64;
 import android.view.View;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import com.github.gotify.client.JSON;
 import com.github.gotify.log.Log;
 import com.google.android.material.snackbar.Snackbar;
@@ -75,6 +78,21 @@ public class Utils {
             @Override
             public void onPrepareLoad(Drawable placeHolderDrawable) {}
         };
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static String binaryFileToBase64(@NonNull InputStream inputStream) {
+        byte[] bytes;
+
+        try {
+            bytes = new byte[inputStream.available()];
+            //noinspection ResultOfMethodCallIgnored
+            inputStream.read(bytes);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("failed to read input");
+        }
+
+        return Base64.getEncoder().encodeToString(bytes);
     }
 
     public static String readFileFromStream(@NonNull InputStream inputStream) {

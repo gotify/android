@@ -11,6 +11,30 @@ public class Settings {
         sharedPreferences = context.getSharedPreferences("gotify", Context.MODE_PRIVATE);
     }
 
+    public void clientCertUri(String clientCertUri) {
+        sharedPreferences.edit().putString("clientCertUri", clientCertUri).apply();
+    }
+
+    public String clientCertUri() {
+        return sharedPreferences.getString("clientCertUri", null);
+    }
+
+    public void clientCert(String clientCert) {
+        sharedPreferences.edit().putString("clientCert", clientCert).apply();
+    }
+
+    public String clientCert() {
+        return sharedPreferences.getString("clientCert", null);
+    }
+
+    public void clientCertPass(String clientCertPass) {
+        sharedPreferences.edit().putString("clientCertPass", clientCertPass).apply();
+    }
+
+    public String clientCertPass() {
+        return sharedPreferences.getString("clientCertPass", "");
+    }
+
     public void url(String url) {
         sharedPreferences.edit().putString("url", url).apply();
     }
@@ -36,6 +60,9 @@ public class Settings {
         token(null);
         validateSSL(true);
         cert(null);
+        clientCert(null);
+        clientCertUri(null);
+        clientCertPass("");
     }
 
     public void user(String name, boolean admin) {
@@ -77,6 +104,6 @@ public class Settings {
     }
 
     public SSLSettings sslSettings() {
-        return new SSLSettings(validateSSL(), cert());
+        return new SSLSettings(validateSSL(), cert(), clientCert(), clientCertPass());
     }
 }
