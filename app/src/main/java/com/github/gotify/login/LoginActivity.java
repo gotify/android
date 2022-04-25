@@ -80,6 +80,7 @@ public class LoginActivity extends AppCompatActivity {
     private String caCertContents;
     private String clientCertContents;
     private String clientCertPassword;
+    private String clientCertUri;
     private AdvancedDialog advancedDialog;
 
     @Override
@@ -104,6 +105,7 @@ public class LoginActivity extends AppCompatActivity {
         checkUrlButton.setText(getString(R.string.check_url));
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @OnClick(R.id.checkurl)
     public void doCheckUrl() {
         String url = urlField.getText().toString();
@@ -157,7 +159,7 @@ public class LoginActivity extends AppCompatActivity {
     void toggleShowAdvanced() {
         String selectedCertName =
                 caCertContents != null ? getNameOfCertContent(caCertContents) : null;
-        String selectedClientCertUri = settings.clientCertUri();
+        clientCertUri = settings.clientCertUri();
         clientCertContents = settings.clientCert();
         clientCertPassword = settings.clientCertPass();
 
@@ -184,8 +186,11 @@ public class LoginActivity extends AppCompatActivity {
                             clientCertContents = null;
                             settings.clientCertPass("");
                             clientCertPassword = "";
+                            settings.clientCertUri(null);
+                            clientCertUri = null;
+
                         })
-                        .show(disableSSLValidation, selectedCertName, selectedClientCertUri, clientCertPassword, settings);
+                        .show(disableSSLValidation, selectedCertName, clientCertUri, clientCertPassword, settings);
     }
 
     private void doSelectCertificate(int intentChooserDescriptionCode, int FILE_SELECT_CODE) {
@@ -236,7 +241,7 @@ public class LoginActivity extends AppCompatActivity {
                     String content = Utils.binaryFileToBase64(fileStream);
 
                     clientCertContents = content;
-                    String path = uri.toString();
+                    String path = uri.getLastPathSegment();
 
                     settings.clientCert(clientCertContents);
                     settings.clientCertUri(path);
