@@ -52,7 +52,6 @@ public class CertUtils {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public static void applySslSettings(OkHttpClient.Builder builder, SSLSettings settings) {
         // Modified from ApiClient.applySslSettings in the client package.
 
@@ -77,29 +76,31 @@ public class CertUtils {
                 }
             }
 
-            if (settings.clientCert != null) {
-                KeyStore ks = KeyStore.getInstance("PKCS12");
-                InputStream bs = new ByteArrayInputStream(Base64.getDecoder().decode(settings.clientCert));
-                ks.load(bs, settings.clientCertPassword.toCharArray());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (settings.clientCert != null) {
+                    KeyStore ks = KeyStore.getInstance("PKCS12");
+                    InputStream bs = new ByteArrayInputStream(Base64.getDecoder().decode(settings.clientCert));
+                    ks.load(bs, settings.clientCertPassword.toCharArray());
 
-                KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
-                kmf.init(ks, settings.clientCertPassword.toCharArray());
+                    KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
+                    kmf.init(ks, settings.clientCertPassword.toCharArray());
 
 
-                TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
-                        TrustManagerFactory.getDefaultAlgorithm());
-                trustManagerFactory.init((KeyStore) null);
-                TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
-                if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
-                    throw new IllegalStateException("Unexpected default trust managers:");
+                    TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
+                            TrustManagerFactory.getDefaultAlgorithm());
+                    trustManagerFactory.init((KeyStore) null);
+                    TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
+                    if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
+                        throw new IllegalStateException("Unexpected default trust managers:");
+                    }
+                    X509TrustManager trustManager = (X509TrustManager) trustManagers[0];
+
+
+                    SSLContext context = SSLContext.getInstance("TLS");
+                    context.init(kmf.getKeyManagers(), new TrustManager[] { trustManager }, null);
+                    builder.sslSocketFactory(
+                            context.getSocketFactory(), trustManager);
                 }
-                X509TrustManager trustManager = (X509TrustManager) trustManagers[0];
-
-
-                SSLContext context = SSLContext.getInstance("TLS");
-                context.init(kmf.getKeyManagers(), new TrustManager[] { trustManager }, null);
-                builder.sslSocketFactory(
-                        context.getSocketFactory(), trustManager);
             }
         } catch (IOException iex) {
             String tx = iex.toString();

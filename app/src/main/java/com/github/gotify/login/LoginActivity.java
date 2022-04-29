@@ -105,7 +105,6 @@ public class LoginActivity extends AppCompatActivity {
         checkUrlButton.setText(getString(R.string.check_url));
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @OnClick(R.id.checkurl)
     public void doCheckUrl() {
         String url = urlField.getText().toString();
@@ -209,7 +208,6 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -279,7 +277,6 @@ public class LoginActivity extends AppCompatActivity {
         };
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @OnClick(R.id.login)
     public void doLogin() {
         String username = usernameField.getText().toString();

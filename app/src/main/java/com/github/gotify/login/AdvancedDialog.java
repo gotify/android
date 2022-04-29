@@ -2,6 +2,7 @@ package com.github.gotify.login;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -62,6 +63,12 @@ class AdvancedDialog {
         holder.disableSSL.setChecked(disableSSL);
         holder.disableSSL.setOnCheckedChangeListener(onCheckedChangeListener);
         holder.editClientCertPass.setText(password);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            holder.editClientCertPass.setVisibility(View.GONE);
+            holder.selectedClientCertificate.setVisibility(View.GONE);
+            holder.toggleClientCert.setVisibility(View.GONE);
+        }
 
         if (selectedCaCertificate == null) {
             showSelectCACertificate();

@@ -80,7 +80,6 @@ public class Utils {
         };
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public static String binaryFileToBase64(@NonNull InputStream inputStream) {
         byte[] bytes;
 
