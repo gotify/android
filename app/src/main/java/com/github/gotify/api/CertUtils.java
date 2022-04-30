@@ -2,7 +2,6 @@ package com.github.gotify.api;
 
 import android.annotation.SuppressLint;
 import android.os.Build;
-import androidx.annotation.RequiresApi;
 import com.github.gotify.SSLSettings;
 import com.github.gotify.Utils;
 import com.github.gotify.log.Log;
