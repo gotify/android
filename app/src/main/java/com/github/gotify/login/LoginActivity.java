@@ -178,10 +178,14 @@ public class LoginActivity extends AppCompatActivity {
                                     invalidateUrl();
                                     caCertContents = null;
                                 })
-                        .onClickSelectClientCertificate(() ->
-                                doSelectCertificate(R.string.select_client_cert_file, CLI_CERT_FILE_SELECT_CODE))
+                        .onClickSelectClientCertificate(() -> {
+                            invalidateUrl();
+                            doSelectCertificate(R.string.select_client_cert_file, CLI_CERT_FILE_SELECT_CODE);
+                        })
                         .onClickRemoveClientCertificate(() -> {
+                            invalidateUrl();
                             clientCertContents = null;
+                            settings.clientCert(null);
                             settings.clientCertPass("");
                             clientCertPassword = "";
                             settings.clientCertUri(null);
@@ -235,14 +239,16 @@ public class LoginActivity extends AppCompatActivity {
                     caCertContents = content;
                     advancedDialog.showRemoveCACertificate(name);
                 } else if (requestCode ==  CLI_CERT_FILE_SELECT_CODE) {
-                    String content = Utils.binaryFileToBase64(fileStream);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        String content = Utils.binaryFileToBase64(fileStream);
 
-                    clientCertContents = content;
-                    String path = uri.getLastPathSegment();
+                        clientCertContents = content;
+                        String path = uri.getLastPathSegment();
 
-                    settings.clientCert(clientCertContents);
-                    settings.clientCertUri(path);
-                    advancedDialog.showRemoveClientCertificate(path);
+                        settings.clientCert(clientCertContents);
+                        settings.clientCertUri(path);
+                        advancedDialog.showRemoveClientCertificate(path);
+                    }
                 }
             }
         } catch (Exception e) {
