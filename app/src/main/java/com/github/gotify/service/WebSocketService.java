@@ -299,6 +299,25 @@ public class WebSocketService extends Service {
             intent = new Intent(this, MessagesActivity.class);
         }
 
+
+        // String actionUrl1 =
+        //         Extras.getNestedValue(String.class, extras, "client::notification", "actions", "url1");
+
+        // String actionUrl2 =
+        //         Extras.getNestedValue(String.class, extras, "client::notification", "actions", "url2");
+
+        String actionShare =
+                Extras.getNestedValue(String.class, extras, "client::notification", "actions", "share");
+
+        if (actionShare != null) {
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, Uri.parse(actionShare));
+            sendIntent.setType("text/plain");
+            Intent shareIntent = Intent.createChooser(sendIntent, null);
+            startActivity(shareIntent);
+        }
+
         PendingIntent contentIntent =
                 PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
