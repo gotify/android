@@ -323,6 +323,30 @@ public class WebSocketService extends Service {
                 .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary))
                 .setContentIntent(contentIntent);
 
+        String actionOpen =
+                Extras.getNestedValue(String.class, extras, "client::notification", "actions", "open");
+
+        if (actionOpen != null) {
+            Intent actionOpenIntent = new Intent();
+            actionOpenIntent.setAction(Intent.ACTION_VIEW);
+            actionOpenIntent.setData(Uri.parse(actionOpen));
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 123, actionOpenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            b.addAction(new NotificationCompat.Action.Builder(null, "open", pendingIntent).build());
+        }
+
+        String actionShare =
+                Extras.getNestedValue(String.class, extras, "client::notification", "actions", "share");
+
+        if (actionShare != null) {
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, actionShare);
+            sendIntent.setType("text/plain");
+            Intent shareIntent = Intent.createChooser(sendIntent, null);
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 124, shareIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            b.addAction(new NotificationCompat.Action.Builder(null, "share", pendingIntent).build());
+        }
+
         CharSequence formattedMessage = message;
         if (Extras.useMarkdown(extras)) {
             formattedMessage = markwon.toMarkdown(message);
