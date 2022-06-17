@@ -338,22 +338,19 @@ public class WebSocketService extends Service {
 
         if (callbackUrl != null) {
             Handler callbackHandler = new Handler(Looper.getMainLooper());
-            Runnable callbackRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    AsyncHttpClient client = new AsyncHttpClient();
-                    client.post(callbackUrl, null, new AsyncHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                            System.out.println("Callback successfully send to: " +callbackUrl);
-                        }
+            Runnable callbackRunnable = () -> {
+                AsyncHttpClient client = new AsyncHttpClient();
+                client.post(callbackUrl, null, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        System.out.println("Callback successfully send to: " +callbackUrl);
+                    }
 
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                            System.out.println("Can't send callback to: "+callbackUrl);
-                        }
-                    });
-                }
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                        System.out.println("Can't send callback to: "+callbackUrl);
+                    }
+                });
             };
             callbackHandler.post(callbackRunnable);
         }
