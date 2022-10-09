@@ -34,11 +34,13 @@ import org.threeten.bp.OffsetDateTime;
 public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.ViewHolder> {
 
     private Context context;
+    private SharedPreferences prefs;
     private Picasso picasso;
     private List<MessageWithImage> items;
     private Delete delete;
     private Settings settings;
     private Markwon markwon;
+    private int messageLayout;
 
     private final String TIME_FORMAT_RELATIVE;
     private final String TIME_FORMAT_PREFS_KEY;
@@ -56,11 +58,25 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
         this.items = items;
         this.delete = delete;
 
+        this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
         this.markwon = MarkwonFactory.createForMessage(context, picasso);
 
         TIME_FORMAT_RELATIVE =
                 context.getResources().getString(R.string.time_format_value_relative);
         TIME_FORMAT_PREFS_KEY = context.getResources().getString(R.string.setting_key_time_format);
+
+        String message_layout_prefs_key =
+                context.getResources().getString(R.string.setting_key_message_layout);
+        String messageLayoutNormal =
+                context.getResources().getString(R.string.message_layout_value_normal);
+        String messageLayoutSetting =
+                prefs.getString(message_layout_prefs_key, messageLayoutNormal);
+
+        if (messageLayoutSetting.equals(messageLayoutNormal)) {
+            messageLayout = R.layout.message_item;
+        } else {
+            messageLayout = R.layout.message_item_compact;
+        }
     }
 
     public List<MessageWithImage> getItems() {
@@ -74,7 +90,7 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.message_item, parent, false);
+        View view = LayoutInflater.from(context).inflate(messageLayout, parent, false);
 
         ViewHolder holder = new ViewHolder(view);
         return holder;
