@@ -27,7 +27,6 @@ import java.io.IOException;
  * The User holds information about permission and other stuff.
  */
 @ApiModel(description = "The User holds information about permission and other stuff.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2020-06-24T18:39:01.386+02:00")
 public class User {
   @SerializedName("admin")
   private Boolean admin = null;

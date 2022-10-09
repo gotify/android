@@ -27,7 +27,6 @@ import java.io.IOException;
  * VersionInfo Model
  */
 @ApiModel(description = "VersionInfo Model")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2020-06-24T18:39:01.386+02:00")
 public class VersionInfo {
   @SerializedName("buildDate")
   private String buildDate = null;

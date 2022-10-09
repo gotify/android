@@ -27,7 +27,6 @@ import java.io.IOException;
  * The Application holds information about an app which can send notifications.
  */
 @ApiModel(description = "The Application holds information about an app which can send notifications.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2020-06-24T18:39:01.386+02:00")
 public class Application {
   @SerializedName("description")
   private String description = null;

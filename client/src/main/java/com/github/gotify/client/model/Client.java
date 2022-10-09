@@ -27,7 +27,6 @@ import java.io.IOException;
  * The Client holds information about a device which can receive notifications (and other stuff).
  */
 @ApiModel(description = "The Client holds information about a device which can receive notifications (and other stuff).")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2020-06-24T18:39:01.386+02:00")
 public class Client {
   @SerializedName("id")
   private Long id = null;

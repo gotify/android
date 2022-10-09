@@ -27,7 +27,6 @@ import java.io.IOException;
  * Health represents how healthy the application is.
  */
 @ApiModel(description = "Health represents how healthy the application is.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2020-06-24T18:39:01.386+02:00")
 public class Health {
   @SerializedName("database")
   private String database = null;

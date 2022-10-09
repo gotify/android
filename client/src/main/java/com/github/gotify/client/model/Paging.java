@@ -27,7 +27,6 @@ import java.io.IOException;
  * The Paging holds information about the limit and making requests to the next page.
  */
 @ApiModel(description = "The Paging holds information about the limit and making requests to the next page.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2020-06-24T18:39:01.386+02:00")
 public class Paging {
   @SerializedName("limit")
   private Long limit = null;
