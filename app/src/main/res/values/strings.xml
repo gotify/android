@@ -70,6 +70,12 @@
     <string name="settings_appearance">Appearance</string>
     <string name="setting_theme">Theme</string>
     <string name="setting_key_theme">theme</string>
+    <string name="setting_message_layout">Message layout</string>
+    <string name="setting_key_message_layout">message_layout</string>
+    <string name="setting_message_layout_dialog_title">Restart App?</string>
+    <string name="setting_message_layout_dialog_message">The change will be effective on next app start.\n\nDo you want to restart now?</string>
+    <string name="setting_message_layout_dialog_button1">Restart</string>
+    <string name="setting_message_layout_dialog_button2">Later</string>
     <string name="setting_time_format">Time format</string>
     <string name="setting_key_time_format">time_format</string>
     <string name="push_message">Push message</string>
