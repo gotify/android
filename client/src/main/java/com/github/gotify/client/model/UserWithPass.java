@@ -27,7 +27,6 @@ import java.io.IOException;
  * The UserWithPass holds information about the credentials and other stuff.
  */
 @ApiModel(description = "The UserWithPass holds information about the credentials and other stuff.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2020-06-24T18:39:01.386+02:00")
 public class UserWithPass {
   @SerializedName("admin")
   private Boolean admin = null;

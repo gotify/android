@@ -27,7 +27,6 @@ import java.io.IOException;
  * The Password for updating the user.
  */
 @ApiModel(description = "The Password for updating the user.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2020-06-24T18:39:01.386+02:00")
 public class UserPass {
   @SerializedName("pass")
   private String pass = null;

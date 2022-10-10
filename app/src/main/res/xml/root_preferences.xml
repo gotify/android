@@ -10,11 +10,18 @@
             android:title="@string/setting_theme" />
 
         <ListPreference
+            android:defaultValue="@string/message_layout_value_normal"
+            android:entries="@array/message_layout_entries"
+            android:entryValues="@array/message_layout_values"
+            android:key="@string/setting_key_message_layout"
+            android:title="@string/setting_message_layout" />
+
+        <ListPreference
             android:defaultValue="@string/time_format_value_relative"
             android:entries="@array/time_format_entries"
             android:entryValues="@array/time_format_values"
             android:key="@string/setting_key_time_format"
-            android:title="@string/setting_time_format"/>
+            android:title="@string/setting_time_format" />
     </PreferenceCategory>
 
 </PreferenceScreen>

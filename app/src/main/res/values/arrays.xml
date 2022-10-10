@@ -8,6 +8,19 @@
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
     <string name="theme_default">System Default</string>
+    <!--  Message Layout  -->
+    <string-array name="message_layout_entries">
+        <item>@string/message_layout_entry_normal</item>
+        <item>@string/message_layout_entry_compact</item>
+    </string-array>
+    <string name="message_layout_entry_normal">Normal</string>
+    <string name="message_layout_entry_compact">Compact</string>
+    <string-array name="message_layout_values">
+        <item>@string/message_layout_value_normal</item>
+        <item>@string/message_layout_value_compact</item>
+    </string-array>
+    <string name="message_layout_value_normal">message_layout_normal</string>
+    <string name="message_layout_value_compact">message_layout_compact</string>
     <!--  Time Format  -->
     <string-array name="time_format_entries">
         <item>@string/time_format_entry_absolute</item>

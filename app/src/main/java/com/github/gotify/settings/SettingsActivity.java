@@ -1,11 +1,18 @@
 package com.github.gotify.settings;
 
+import android.app.AlertDialog;
+import android.content.ComponentName;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.ListPreference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import com.github.gotify.R;
@@ -51,6 +58,39 @@ public class SettingsActivity extends AppCompatActivity
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
+        }
+
+        @Override
+        public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+            super.onViewCreated(view, savedInstanceState);
+            ListPreference message_layout =
+                    findPreference(getString(R.string.setting_key_message_layout));
+            message_layout.setOnPreferenceChangeListener(
+                    (ignored, ignored2) -> {
+                        new AlertDialog.Builder(getContext())
+                                .setTitle(R.string.setting_message_layout_dialog_title)
+                                .setMessage(R.string.setting_message_layout_dialog_message)
+                                .setPositiveButton(
+                                        getString(R.string.setting_message_layout_dialog_button1),
+                                        (ignored3, ignored4) -> {
+                                            restartApp();
+                                        })
+                                .setNegativeButton(
+                                        getString(R.string.setting_message_layout_dialog_button2),
+                                        (ignore3, ignored4) -> {})
+                                .show();
+                        return true;
+                    });
+        }
+
+        private void restartApp() {
+            PackageManager packageManager = getContext().getPackageManager();
+            String packageName = getContext().getPackageName();
+            Intent intent = packageManager.getLaunchIntentForPackage(packageName);
+            ComponentName componentName = intent.getComponent();
+            Intent mainIntent = Intent.makeRestartActivityTask(componentName);
+            startActivity(mainIntent);
+            Runtime.getRuntime().exit(0);
         }
     }
 }

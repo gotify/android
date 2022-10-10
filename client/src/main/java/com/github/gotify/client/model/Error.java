@@ -27,7 +27,6 @@ import java.io.IOException;
  * The Error contains error relevant information.
  */
 @ApiModel(description = "The Error contains error relevant information.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2020-06-24T18:39:01.386+02:00")
 public class Error {
   @SerializedName("error")
   private String error = null;

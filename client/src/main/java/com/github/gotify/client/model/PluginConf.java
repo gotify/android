@@ -29,7 +29,6 @@ import java.util.List;
  * Holds information about a plugin instance for one user.
  */
 @ApiModel(description = "Holds information about a plugin instance for one user.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2020-06-24T18:39:01.386+02:00")
 public class PluginConf {
   @SerializedName("author")
   private String author = null;

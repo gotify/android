@@ -31,7 +31,6 @@ import org.threeten.bp.OffsetDateTime;
  * The MessageExternal holds information about a message which was sent by an Application.
  */
 @ApiModel(description = "The MessageExternal holds information about a message which was sent by an Application.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2020-06-24T18:39:01.386+02:00")
 public class Message {
   @SerializedName("appid")
   private Long appid = null;

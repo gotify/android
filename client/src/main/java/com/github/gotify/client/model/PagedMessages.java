@@ -31,7 +31,6 @@ import java.util.List;
  * Wrapper for the paging and the messages
  */
 @ApiModel(description = "Wrapper for the paging and the messages")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2020-06-24T18:39:01.386+02:00")
 public class PagedMessages {
   @SerializedName("messages")
   private List<Message> messages = new ArrayList<Message>();
