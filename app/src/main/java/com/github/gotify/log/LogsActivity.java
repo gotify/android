@@ -13,18 +13,21 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import com.github.gotify.R;
 import com.github.gotify.Utils;
+import com.github.gotify.databinding.ActivityLogsBinding;
 
 public class LogsActivity extends AppCompatActivity {
 
+    private ActivityLogsBinding binding;
     private Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_logs);
+        binding = ActivityLogsBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         Log.i("Entering " + getClass().getSimpleName());
         updateLogs();
-        setSupportActionBar(findViewById(R.id.toolbar));
+        setSupportActionBar(binding.appBarDrawer.toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -54,7 +57,7 @@ public class LogsActivity extends AppCompatActivity {
             Log.clear();
         }
         if (item.getItemId() == R.id.action_copy_logs) {
-            TextView content = findViewById(R.id.log_content);
+            TextView content = binding.logContent;
             ClipboardManager clipboardManager =
                     (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clipData = ClipData.newPlainText("GotifyLog", content.getText().toString());
@@ -73,7 +76,7 @@ public class LogsActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String s) {
-            TextView content = findViewById(R.id.log_content);
+            TextView content = binding.logContent;
             if (content.getSelectionStart() == content.getSelectionEnd()) {
                 content.setText(s);
             }

@@ -80,6 +80,7 @@
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <include
+            android:id="@+id/app_bar_drawer"
             layout="@layout/app_bar_drawer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

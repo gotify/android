@@ -6,19 +6,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.OnTextChanged;
 import com.github.gotify.R;
 import com.github.gotify.SSLSettings;
 import com.github.gotify.Settings;
@@ -32,6 +27,7 @@ import com.github.gotify.client.api.ClientApi;
 import com.github.gotify.client.api.UserApi;
 import com.github.gotify.client.model.Client;
 import com.github.gotify.client.model.VersionInfo;
+import com.github.gotify.databinding.ActivityLoginBinding;
 import com.github.gotify.init.InitializationActivity;
 import com.github.gotify.log.Log;
 import com.github.gotify.log.LogsActivity;
@@ -48,30 +44,7 @@ public class LoginActivity extends AppCompatActivity {
     // return value from startActivityForResult when choosing a certificate
     private final int FILE_SELECT_CODE = 1;
 
-    @BindView(R.id.username)
-    EditText usernameField;
-
-    @BindView(R.id.gotify_url)
-    EditText urlField;
-
-    @BindView(R.id.password)
-    EditText passwordField;
-
-    @BindView(R.id.advanced_settings)
-    ImageView toggleAdvanced;
-
-    @BindView(R.id.checkurl)
-    Button checkUrlButton;
-
-    @BindView(R.id.login)
-    Button loginButton;
-
-    @BindView(R.id.checkurl_progress)
-    ProgressBar checkUrlProgress;
-
-    @BindView(R.id.login_progress)
-    ProgressBar loginProgress;
-
+    private ActivityLoginBinding binding;
     private Settings settings;
 
     private boolean disableSSLValidation;
@@ -82,27 +55,46 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         UncaughtExceptionHandler.registerCurrentThread();
-        setContentView(R.layout.activity_login);
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         Log.i("Entering " + getClass().getSimpleName());
-        ButterKnife.bind(this);
         settings = new Settings(this);
     }
 
-    @OnTextChanged(R.id.gotify_url)
-    public void onUrlChange() {
-        invalidateUrl();
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
+        binding.gotifyUrl.addTextChangedListener(
+                new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(
+                            CharSequence charSequence, int i, int i1, int i2) {}
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        invalidateUrl();
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {}
+                });
+
+        binding.checkurl.setOnClickListener(ignored -> doCheckUrl());
+        binding.openLogs.setOnClickListener(ignored -> openLogs());
+        binding.advancedSettings.setOnClickListener(ignored -> toggleShowAdvanced());
+        binding.login.setOnClickListener(ignored -> doLogin());
     }
 
     private void invalidateUrl() {
-        usernameField.setVisibility(View.GONE);
-        passwordField.setVisibility(View.GONE);
-        loginButton.setVisibility(View.GONE);
-        checkUrlButton.setText(getString(R.string.check_url));
+        binding.username.setVisibility(View.GONE);
+        binding.password.setVisibility(View.GONE);
+        binding.login.setVisibility(View.GONE);
+        binding.checkurl.setText(getString(R.string.check_url));
     }
 
-    @OnClick(R.id.checkurl)
     public void doCheckUrl() {
-        String url = urlField.getText().toString();
+        String url = binding.gotifyUrl.getText().toString();
         HttpUrl parsedUrl = HttpUrl.parse(url);
         if (parsedUrl == null) {
             Utils.showSnackBar(LoginActivity.this, "Invalid URL (include http:// or https://)");
@@ -113,8 +105,8 @@ public class LoginActivity extends AppCompatActivity {
             showHttpWarning();
         }
 
-        checkUrlProgress.setVisibility(View.VISIBLE);
-        checkUrlButton.setVisibility(View.GONE);
+        binding.checkurlProgress.setVisibility(View.VISIBLE);
+        binding.checkurl.setVisibility(View.GONE);
 
         final String trimmedUrl = url.trim();
         final String fixedUrl =
@@ -127,8 +119,8 @@ public class LoginActivity extends AppCompatActivity {
                     .getVersion()
                     .enqueue(callInUI(this, onValidUrl(fixedUrl), onInvalidUrl(fixedUrl)));
         } catch (Exception e) {
-            checkUrlProgress.setVisibility(View.GONE);
-            checkUrlButton.setVisibility(View.VISIBLE);
+            binding.checkurlProgress.setVisibility(View.GONE);
+            binding.checkurl.setVisibility(View.VISIBLE);
             String errorMsg =
                     getString(R.string.version_failed, fixedUrl + "/version", e.getMessage());
             Utils.showSnackBar(LoginActivity.this, errorMsg);
@@ -144,18 +136,16 @@ public class LoginActivity extends AppCompatActivity {
                 .show();
     }
 
-    @OnClick(R.id.open_logs)
     public void openLogs() {
         startActivity(new Intent(this, LogsActivity.class));
     }
 
-    @OnClick(R.id.advanced_settings)
     void toggleShowAdvanced() {
         String selectedCertName =
                 caCertContents != null ? getNameOfCertContent(caCertContents) : null;
 
         advancedDialog =
-                new AdvancedDialog(this)
+                new AdvancedDialog(this, getLayoutInflater())
                         .onDisableSSLChanged(
                                 (ignored, disable) -> {
                                     invalidateUrl();
@@ -231,31 +221,31 @@ public class LoginActivity extends AppCompatActivity {
     private Callback.SuccessCallback<VersionInfo> onValidUrl(String url) {
         return (version) -> {
             settings.url(url);
-            checkUrlProgress.setVisibility(View.GONE);
-            checkUrlButton.setVisibility(View.VISIBLE);
-            checkUrlButton.setText(getString(R.string.found_gotify_version, version.getVersion()));
-            usernameField.setVisibility(View.VISIBLE);
-            usernameField.requestFocus();
-            passwordField.setVisibility(View.VISIBLE);
-            loginButton.setVisibility(View.VISIBLE);
+            binding.checkurlProgress.setVisibility(View.GONE);
+            binding.checkurl.setVisibility(View.VISIBLE);
+            binding.checkurl.setText(
+                    getString(R.string.found_gotify_version, version.getVersion()));
+            binding.username.setVisibility(View.VISIBLE);
+            binding.username.requestFocus();
+            binding.password.setVisibility(View.VISIBLE);
+            binding.login.setVisibility(View.VISIBLE);
         };
     }
 
     private Callback.ErrorCallback onInvalidUrl(String url) {
         return (exception) -> {
-            checkUrlProgress.setVisibility(View.GONE);
-            checkUrlButton.setVisibility(View.VISIBLE);
+            binding.checkurlProgress.setVisibility(View.GONE);
+            binding.checkurl.setVisibility(View.VISIBLE);
             Utils.showSnackBar(LoginActivity.this, versionError(url, exception));
         };
     }
 
-    @OnClick(R.id.login)
     public void doLogin() {
-        String username = usernameField.getText().toString();
-        String password = passwordField.getText().toString();
+        String username = binding.username.getText().toString();
+        String password = binding.password.getText().toString();
 
-        loginButton.setVisibility(View.GONE);
-        loginProgress.setVisibility(View.VISIBLE);
+        binding.login.setVisibility(View.GONE);
+        binding.loginProgress.setVisibility(View.VISIBLE);
 
         ApiClient client =
                 ClientFactory.basicAuth(settings.url(), tempSSLSettings(), username, password);
@@ -265,8 +255,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void onInvalidLogin(ApiException e) {
-        loginButton.setVisibility(View.VISIBLE);
-        loginProgress.setVisibility(View.GONE);
+        binding.login.setVisibility(View.VISIBLE);
+        binding.loginProgress.setVisibility(View.GONE);
         Utils.showSnackBar(this, getString(R.string.wronguserpw));
     }
 
@@ -304,13 +294,13 @@ public class LoginActivity extends AppCompatActivity {
 
     private void onFailedToCreateClient(ApiException e) {
         Utils.showSnackBar(this, getString(R.string.create_client_failed));
-        loginProgress.setVisibility(View.GONE);
-        loginButton.setVisibility(View.VISIBLE);
+        binding.loginProgress.setVisibility(View.GONE);
+        binding.login.setVisibility(View.VISIBLE);
     }
 
     private void onCancelClientDialog(DialogInterface dialog, int which) {
-        loginProgress.setVisibility(View.GONE);
-        loginButton.setVisibility(View.VISIBLE);
+        binding.loginProgress.setVisibility(View.GONE);
+        binding.login.setVisibility(View.VISIBLE);
     }
 
     private String versionError(String url, ApiException exception) {

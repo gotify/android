@@ -6,16 +6,11 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import com.github.gotify.R;
 import com.github.gotify.Settings;
 import com.github.gotify.api.Api;
@@ -25,6 +20,7 @@ import com.github.gotify.client.ApiClient;
 import com.github.gotify.client.api.MessageApi;
 import com.github.gotify.client.model.Application;
 import com.github.gotify.client.model.Message;
+import com.github.gotify.databinding.ActivityShareBinding;
 import com.github.gotify.log.Log;
 import com.github.gotify.messages.provider.ApplicationHolder;
 import java.util.ArrayList;
@@ -33,35 +29,18 @@ import java.util.List;
 import static com.github.gotify.Utils.first;
 
 public class ShareActivity extends AppCompatActivity {
+    private ActivityShareBinding binding;
     private Settings settings;
     private ApplicationHolder appsHolder;
-
-    @BindView(R.id.title)
-    EditText edtTxtTitle;
-
-    @BindView(R.id.content)
-    EditText edtTxtContent;
-
-    @BindView(R.id.edtTxtPriority)
-    EditText edtTxtPriority;
-
-    @BindView(R.id.appSpinner)
-    Spinner appSpinner;
-
-    @BindView(R.id.push_button)
-    Button pushMessageButton;
-
-    @BindView(R.id.missingAppsContainer)
-    LinearLayout missingAppsInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_share);
-        ButterKnife.bind(this);
+        binding = ActivityShareBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         Log.i("Entering " + getClass().getSimpleName());
-        setSupportActionBar(findViewById(R.id.toolbar));
+        setSupportActionBar(binding.appBarDrawer.toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -74,7 +53,7 @@ public class ShareActivity extends AppCompatActivity {
         if (Intent.ACTION_SEND.equals(intent.getAction()) && "text/plain".equals(type)) {
             String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
             if (sharedText != null) {
-                edtTxtContent.setText(sharedText);
+                binding.content.setText(sharedText);
             }
         }
 
@@ -94,11 +73,18 @@ public class ShareActivity extends AppCompatActivity {
                     populateSpinner(apps);
 
                     boolean appsAvailable = !apps.isEmpty();
-                    pushMessageButton.setEnabled(appsAvailable);
-                    missingAppsInfo.setVisibility(appsAvailable ? View.GONE : View.VISIBLE);
+                    binding.pushButton.setEnabled(appsAvailable);
+                    binding.missingAppsContainer.setVisibility(
+                            appsAvailable ? View.GONE : View.VISIBLE);
                 });
-        appsHolder.onUpdateFailed(() -> pushMessageButton.setEnabled(false));
+        appsHolder.onUpdateFailed(() -> binding.pushButton.setEnabled(false));
         appsHolder.request();
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        binding.pushButton.setOnClickListener(ignored -> pushMessage());
     }
 
     @Override
@@ -109,12 +95,11 @@ public class ShareActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @OnClick(R.id.push_button)
-    public void pushMessage(View view) {
-        String titleText = edtTxtTitle.getText().toString();
-        String contentText = edtTxtContent.getText().toString();
-        String priority = edtTxtPriority.getText().toString();
-        int appIndex = appSpinner.getSelectedItemPosition();
+    public void pushMessage() {
+        String titleText = binding.title.getText().toString();
+        String contentText = binding.content.getText().toString();
+        String priority = binding.edtTxtPriority.getText().toString();
+        int appIndex = binding.appSpinner.getSelectedItemPosition();
 
         if (contentText.isEmpty()) {
             Toast.makeText(this, "Content should not be empty.", Toast.LENGTH_LONG).show();
@@ -147,7 +132,7 @@ public class ShareActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(
                         this, android.R.layout.simple_spinner_dropdown_item, appNameList);
-        appSpinner.setAdapter(adapter);
+        binding.appSpinner.setAdapter(adapter);
     }
 
     private class PushMessage extends AsyncTask<Message, String, String> {

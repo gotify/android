@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.text.format.DateUtils;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -16,13 +15,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import androidx.viewbinding.ViewBinding;
 import com.github.gotify.MarkwonFactory;
 import com.github.gotify.R;
 import com.github.gotify.Settings;
 import com.github.gotify.Utils;
 import com.github.gotify.client.model.Message;
+import com.github.gotify.databinding.MessageItemBinding;
+import com.github.gotify.databinding.MessageItemCompactBinding;
 import com.github.gotify.messages.provider.MessageWithImage;
 import com.squareup.picasso.Picasso;
 import io.noties.markwon.Markwon;
@@ -90,9 +90,17 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(messageLayout, parent, false);
+        ViewHolder holder;
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        if (messageLayout == R.layout.message_item) {
+            MessageItemBinding binding = MessageItemBinding.inflate(layoutInflater, parent, false);
+            holder = new ViewHolder(binding);
+        } else {
+            MessageItemCompactBinding binding =
+                    MessageItemCompactBinding.inflate(layoutInflater, parent, false);
+            holder = new ViewHolder(binding);
+        }
 
-        ViewHolder holder = new ViewHolder(view);
         return holder;
     }
 
@@ -133,30 +141,36 @@ public class ListMessageAdapter extends RecyclerView.Adapter<ListMessageAdapter.
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.message_image)
         ImageView image;
-
-        @BindView(R.id.message_text)
         TextView message;
-
-        @BindView(R.id.message_title)
         TextView title;
-
-        @BindView(R.id.message_date)
         TextView date;
-
-        @BindView(R.id.message_delete)
         ImageButton delete;
 
         private boolean relativeTimeFormat;
         private OffsetDateTime dateTime;
 
-        ViewHolder(final View view) {
-            super(view);
-            ButterKnife.bind(this, view);
+        ViewHolder(final ViewBinding binding) {
+            super(binding.getRoot());
             relativeTimeFormat = true;
             dateTime = null;
             enableCopyToClipboard();
+
+            if (binding instanceof MessageItemBinding) {
+                MessageItemBinding localBinding = (MessageItemBinding) binding;
+                image = localBinding.messageImage;
+                message = localBinding.messageText;
+                title = localBinding.messageTitle;
+                date = localBinding.messageDate;
+                delete = localBinding.messageDelete;
+            } else if (binding instanceof MessageItemCompactBinding) {
+                MessageItemCompactBinding localBinding = (MessageItemCompactBinding) binding;
+                image = localBinding.messageImage;
+                message = localBinding.messageText;
+                title = localBinding.messageTitle;
+                date = localBinding.messageDate;
+                delete = localBinding.messageDelete;
+            }
         }
 
         void switchTimeFormat() {
