@@ -1,18 +1,28 @@
 package com.github.gotify.api;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
+import androidx.annotation.RequiresApi;
 import com.github.gotify.SSLSettings;
 import com.github.gotify.Utils;
 import com.github.gotify.log.Log;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.Base64;
 import java.util.Collection;
 import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
@@ -60,19 +70,60 @@ public class CertUtils {
             }
 
             if (settings.cert != null) {
+                KeyManager[] keyManagers = new KeyManager[] {};
                 TrustManager[] trustManagers = certToTrustManager(settings.cert);
 
                 if (trustManagers != null && trustManagers.length > 0) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        if (settings.clientCert != null) {
+                            keyManagers = getClientCerts(settings.clientCert, settings.clientCertPassword.toCharArray());
+                        }
+                    }
+
                     SSLContext context = SSLContext.getInstance("TLS");
-                    context.init(new KeyManager[] {}, trustManagers, new SecureRandom());
+                    context.init(keyManagers, trustManagers, new SecureRandom());
                     builder.sslSocketFactory(
                             context.getSocketFactory(), (X509TrustManager) trustManagers[0]);
                 }
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    if (settings.clientCert != null) {
+                        KeyManager[] keyManagers = getClientCerts(settings.clientCert, settings.clientCertPassword.toCharArray());
+
+                        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
+                                TrustManagerFactory.getDefaultAlgorithm());
+                        trustManagerFactory.init((KeyStore) null);
+                        TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
+                        if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
+                            throw new IllegalStateException("Unexpected default trust managers:");
+                        }
+                        X509TrustManager trustManager = (X509TrustManager) trustManagers[0];
+
+                        SSLContext context = SSLContext.getInstance("TLS");
+                        context.init(keyManagers, new TrustManager[] { trustManager }, null);
+                        builder.sslSocketFactory(
+                                context.getSocketFactory(), trustManager);
+                    }
+                }
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             // We shouldn't have issues since the cert is verified on login.
             Log.e("Failed to apply SSL settings", e);
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private static KeyManager[] getClientCerts(String clientCert, char[] password)
+            throws CertificateException, IOException, NoSuchAlgorithmException, UnrecoverableKeyException, KeyStoreException {
+        KeyStore ks = KeyStore.getInstance("PKCS12");
+        InputStream bs = new ByteArrayInputStream(Base64.getDecoder().decode(clientCert));
+        ks.load(bs, password);
+
+        KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
+        kmf.init(ks, password);
+
+        return kmf.getKeyManagers();
     }
 
     private static TrustManager[] certToTrustManager(String cert) throws GeneralSecurityException {
