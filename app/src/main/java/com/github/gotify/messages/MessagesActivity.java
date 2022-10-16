@@ -17,13 +17,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.ViewFlipper;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.GravityCompat;
@@ -34,9 +33,6 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import com.github.gotify.BuildConfig;
 import com.github.gotify.MissedMessageUtil;
 import com.github.gotify.R;
@@ -53,6 +49,7 @@ import com.github.gotify.client.api.MessageApi;
 import com.github.gotify.client.model.Application;
 import com.github.gotify.client.model.Client;
 import com.github.gotify.client.model.Message;
+import com.github.gotify.databinding.ActivityMessagesBinding;
 import com.github.gotify.init.InitializationActivity;
 import com.github.gotify.log.Log;
 import com.github.gotify.log.LogsActivity;
@@ -91,24 +88,7 @@ public class MessagesActivity extends AppCompatActivity
 
     private static final int APPLICATION_ORDER = 1;
 
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-
-    @BindView(R.id.drawer_layout)
-    DrawerLayout drawer;
-
-    @BindView(R.id.nav_view)
-    NavigationView navigationView;
-
-    @BindView(R.id.messages_view)
-    RecyclerView messagesView;
-
-    @BindView(R.id.swipe_refresh)
-    SwipeRefreshLayout swipeRefreshLayout;
-
-    @BindView(R.id.flipper)
-    ViewFlipper flipper;
-
+    private ActivityMessagesBinding binding;
     private MessagesModel viewModel;
 
     private boolean isLoadMore = false;
@@ -119,8 +99,8 @@ public class MessagesActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_messages);
-        ButterKnife.bind(this);
+        binding = ActivityMessagesBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         viewModel =
                 new ViewModelProvider(this, new MessagesModelFactory(this))
                         .get(MessagesModel.class);
@@ -129,6 +109,7 @@ public class MessagesActivity extends AppCompatActivity
         initDrawer();
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        RecyclerView messagesView = binding.messagesView;
         DividerItemDecoration dividerItemDecoration =
                 new DividerItemDecoration(
                         messagesView.getContext(), layoutManager.getOrientation());
@@ -155,8 +136,9 @@ public class MessagesActivity extends AppCompatActivity
                 new ItemTouchHelper(new SwipeToDeleteCallback(listMessageAdapter));
         itemTouchHelper.attachToRecyclerView(messagesView);
 
+        SwipeRefreshLayout swipeRefreshLayout = binding.swipeRefresh;
         swipeRefreshLayout.setOnRefreshListener(this::onRefresh);
-        drawer.addDrawerListener(
+        binding.drawerLayout.addDrawerListener(
                 new DrawerLayout.SimpleDrawerListener() {
                     @Override
                     public void onDrawerClosed(View drawerView) {
@@ -185,6 +167,12 @@ public class MessagesActivity extends AppCompatActivity
         new UpdateMessagesForApplication(true).execute(viewModel.getAppId());
     }
 
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        binding.learnGotify.setOnClickListener(view -> openDocumentation());
+    }
+
     public void onRefreshAll(View view) {
         refreshAll();
     }
@@ -204,7 +192,6 @@ public class MessagesActivity extends AppCompatActivity
         new LoadMore().execute(viewModel.getAppId());
     }
 
-    @OnClick(R.id.learn_gotify)
     public void openDocumentation() {
         Intent browserIntent =
                 new Intent(Intent.ACTION_VIEW, Uri.parse("https://gotify.net/docs/pushmsg"));
@@ -216,7 +203,7 @@ public class MessagesActivity extends AppCompatActivity
     }
 
     protected void onUpdateApps(List<Application> applications) {
-        Menu menu = navigationView.getMenu();
+        Menu menu = binding.navView.getMenu();
         menu.removeGroup(R.id.apps);
         viewModel.getTargetReferences().clear();
         updateMessagesAndStopLoading(viewModel.getMessages().get(viewModel.getAppId()));
@@ -244,20 +231,20 @@ public class MessagesActivity extends AppCompatActivity
     }
 
     private void initDrawer() {
-        setSupportActionBar(toolbar);
-        navigationView.setItemIconTintList(null);
+        setSupportActionBar(binding.appBarDrawer.toolbar);
+        binding.navView.setItemIconTintList(null);
         ActionBarDrawerToggle toggle =
                 new ActionBarDrawerToggle(
                         this,
-                        drawer,
-                        toolbar,
+                        binding.drawerLayout,
+                        binding.appBarDrawer.toolbar,
                         R.string.navigation_drawer_open,
                         R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
+        binding.drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        navigationView.setNavigationItemSelectedListener(this);
-        View headerView = navigationView.getHeaderView(0);
+        binding.navView.setNavigationItemSelectedListener(this);
+        View headerView = binding.navView.getHeaderView(0);
 
         Settings settings = viewModel.getSettings();
 
@@ -278,8 +265,8 @@ public class MessagesActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            binding.drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
@@ -294,11 +281,11 @@ public class MessagesActivity extends AppCompatActivity
             Application app = viewModel.getAppsHolder().get().get(id);
             updateAppOnDrawerClose = app != null ? app.getId() : MessageState.ALL_MESSAGES;
             startLoading();
-            toolbar.setSubtitle(item.getTitle());
+            binding.appBarDrawer.toolbar.setSubtitle(item.getTitle());
         } else if (id == R.id.nav_all_messages) {
             updateAppOnDrawerClose = MessageState.ALL_MESSAGES;
             startLoading();
-            toolbar.setSubtitle("");
+            binding.appBarDrawer.toolbar.setSubtitle("");
         } else if (id == R.id.logout) {
             new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AppTheme_Dialog))
                     .setTitle(R.string.logout)
@@ -315,7 +302,7 @@ public class MessagesActivity extends AppCompatActivity
             startActivity(intent);
         }
 
-        drawer.closeDrawer(GravityCompat.START);
+        binding.drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 
@@ -325,13 +312,13 @@ public class MessagesActivity extends AppCompatActivity
     }
 
     private void startLoading() {
-        swipeRefreshLayout.setRefreshing(true);
-        messagesView.setVisibility(View.GONE);
+        binding.swipeRefresh.setRefreshing(true);
+        binding.messagesView.setVisibility(View.GONE);
     }
 
     private void stopLoading() {
-        swipeRefreshLayout.setRefreshing(false);
-        messagesView.setVisibility(View.VISIBLE);
+        binding.swipeRefresh.setRefreshing(false);
+        binding.messagesView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -359,7 +346,7 @@ public class MessagesActivity extends AppCompatActivity
         }
 
         listMessageAdapter.notifyDataSetChanged();
-        selectAppInMenu(navigationView.getMenu().findItem(selectedIndex));
+        selectAppInMenu(binding.navView.getMenu().findItem(selectedIndex));
         super.onResume();
     }
 
@@ -373,12 +360,12 @@ public class MessagesActivity extends AppCompatActivity
         if (appItem != null) {
             appItem.setChecked(true);
             if (appItem.getItemId() != R.id.nav_all_messages)
-                toolbar.setSubtitle(appItem.getTitle());
+                binding.appBarDrawer.toolbar.setSubtitle(appItem.getTitle());
         }
     }
 
     private void scheduleDeletion(int position, Message message, boolean listAnimation) {
-        ListMessageAdapter adapter = (ListMessageAdapter) messagesView.getAdapter();
+        ListMessageAdapter adapter = (ListMessageAdapter) binding.messagesView.getAdapter();
 
         MessageFacade messages = viewModel.getMessages();
         messages.deleteLocal(message);
@@ -394,7 +381,7 @@ public class MessagesActivity extends AppCompatActivity
         MessageFacade messages = viewModel.getMessages();
         MessageDeletion deletion = messages.undoDeleteLocal();
         if (deletion != null) {
-            ListMessageAdapter adapter = (ListMessageAdapter) messagesView.getAdapter();
+            ListMessageAdapter adapter = (ListMessageAdapter) binding.messagesView.getAdapter();
             long appId = viewModel.getAppId();
             adapter.setItems(messages.get(appId));
             int insertPosition =
@@ -406,7 +393,7 @@ public class MessagesActivity extends AppCompatActivity
     }
 
     private void showDeletionSnackbar() {
-        View view = swipeRefreshLayout;
+        View view = binding.swipeRefresh;
         Snackbar snackbar = Snackbar.make(view, R.string.snackbar_deleted, Snackbar.LENGTH_LONG);
         snackbar.setAction(R.string.snackbar_undo, v -> undoDelete());
         snackbar.addCallback(new SnackbarCallback());
@@ -741,12 +728,12 @@ public class MessagesActivity extends AppCompatActivity
         stopLoading();
 
         if (messageWithImages.isEmpty()) {
-            flipper.setDisplayedChild(1);
+            binding.flipper.setDisplayedChild(1);
         } else {
-            flipper.setDisplayedChild(0);
+            binding.flipper.setDisplayedChild(0);
         }
 
-        ListMessageAdapter adapter = (ListMessageAdapter) messagesView.getAdapter();
+        ListMessageAdapter adapter = (ListMessageAdapter) binding.messagesView.getAdapter();
         adapter.setItems(messageWithImages);
         adapter.notifyDataSetChanged();
     }
