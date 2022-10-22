@@ -7,7 +7,7 @@ android {
     compileSdkVersion 30
     defaultConfig {
         applicationId "com.github.gotify"
-        minSdkVersion 19
+        minSdkVersion 23
         targetSdkVersion 30
         versionCode 26
         versionName "2.4.0"
