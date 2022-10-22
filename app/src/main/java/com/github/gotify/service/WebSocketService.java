@@ -240,7 +240,9 @@ public class WebSocketService extends Service {
     private void showForegroundNotification(String title, String message) {
         Intent notificationIntent = new Intent(this, MessagesActivity.class);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        PendingIntent pendingIntent =
+                PendingIntent.getActivity(
+                        this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, NotificationSupport.Channel.FOREGROUND);
@@ -300,7 +302,11 @@ public class WebSocketService extends Service {
         }
 
         PendingIntent contentIntent =
-                PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.getActivity(
+                        this,
+                        0,
+                        intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder b =
                 new NotificationCompat.Builder(
@@ -353,7 +359,11 @@ public class WebSocketService extends Service {
     public void showNotificationGroup(long priority) {
         Intent intent = new Intent(this, MessagesActivity.class);
         PendingIntent contentIntent =
-                PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.getActivity(
+                        this,
+                        0,
+                        intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder b =
                 new NotificationCompat.Builder(
