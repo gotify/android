@@ -8,8 +8,6 @@ buildscript {
     repositories {
         google()
     }
-    dependencies {
-    }
 }
 
 repositories {
