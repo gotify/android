@@ -19,6 +19,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".init.InitializationActivity"
+            android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize">
@@ -30,24 +31,29 @@
         </activity>
         <activity
             android:name=".messages.MessagesActivity"
+            android:exported="false"
             android:launchMode="singleTask"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".login.LoginActivity"
+            android:exported="false"
             android:label="Login"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".log.LogsActivity"
+            android:exported="false"
             android:label="@string/title_activity_logs"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".settings.SettingsActivity"
+            android:exported="false"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/title_activity_settings" />
         <activity
             android:name=".sharing.ShareActivity"
+            android:exported="true"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="Push message">
             <intent-filter>
@@ -59,7 +65,8 @@
 
         <service android:name=".service.WebSocketService" />
 
-        <receiver android:name=".init.BootCompletedReceiver">
+        <receiver android:name=".init.BootCompletedReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
