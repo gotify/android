@@ -4,6 +4,7 @@ plugins {
 apply plugin: 'com.android.application'
 
 android {
+    namespace "com.github.gotify"
     compileSdk 33
     defaultConfig {
         applicationId "com.github.gotify"
