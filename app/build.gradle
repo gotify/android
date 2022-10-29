@@ -1,14 +1,15 @@
 plugins {
-    id "com.diffplug.gradle.spotless" version "3.26.1"
+    id "com.diffplug.spotless" version "6.11.0"
 }
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 30
+    namespace "com.github.gotify"
+    compileSdk 33
     defaultConfig {
         applicationId "com.github.gotify"
-        minSdkVersion 23
-        targetSdkVersion 30
+        minSdk 23
+        targetSdk 33
         versionCode 26
         versionName "2.4.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -31,8 +32,8 @@ android {
         viewBinding true
     }
     compileOptions {
-        sourceCompatibility = '1.8'
-        targetCompatibility = '1.8'
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     lintOptions {
         disable 'GoogleAppIndexingWarning'
@@ -59,13 +60,12 @@ if (project.hasProperty('sign')) {
 
 dependencies {
     implementation project(':client')
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.material:material:1.4.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
-    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'androidx.preference:preference:1.2.0'
 
     implementation 'com.hypertrack:hyperlog:0.0.10'
     implementation 'com.squareup.picasso:picasso:2.71828'
@@ -79,6 +79,7 @@ dependencies {
 configurations {
     all {
         exclude group: 'org.json', module: 'json'
+        exclude group: 'androidx.lifecycle', module: 'lifecycle-viewmodel-ktx'
     }
 }
 
