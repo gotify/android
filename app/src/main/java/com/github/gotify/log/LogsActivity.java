@@ -55,6 +55,7 @@ public class LogsActivity extends AppCompatActivity {
         }
         if (item.getItemId() == R.id.action_delete_logs) {
             Log.clear();
+            binding.logContent.setText(null);
         }
         if (item.getItemId() == R.id.action_copy_logs) {
             TextView content = binding.logContent;
