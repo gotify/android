@@ -330,7 +330,7 @@ public class MessagesActivity extends AppCompatActivity
         nManager.cancelAll();
 
         IntentFilter filter = new IntentFilter();
-        filter.addAction(WebSocketService.NEW_MESSAGE_BROADCAST);
+        filter.addAction(WebSocketService.Companion.getNEW_MESSAGE_BROADCAST());
         registerReceiver(receiver, filter);
         new UpdateMissedMessages().execute(viewModel.getMessages().getLastReceivedMessage());
 
