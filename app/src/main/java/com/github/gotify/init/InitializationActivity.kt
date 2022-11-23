@@ -31,7 +31,7 @@ class InitializationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         Log.init(this)
         val theme = PreferenceManager.getDefaultSharedPreferences(this)
-            .getString(getString(R.string.setting_key_theme), getString(R.string.theme_default))
+            .getString(getString(R.string.setting_key_theme), getString(R.string.theme_default))!!
         ThemeHelper.setTheme(this, theme)
 
         setContentView(R.layout.splash)
