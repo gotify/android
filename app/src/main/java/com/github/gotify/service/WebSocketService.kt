@@ -45,9 +45,9 @@ class WebSocketService : Service() {
         super.onCreate()
         settings = Settings(this)
         val client = ClientFactory.clientToken(
-            settings.url(),
+            settings.url,
             settings.sslSettings(),
-            settings.token()
+            settings.token
         )
         missingMessageUtil = MissedMessageUtil(client.createService(MessageApi::class.java))
         Log.i("Create ${javaClass.simpleName}")
@@ -63,7 +63,7 @@ class WebSocketService : Service() {
         Log.w("Destroy ${javaClass.simpleName}")
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.init(this)
         if (connection != null) {
             connection!!.close()
@@ -80,16 +80,16 @@ class WebSocketService : Service() {
         showForegroundNotification(getString(R.string.websocket_init))
 
         if (lastReceivedMessage.get() == NOT_LOADED) {
-            missingMessageUtil.lastReceivedMessage { lastReceivedMessage.set(it) }
+            missingMessageUtil.lastReceivedMessage { lastReceivedMessage.set(it ?: 0L) }
         }
 
         val cm = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
         val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
 
         connection = WebSocketConnection(
-            settings.url(),
+            settings.url,
             settings.sslSettings(),
-            settings.token(),
+            settings.token,
             cm,
             alarmManager
         )
@@ -105,7 +105,7 @@ class WebSocketService : Service() {
                     onNetworkFailure(minutes)
                 }
             })
-            .onMessage { onMessage(it) }
+            .onMessage { if (it != null) onMessage(it) }
             .onReconnected { notifyMissedNotifications() }
             .start()
 
@@ -120,9 +120,9 @@ class WebSocketService : Service() {
             getString(R.string.websocket_closed), getString(R.string.websocket_reconnect)
         )
         ClientFactory.userApiWithToken(settings)
-            .currentUser()
-            .enqueue(Callback.call({ doReconnect() }) { exception ->
-                if (exception.code() == 401) {
+            ?.currentUser()
+            ?.enqueue(Callback.call({ doReconnect() }) { exception ->
+                if (exception.code == 401) {
                     showForegroundNotification(
                         getString(R.string.user_action),
                         getString(R.string.websocket_closed_logout)
@@ -164,7 +164,7 @@ class WebSocketService : Service() {
             return
         }
 
-        val messages = missingMessageUtil.missingMessages(messageId)
+        val messages = missingMessageUtil.missingMessages(messageId).filterNotNull()
 
         if (messages.size > 5) {
             onGroupedMessages(messages)

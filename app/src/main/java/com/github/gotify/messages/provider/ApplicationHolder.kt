@@ -23,10 +23,8 @@ class ApplicationHolder(private val activity: Activity, private val client: ApiC
             .enqueue(
                 Callback.callInUI(
                     activity,
-                    { apps: List<Application> ->
-                        onReceiveApps(
-                            apps
-                        )
+                    { apps: List<Application>? ->
+                        if (apps != null) onReceiveApps(apps)
                     }
                 ) { e: ApiException -> onFailedApps(e) })
     }

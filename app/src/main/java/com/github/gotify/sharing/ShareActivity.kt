@@ -58,9 +58,9 @@ class ShareActivity : AppCompatActivity() {
         }
 
         val client = ClientFactory.clientToken(
-            settings.url(),
+            settings.url,
             settings.sslSettings(),
-            settings.token()
+            settings.token
         )
         appsHolder = ApplicationHolder(this, client)
         appsHolder.onUpdate {
@@ -116,7 +116,7 @@ class ShareActivity : AppCompatActivity() {
 
         PushMessage({
             val pushClient = ClientFactory.clientToken(
-                settings.url(),
+                settings.url,
                 settings.sslSettings(),
                 appsHolder.get()[appIndex].token
             )
@@ -150,7 +150,7 @@ class ShareActivity : AppCompatActivity() {
     ) : AsyncTask<Message?, String?, String>() {
         @Deprecated("Deprecated in Java")
         override fun doInBackground(vararg messages: Message?): String {
-            return backgroundAction(Utils.first(messages))
+            return backgroundAction(messages.first())
         }
 
         @Deprecated("Deprecated in Java")

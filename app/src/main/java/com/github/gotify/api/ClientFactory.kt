@@ -49,7 +49,7 @@ internal object ClientFactory {
     }
 
     fun userApiWithToken(settings: Settings): UserApi? {
-        return clientToken(settings.url(), settings.sslSettings(), settings.token())
+        return clientToken(settings.url, settings.sslSettings(), settings.token)
             .createService(UserApi::class.java)
     }
 

@@ -196,7 +196,7 @@ class MessagesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                 .get()
                 .load(
                     Utils.resolveAbsoluteUrl(
-                        viewModel.settings.url() + "/", app.image
+                        viewModel.settings.url + "/", app.image
                     )
                 )
                 .error(R.drawable.ic_alarm)
@@ -223,12 +223,12 @@ class MessagesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         val headerView: View = binding.navView.getHeaderView(0)
         val settings = viewModel.settings
         val user = headerView.findViewById<TextView>(R.id.header_user)
-        user.text = settings.user().name
+        user.text = settings.user?.name
         val connection = headerView.findViewById<TextView>(R.id.header_connection)
-        connection.text = getString(R.string.connection, settings.user().name, settings.url())
+        connection.text = getString(R.string.connection, settings.user?.name, settings.url)
         val version = headerView.findViewById<TextView>(R.id.header_version)
         version.text =
-            getString(R.string.versions, BuildConfig.VERSION_NAME, settings.serverVersion())
+            getString(R.string.versions, BuildConfig.VERSION_NAME, settings.serverVersion)
         val refreshAll = headerView.findViewById<ImageButton>(R.id.refresh_all)
         refreshAll.setOnClickListener { view: View? ->
             onRefreshAll(
@@ -480,7 +480,7 @@ class MessagesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
     private inner class UpdateMissedMessages : AsyncTask<Long?, Void?, Boolean>() {
         override fun doInBackground(vararg ids: Long?): Boolean {
-            val id = Utils.first<Long>(ids)
+            val id = ids.first()!!
             if (id == -1L) {
                 return false
             }
@@ -488,8 +488,7 @@ class MessagesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                 viewModel.client.createService(
                     MessageApi::class.java
                 )
-            )
-                .missingMessages(id)
+            ).missingMessages(id).filterNotNull()
             viewModel.messages.addMessages(newMessages)
             return newMessages.isNotEmpty()
         }
@@ -528,7 +527,7 @@ class MessagesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     private fun deleteApp(appId: Long) {
         val settings = viewModel.settings
         val client =
-            ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token())
+            ClientFactory.clientToken(settings.url, settings.sslSettings(), settings.token)
         client.createService(ApplicationApi::class.java)
             .deleteApp(appId)
             .enqueue(
@@ -561,7 +560,7 @@ class MessagesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         }
 
         override fun doInBackground(vararg appIds: Long?): Long {
-            val appId = Utils.first<Long>(appIds)
+            val appId = appIds.first()!!
             viewModel.messages.loadMoreIfNotPresent(appId)
             return appId
         }
@@ -610,20 +609,19 @@ class MessagesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         }
     }
 
-    private inner class DeleteClientAndNavigateToLogin :
-        AsyncTask<Void?, Void?, Void?>() {
+    private inner class DeleteClientAndNavigateToLogin : AsyncTask<Void?, Void?, Void?>() {
         override fun doInBackground(vararg ignore: Void?): Void? {
             val settings = viewModel.settings
             val api = ClientFactory.clientToken(
-                settings.url(), settings.sslSettings(), settings.token()
+                settings.url, settings.sslSettings(), settings.token
             )
                 .createService(ClientApi::class.java)
             stopService(Intent(this@MessagesActivity, WebSocketService::class.java))
             try {
-                val clients = Api.execute(api.clients)
+                val clients = Api.execute(api.clients) ?: emptyList()
                 var currentClient: Client? = null
                 for (client in clients) {
-                    if (client.token == settings.token()) {
+                    if (client.token == settings.token) {
                         currentClient = client
                         break
                     }

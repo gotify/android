@@ -79,7 +79,7 @@ class ListMessageAdapter(
             holder.message!!.text = message.message.message
         }
         holder.title!!.text = message.message.title
-        picasso.load(Utils.resolveAbsoluteUrl("${settings.url()}/", message.image))
+        picasso.load(Utils.resolveAbsoluteUrl("${settings.url}/", message.image))
             .error(R.drawable.ic_alarm)
             .placeholder(R.drawable.ic_placeholder)
             .into(holder.image)
@@ -144,7 +144,7 @@ class ListMessageAdapter(
             if (dateTime != null) {
                 text = if (relativeTimeFormat) {
                     // Relative time format
-                    Utils.dateToRelative(dateTime)
+                    Utils.dateToRelative(dateTime!!)
                 } else {
                     // Absolute time format
                     val time = dateTime!!.toInstant().toEpochMilli()

@@ -18,7 +18,7 @@ import okhttp3.*
 
 internal class WebSocketConnection(
     private val baseUrl: String,
-    settings: SSLSettings?,
+    settings: SSLSettings,
     private val token: String,
     private val connectivityManager: ConnectivityManager,
     private val alarmManager: AlarmManager

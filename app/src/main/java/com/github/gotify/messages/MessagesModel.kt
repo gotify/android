@@ -27,7 +27,7 @@ class MessagesModel(parentView: Activity) : ViewModel() {
     init {
         settings = Settings(parentView)
         picassoHandler = PicassoHandler(parentView, settings)
-        client = ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token())
+        client = ClientFactory.clientToken(settings.url, settings.sslSettings(), settings.token)
         appsHolder = ApplicationHolder(parentView, client)
         messages = MessageFacade(client.createService(MessageApi::class.java), appsHolder)
     }

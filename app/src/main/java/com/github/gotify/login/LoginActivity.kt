@@ -104,8 +104,8 @@ class LoginActivity : AppCompatActivity() {
 
         try {
             ClientFactory.versionApi(fixedUrl, tempSslSettings())
-                .version
-                .enqueue(Callback.callInUI(this, onValidUrl(fixedUrl), onInvalidUrl(fixedUrl)))
+                ?.version
+                ?.enqueue(Callback.callInUI(this, onValidUrl(fixedUrl), onInvalidUrl(fixedUrl)))
         } catch (e: Exception) {
             binding.checkurlProgress.visibility = View.GONE
             binding.checkurl.visibility = View.VISIBLE
@@ -196,10 +196,10 @@ class LoginActivity : AppCompatActivity() {
 
     private fun onValidUrl(url: String): SuccessCallback<VersionInfo> {
         return SuccessCallback { version ->
-            settings.url(url)
+            settings.url = url
             binding.checkurlProgress.visibility = View.GONE
             binding.checkurl.visibility = View.VISIBLE
-            binding.checkurl.text = getString(R.string.found_gotify_version, version.version)
+            binding.checkurl.text = getString(R.string.found_gotify_version, version?.version)
             binding.username.visibility = View.VISIBLE
             binding.username.requestFocus()
             binding.password.visibility = View.VISIBLE
@@ -222,7 +222,7 @@ class LoginActivity : AppCompatActivity() {
         binding.login.visibility = View.GONE
         binding.loginProgress.visibility = View.VISIBLE
 
-        val client = ClientFactory.basicAuth(settings.url(), tempSslSettings(), username, password)
+        val client = ClientFactory.basicAuth(settings.url, tempSslSettings(), username, password)
         client.createService(UserApi::class.java)
             .currentUser()
             .enqueue(Callback.callInUI(this, { newClientDialog(client) }) {
@@ -256,16 +256,16 @@ class LoginActivity : AppCompatActivity() {
             val newClient = Client().name(nameProvider.text.toString())
             client.createService(ClientApi::class.java)
                 .createClient(newClient)
-                .enqueue(Callback.callInUI(this, { onCreatedClient(it) }) {
+                .enqueue(Callback.callInUI(this, { if (it != null) onCreatedClient(it) }) {
                     onFailedToCreateClient()
                 })
         }
     }
 
     private fun onCreatedClient(client: Client) {
-        settings.token(client.token)
-        settings.validateSSL(!disableSslValidation)
-        settings.cert(caCertContents)
+        settings.token = client.token
+        settings.validateSSL = !disableSslValidation
+        settings.cert = caCertContents.toString()
 
         Utils.showSnackBar(this, getString(R.string.created_client))
         startActivity(Intent(this, InitializationActivity::class.java))
@@ -284,10 +284,10 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun versionError(url: String, exception: ApiException): String {
-        return getString(R.string.version_failed_status_code, "$url/version", exception.code())
+        return getString(R.string.version_failed_status_code, "$url/version", exception.code)
     }
 
     private fun tempSslSettings(): SSLSettings {
-        return SSLSettings(!disableSslValidation, caCertContents)
+        return SSLSettings(!disableSslValidation, caCertContents.toString())
     }
 }

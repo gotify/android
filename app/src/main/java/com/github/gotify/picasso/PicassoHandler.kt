@@ -46,7 +46,7 @@ class PicassoHandler(private val context: Context, private val settings: Setting
     }
 
     @Throws(IOException::class)
-    fun getImageFromUrl(url: String): Bitmap {
+    fun getImageFromUrl(url: String?): Bitmap {
         return picasso.load(url).get()
     }
 
@@ -56,7 +56,7 @@ class PicassoHandler(private val context: Context, private val settings: Setting
         }
         try {
             return getImageFromUrl(
-                Utils.resolveAbsoluteUrl("${settings.url()}/", appIdToAppImage[appId])
+                Utils.resolveAbsoluteUrl("${settings.url}/", appIdToAppImage[appId])
             )
         } catch (e: IOException) {
             Log.e("Could not load image for notification", e)
@@ -65,12 +65,12 @@ class PicassoHandler(private val context: Context, private val settings: Setting
     }
 
     fun updateAppIds() {
-        ClientFactory.clientToken(settings.url(), settings.sslSettings(), settings.token())
+        ClientFactory.clientToken(settings.url, settings.sslSettings(), settings.token)
             .createService(ApplicationApi::class.java)
             .apps
             .enqueue(Callback.call({ apps ->
                 appIdToAppImage.clear()
-                appIdToAppImage.putAll(MessageImageCombiner.appIdToImage(apps))
+                appIdToAppImage.putAll(MessageImageCombiner.appIdToImage(apps ?: emptyList()))
             }) { appIdToAppImage.clear() })
     }
 

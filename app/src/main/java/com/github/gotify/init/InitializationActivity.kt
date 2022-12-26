@@ -59,16 +59,18 @@ class InitializationActivity : AppCompatActivity() {
 
     private fun tryAuthenticate() {
         ClientFactory.userApiWithToken(settings)
-            .currentUser()
-            .enqueue(Callback.callInUI(this, { authenticated(it) }) { apiException ->
-                failed(apiException)
-            })
+                ?.currentUser()
+                ?.enqueue(
+                    Callback.callInUI(this, { if (it != null) authenticated(it) }) { apiException ->
+                        failed(apiException)
+                    }
+                )
     }
 
     private fun failed(exception: ApiException) {
-        when (exception.code()) {
+        when (exception.code) {
             0 -> {
-                dialog(getString(R.string.not_available, settings.url()))
+                dialog(getString(R.string.not_available, settings.url))
                 return
             }
             401 -> {
@@ -77,9 +79,9 @@ class InitializationActivity : AppCompatActivity() {
             }
         }
 
-        var response = exception.body()
+        var response = exception.body
         response = response.substring(0, 200.coerceAtMost(response.length))
-        dialog(getString(R.string.other_error, settings.url(), exception.code(), response))
+        dialog(getString(R.string.other_error, settings.url, exception.code, response))
     }
 
     private fun dialog(message: String) {
@@ -94,7 +96,7 @@ class InitializationActivity : AppCompatActivity() {
     private fun authenticated(user: User) {
         Log.i("Authenticated as ${user.name}")
 
-        settings.user(user.name, user.isAdmin)
+        settings.setUser(user.name, user.isAdmin)
         requestVersion {
             startActivity(Intent(this, MessagesActivity::class.java))
             finish()
@@ -108,9 +110,11 @@ class InitializationActivity : AppCompatActivity() {
     }
 
     private fun requestVersion(runnable: Runnable) {
-        requestVersion({ version: VersionInfo ->
-            Log.i("Server version: ${version.version}@${version.buildDate}")
-            settings.serverVersion(version.version)
+        requestVersion({ version: VersionInfo? ->
+            if (version != null) {
+                Log.i("Server version: ${version.version}@${version.buildDate}")
+                settings.serverVersion = version.version
+            }
             runnable.run()
         }) { runnable.run() }
     }
@@ -119,8 +123,8 @@ class InitializationActivity : AppCompatActivity() {
         callback: SuccessCallback<VersionInfo>,
         errorCallback: Callback.ErrorCallback
     ) {
-        ClientFactory.versionApi(settings.url(), settings.sslSettings())
-            .version
-            .enqueue(Callback.callInUI(this, callback, errorCallback))
+        ClientFactory.versionApi(settings.url, settings.sslSettings())
+            ?.version
+            ?.enqueue(Callback.callInUI(this, callback, errorCallback))
     }
 }
