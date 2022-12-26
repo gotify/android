@@ -1,0 +1,16 @@
+package com.github.gotify.messages
+
+import android.app.Activity
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+
+class MessagesModelFactory(var modelParameterActivity: Activity) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass == MessagesModel::class.java) {
+            return modelClass.cast(MessagesModel(modelParameterActivity)) as T
+        }
+        throw IllegalArgumentException(
+            "modelClass parameter must be of type ${MessagesModel::class.java.name}"
+        )
+    }
+}
