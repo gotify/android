@@ -3,7 +3,7 @@ package com.github.gotify.messages.provider
 import com.github.gotify.client.model.Application
 import com.github.gotify.client.model.Message
 
-object MessageImageCombiner {
+internal object MessageImageCombiner {
     fun combine(messages: List<Message>, applications: List<Application>): List<MessageWithImage> {
         val appIdToImage = appIdToImage(applications)
         val result = mutableListOf<MessageWithImage>()

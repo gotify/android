@@ -5,7 +5,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import com.github.gotify.R
 
-object ThemeHelper {
+internal object ThemeHelper {
     fun setTheme(context: Context, newTheme: String) {
         AppCompatDelegate.setDefaultNightMode(ofKey(context, newTheme))
     }

@@ -9,7 +9,7 @@ import com.github.gotify.client.model.Message
 import com.github.gotify.client.model.PagedMessages
 import com.github.gotify.log.Log
 
-class MissedMessageUtil(private val api: MessageApi) {
+internal class MissedMessageUtil(private val api: MessageApi) {
     fun lastReceivedMessage(successCallback: SuccessCallback<Long?>) {
         api.getMessages(1, 0L).enqueue(
             Callback.call({ messages: PagedMessages? ->

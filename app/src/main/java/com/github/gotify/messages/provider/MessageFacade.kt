@@ -3,7 +3,7 @@ package com.github.gotify.messages.provider
 import com.github.gotify.client.api.MessageApi
 import com.github.gotify.client.model.Message
 
-class MessageFacade(api: MessageApi, private val applicationHolder: ApplicationHolder) {
+internal class MessageFacade(api: MessageApi, private val applicationHolder: ApplicationHolder) {
     private val requester: MessageRequester
     private val state: MessageStateHolder
 

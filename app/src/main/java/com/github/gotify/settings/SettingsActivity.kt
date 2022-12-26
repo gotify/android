@@ -15,7 +15,7 @@ import androidx.preference.PreferenceManager
 import com.github.gotify.R
 import com.github.gotify.databinding.SettingsActivityBinding
 
-class SettingsActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
+internal class SettingsActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
     private lateinit var binding: SettingsActivityBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {

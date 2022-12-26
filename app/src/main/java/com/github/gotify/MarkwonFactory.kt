@@ -20,7 +20,7 @@ import org.commonmark.ext.gfm.tables.TablesExtension
 import org.commonmark.node.*
 import org.commonmark.parser.Parser
 
-object MarkwonFactory {
+internal object MarkwonFactory {
     fun createForMessage(context: Context, picasso: Picasso): Markwon {
         return Markwon.builder(context)
             .usePlugin(CorePlugin.create())

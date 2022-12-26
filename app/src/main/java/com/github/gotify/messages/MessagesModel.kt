@@ -12,7 +12,7 @@ import com.github.gotify.messages.provider.MessageState
 import com.github.gotify.picasso.PicassoHandler
 import com.squareup.picasso.Target
 
-class MessagesModel(parentView: Activity) : ViewModel() {
+internal class MessagesModel(parentView: Activity) : ViewModel() {
     val settings: Settings
     val picassoHandler: PicassoHandler
     val client: ApiClient

@@ -2,7 +2,7 @@ package com.github.gotify.messages.provider
 
 import com.github.gotify.client.model.Message
 
-class MessageState {
+internal class MessageState {
     var appId = 0L
     var loaded = false
     var hasNext = false

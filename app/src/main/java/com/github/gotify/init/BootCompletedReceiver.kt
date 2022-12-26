@@ -7,7 +7,7 @@ import android.os.Build
 import com.github.gotify.Settings
 import com.github.gotify.service.WebSocketService
 
-class BootCompletedReceiver : BroadcastReceiver() {
+internal class BootCompletedReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         val settings = Settings(context)

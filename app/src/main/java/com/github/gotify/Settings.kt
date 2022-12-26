@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.github.gotify.client.model.User
 
-class Settings(context: Context) {
+internal class Settings(context: Context) {
     private val sharedPreferences: SharedPreferences
     var url: String
         get() = sharedPreferences.getString("url", "")!!

@@ -24,7 +24,7 @@ import java.net.URI
 import java.net.URISyntaxException
 import java.net.URL
 
-object Utils {
+internal object Utils {
     val JSON: Gson = JSON().gson
 
     fun showSnackBar(activity: Activity, message: String?) {

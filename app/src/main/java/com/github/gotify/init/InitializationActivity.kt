@@ -23,7 +23,7 @@ import com.github.gotify.messages.MessagesActivity
 import com.github.gotify.service.WebSocketService
 import com.github.gotify.settings.ThemeHelper
 
-class InitializationActivity : AppCompatActivity() {
+internal class InitializationActivity : AppCompatActivity() {
 
     private lateinit var settings: Settings
 

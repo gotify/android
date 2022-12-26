@@ -34,7 +34,7 @@ import com.github.gotify.log.UncaughtExceptionHandler
 import java.security.cert.X509Certificate
 import okhttp3.HttpUrl
 
-class LoginActivity : AppCompatActivity() {
+internal class LoginActivity : AppCompatActivity() {
     companion object {
         // return value from startActivityForResult when choosing a certificate
         private const val FILE_SELECT_CODE = 1
@@ -82,7 +82,7 @@ class LoginActivity : AppCompatActivity() {
         binding.checkurl.text = getString(R.string.check_url)
     }
 
-    fun doCheckUrl() {
+    private fun doCheckUrl() {
         val url = binding.gotifyUrl.text.toString()
         val parsedUrl = HttpUrl.parse(url)
         if (parsedUrl == null) {
@@ -114,7 +114,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    fun showHttpWarning() {
+    private fun showHttpWarning() {
         AlertDialog.Builder(ContextThemeWrapper(this, R.style.AppTheme_Dialog))
             .setTitle(R.string.warning)
             .setCancelable(true)
@@ -123,11 +123,11 @@ class LoginActivity : AppCompatActivity() {
             .show()
     }
 
-    fun openLogs() {
+    private fun openLogs() {
         startActivity(Intent(this, LogsActivity::class.java))
     }
 
-    fun toggleShowAdvanced() {
+    private fun toggleShowAdvanced() {
         val selectedCertName = if (caCertContents != null) {
             getNameOfCertContent(caCertContents!!)
         } else null
@@ -215,7 +215,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    fun doLogin() {
+    private fun doLogin() {
         val username = binding.username.text.toString()
         val password = binding.password.text.toString()
 
@@ -251,7 +251,10 @@ class LoginActivity : AppCompatActivity() {
             .show()
     }
 
-    fun doCreateClient(client: ApiClient, nameProvider: EditText): DialogInterface.OnClickListener {
+    private fun doCreateClient(
+        client: ApiClient,
+        nameProvider: EditText
+    ): DialogInterface.OnClickListener {
         return DialogInterface.OnClickListener { _, _ ->
             val newClient = Client().name(nameProvider.text.toString())
             client.createService(ClientApi::class.java)

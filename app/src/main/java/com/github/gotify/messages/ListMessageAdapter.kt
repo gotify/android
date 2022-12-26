@@ -30,7 +30,7 @@ import org.threeten.bp.OffsetDateTime
 import java.text.DateFormat
 import java.util.*
 
-class ListMessageAdapter(
+internal class ListMessageAdapter(
     private val context: Context,
     private val settings: Settings,
     private val picasso: Picasso,

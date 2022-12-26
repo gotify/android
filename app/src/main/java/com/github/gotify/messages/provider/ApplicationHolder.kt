@@ -8,7 +8,7 @@ import com.github.gotify.client.ApiClient
 import com.github.gotify.client.api.ApplicationApi
 import com.github.gotify.client.model.Application
 
-class ApplicationHolder(private val activity: Activity, private val client: ApiClient) {
+internal class ApplicationHolder(private val activity: Activity, private val client: ApiClient) {
     private var state: List<Application> = listOf()
     private var onUpdate: Runnable? = null
     private var onUpdateFailed: Runnable? = null

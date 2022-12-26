@@ -19,8 +19,7 @@ import okhttp3.OkHttpClient
 import java.io.File
 import java.io.IOException
 
-class PicassoHandler(private val context: Context, private val settings: Settings) {
-
+internal class PicassoHandler(private val context: Context, private val settings: Settings) {
     companion object {
         private const val PICASSO_CACHE_SIZE = 50 * 1024 * 1024 // 50 MB
         private const val PICASSO_CACHE_SUBFOLDER = "picasso-cache"

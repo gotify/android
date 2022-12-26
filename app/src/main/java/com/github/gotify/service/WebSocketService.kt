@@ -26,7 +26,7 @@ import com.github.gotify.service.WebSocketConnection.OnNetworkFailureRunnable
 import io.noties.markwon.Markwon
 import java.util.concurrent.atomic.AtomicLong
 
-class WebSocketService : Service() {
+internal class WebSocketService : Service() {
     companion object {
         val NEW_MESSAGE_BROADCAST = "${WebSocketService::class.java.name}.NEW_MESSAGE"
         private const val NOT_LOADED = -2L

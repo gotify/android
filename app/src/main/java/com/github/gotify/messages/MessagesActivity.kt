@@ -57,7 +57,10 @@ import com.google.android.material.snackbar.BaseTransientBottomBar.BaseCallback
 import com.google.android.material.snackbar.Snackbar
 import java.io.IOException
 
-class MessagesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+internal class MessagesActivity :
+    AppCompatActivity(),
+    NavigationView.OnNavigationItemSelectedListener
+{
     private lateinit var binding: ActivityMessagesBinding
     private lateinit var viewModel: MessagesModel
     private var isLoadMore = false
@@ -148,11 +151,11 @@ class MessagesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         binding.learnGotify.setOnClickListener { openDocumentation() }
     }
 
-    fun onRefreshAll(view: View?) {
+    private fun onRefreshAll(view: View?) {
         refreshAll()
     }
 
-    fun refreshAll() {
+    private fun refreshAll() {
         try {
             viewModel.picassoHandler.evict()
         } catch (e: IOException) {
@@ -176,7 +179,7 @@ class MessagesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         CommitDeleteMessage().execute()
     }
 
-    protected fun onUpdateApps(applications: List<Application>) {
+    private fun onUpdateApps(applications: List<Application>) {
         val menu: Menu = binding.navView.menu
         menu.removeGroup(R.id.apps)
         viewModel.targetReferences.clear()
@@ -278,7 +281,7 @@ class MessagesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         return true
     }
 
-    fun doLogout() {
+    private fun doLogout() {
         setContentView(R.layout.splash)
         DeleteClientAndNavigateToLogin().execute()
     }

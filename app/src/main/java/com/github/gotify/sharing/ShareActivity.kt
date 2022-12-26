@@ -22,7 +22,7 @@ import com.github.gotify.databinding.ActivityShareBinding
 import com.github.gotify.log.Log
 import com.github.gotify.messages.provider.ApplicationHolder
 
-class ShareActivity : AppCompatActivity() {
+internal class ShareActivity : AppCompatActivity() {
     private lateinit var binding: ActivityShareBinding
     private lateinit var settings: Settings
     private lateinit var appsHolder: ApplicationHolder
@@ -88,7 +88,7 @@ class ShareActivity : AppCompatActivity() {
         return false
     }
 
-    fun pushMessage() {
+    private fun pushMessage() {
         val titleText = binding.title.text.toString()
         val contentText = binding.content.text.toString()
         val priority = binding.edtTxtPriority.text.toString()

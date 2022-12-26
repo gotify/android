@@ -2,7 +2,7 @@ package com.github.gotify.messages
 
 import com.github.gotify.client.model.Message
 
-object Extras {
+internal object Extras {
     fun useMarkdown(message: Message): Boolean {
         return useMarkdown(message.extras)
     }

@@ -11,8 +11,7 @@ import com.squareup.picasso.RequestHandler
  * Adapted from https://github.com/square/picasso/issues/1395#issuecomment-220929377 By
  * https://github.com/SmartDengg
  */
-class PicassoDataRequestHandler : RequestHandler() {
-
+internal class PicassoDataRequestHandler : RequestHandler() {
     companion object {
         private const val DATA_SCHEME = "data"
     }

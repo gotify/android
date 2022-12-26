@@ -3,7 +3,7 @@ package com.github.gotify.api
 import java.io.IOException
 import retrofit2.Call
 
-object Api {
+internal object Api {
     @Throws(ApiException::class)
     fun <T> execute(call: Call<T>): T? {
         try {

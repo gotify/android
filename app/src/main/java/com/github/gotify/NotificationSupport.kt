@@ -7,7 +7,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.github.gotify.log.Log
 
-object NotificationSupport {
+internal object NotificationSupport {
     @RequiresApi(Build.VERSION_CODES.O)
     fun createChannels(notificationManager: NotificationManager) {
         try {
