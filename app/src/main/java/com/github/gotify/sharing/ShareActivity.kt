@@ -1,7 +1,6 @@
 package com.github.gotify.sharing
 
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -11,7 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.github.gotify.R
 import com.github.gotify.Settings
-import com.github.gotify.Utils
+import com.github.gotify.Utils.launchCoroutine
 import com.github.gotify.api.Api
 import com.github.gotify.api.ApiException
 import com.github.gotify.api.ClientFactory
@@ -21,6 +20,8 @@ import com.github.gotify.client.model.Message
 import com.github.gotify.databinding.ActivityShareBinding
 import com.github.gotify.log.Log
 import com.github.gotify.messages.provider.ApplicationHolder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 internal class ShareActivity : AppCompatActivity() {
     private lateinit var binding: ActivityShareBinding
@@ -114,24 +115,37 @@ internal class ShareActivity : AppCompatActivity() {
         message.message = contentText
         message.priority = priority.toLong()
 
-        PushMessage({
-            val pushClient = ClientFactory.clientToken(
-                settings.url,
-                settings.sslSettings(),
-                appsHolder.get()[appIndex].token
-            )
-            try {
-                val messageApi = pushClient.createService(MessageApi::class.java)
-                Api.execute(messageApi.createMessage(it))
-                "Pushed!"
-            } catch (apiException: ApiException) {
-                Log.e("Failed sending message", apiException)
-                "Oops! Something went wrong..."
+        launchCoroutine {
+            val response = executeMessageCall(appIndex, message)
+            withContext(Dispatchers.Main) {
+                if (response) {
+                    Toast.makeText(this@ShareActivity, "Pushed!", Toast.LENGTH_LONG).show()
+                    finish()
+                } else {
+                    Toast.makeText(
+                        this@ShareActivity,
+                        "Oops! Something went wrong...",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
-        }, {
-            Toast.makeText(this, it, Toast.LENGTH_LONG).show()
-            finish()
-        }).execute(message)
+        }
+    }
+
+    private fun executeMessageCall(appIndex: Int, message: Message): Boolean {
+        val pushClient = ClientFactory.clientToken(
+            settings.url,
+            settings.sslSettings(),
+            appsHolder.get()[appIndex].token
+        )
+        return try {
+            val messageApi = pushClient.createService(MessageApi::class.java)
+            Api.execute(messageApi.createMessage(message))
+            true
+        } catch (apiException: ApiException) {
+            Log.e("Failed sending message", apiException)
+            false
+        }
     }
 
     private fun populateSpinner(apps: List<Application>) {
@@ -142,20 +156,5 @@ internal class ShareActivity : AppCompatActivity() {
 
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, appNameList)
         binding.appSpinner.adapter = adapter
-    }
-
-    class PushMessage(
-        private val backgroundAction: (message: Message?) -> String,
-        private val postAction: (message: String) -> Unit
-    ) : AsyncTask<Message?, String?, String>() {
-        @Deprecated("Deprecated in Java")
-        override fun doInBackground(vararg messages: Message?): String {
-            return backgroundAction(messages.first())
-        }
-
-        @Deprecated("Deprecated in Java")
-        override fun onPostExecute(message: String) {
-            postAction(message)
-        }
     }
 }
