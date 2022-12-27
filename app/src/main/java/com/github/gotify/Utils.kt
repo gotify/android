@@ -7,14 +7,14 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.text.format.DateUtils
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.github.gotify.client.JSON
 import com.github.gotify.log.Log
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso.LoadedFrom
 import com.squareup.picasso.Target
-import okio.Buffer
-import org.threeten.bp.OffsetDateTime
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
@@ -23,6 +23,12 @@ import java.net.MalformedURLException
 import java.net.URI
 import java.net.URISyntaxException
 import java.net.URL
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okio.Buffer
+import org.threeten.bp.OffsetDateTime
 
 internal object Utils {
     val JSON: Gson = JSON().gson
@@ -93,6 +99,15 @@ internal object Utils {
 
     fun stringToInputStream(str: String?): InputStream? {
         return if (str == null) null else Buffer().writeUtf8(str).inputStream()
+    }
+
+    fun AppCompatActivity.launchCoroutine(
+        dispatcher: CoroutineDispatcher = Dispatchers.IO,
+        action: suspend (coroutineScope: CoroutineScope) -> Unit
+    ) {
+        this.lifecycleScope.launch(dispatcher) {
+            action(this)
+        }
     }
 
     fun interface DrawableReceiver {
