@@ -3,7 +3,6 @@ package com.github.gotify.log
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -12,7 +11,10 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.github.gotify.R
 import com.github.gotify.Utils
+import com.github.gotify.Utils.launchCoroutine
 import com.github.gotify.databinding.ActivityLogsBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 internal class LogsActivity : AppCompatActivity() {
 
@@ -34,12 +36,15 @@ internal class LogsActivity : AppCompatActivity() {
     }
 
     private fun updateLogs() {
-        RefreshLogs { result ->
-            val content = binding.logContent
-            if (content.selectionStart == content.selectionEnd) {
-                content.text = result
+        launchCoroutine {
+            val log = Log.get()
+            withContext(Dispatchers.Main) {
+                val content = binding.logContent
+                if (content.selectionStart == content.selectionEnd) {
+                    content.text = log
+                }
             }
-        }.execute()
+        }
 
         if (!isDestroyed) {
             handler.postDelayed(this::updateLogs, 5000)
@@ -72,21 +77,6 @@ internal class LogsActivity : AppCompatActivity() {
                 true
             }
             else -> false
-        }
-    }
-
-    class RefreshLogs(private val action: (result: String) -> Unit)
-        : AsyncTask<Unit, Unit, String>() {
-
-        @Deprecated("Deprecated in Java")
-        override fun doInBackground(vararg params: Unit?): String {
-            return Log.get()
-        }
-
-        @Deprecated("Deprecated in Java")
-        override fun onPostExecute(result: String?) {
-            action(result ?: "")
-            super.onPostExecute(result)
         }
     }
 }
