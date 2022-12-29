@@ -6,7 +6,6 @@ import android.graphics.Canvas
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.AsyncTask
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -31,6 +30,7 @@ import com.github.gotify.BuildConfig
 import com.github.gotify.MissedMessageUtil
 import com.github.gotify.R
 import com.github.gotify.Utils
+import com.github.gotify.Utils.launchCoroutine
 import com.github.gotify.api.Api
 import com.github.gotify.api.ApiException
 import com.github.gotify.api.Callback
@@ -56,6 +56,8 @@ import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.BaseTransientBottomBar.BaseCallback
 import com.google.android.material.snackbar.Snackbar
 import java.io.IOException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 internal class MessagesActivity :
     AppCompatActivity(),
@@ -74,7 +76,9 @@ internal class MessagesActivity :
                 messageJson,
                 Message::class.java
             )
-            NewSingleMessage().execute(message)
+            launchCoroutine {
+                addSingleMessage(message)
+            }
         }
     }
 
@@ -126,8 +130,10 @@ internal class MessagesActivity :
                 override fun onDrawerClosed(drawerView: View) {
                     if (updateAppOnDrawerClose != null) {
                         viewModel.appId = updateAppOnDrawerClose!!
-                        UpdateMessagesForApplication(true).execute(updateAppOnDrawerClose)
-                        updateAppOnDrawerClose = null
+                        launchCoroutine {
+                            updateMessagesForApplication(true, updateAppOnDrawerClose!!)
+                            updateAppOnDrawerClose = null
+                        }
                         invalidateOptionsMenu()
                     }
                 }
@@ -143,7 +149,9 @@ internal class MessagesActivity :
                     swipeRefreshLayout.isEnabled = true
                 }
             }
-        UpdateMessagesForApplication(true).execute(viewModel.appId)
+        launchCoroutine {
+            updateMessagesForApplication(true, viewModel.appId)
+        }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -167,16 +175,14 @@ internal class MessagesActivity :
 
     private fun onRefresh() {
         viewModel.messages.clear()
-        LoadMore().execute(viewModel.appId)
+        launchCoroutine {
+            loadMore(viewModel.appId)
+        }
     }
 
     private fun openDocumentation() {
         val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://gotify.net/docs/pushmsg"))
         startActivity(browserIntent)
-    }
-
-    fun commitDelete() {
-        CommitDeleteMessage().execute()
     }
 
     private fun onUpdateApps(applications: List<Application>) {
@@ -283,7 +289,9 @@ internal class MessagesActivity :
 
     private fun doLogout() {
         setContentView(R.layout.splash)
-        DeleteClientAndNavigateToLogin().execute()
+        launchCoroutine {
+            deleteClientAndNavigateToLogin()
+        }
     }
 
     private fun startLoading() {
@@ -303,7 +311,9 @@ internal class MessagesActivity :
         val filter = IntentFilter()
         filter.addAction(NEW_MESSAGE_BROADCAST)
         registerReceiver(receiver, filter)
-        UpdateMissedMessages().execute(viewModel.messages.getLastReceivedMessage())
+        launchCoroutine {
+            updateMissedMessages(viewModel.messages.getLastReceivedMessage())
+        }
         var selectedIndex: Int = R.id.nav_all_messages
         val appId = viewModel.appId
         if (appId != MessageState.ALL_MESSAGES) {
@@ -372,7 +382,9 @@ internal class MessagesActivity :
                 // deletion to be sent to the server twice, since the deletion is sent to the server
                 // in MessageFacade if a message is deleted while another message was already
                 // waiting for deletion.
-                commitDelete()
+                launchCoroutine {
+                    commitDeleteMessage()
+                }
             }
         }
     }
@@ -474,32 +486,24 @@ internal class MessagesActivity :
                 ) {
                     if (!isLoadMore) {
                         isLoadMore = true
-                        LoadMore().execute(viewModel.appId)
+                        launchCoroutine {
+                            loadMore(viewModel.appId)
+                        }
                     }
                 }
             }
         }
     }
 
-    private inner class UpdateMissedMessages : AsyncTask<Long?, Void?, Boolean>() {
-        override fun doInBackground(vararg ids: Long?): Boolean {
-            val id = ids.first()!!
-            if (id == -1L) {
-                return false
-            }
-            val newMessages = MissedMessageUtil(
-                viewModel.client.createService(
-                    MessageApi::class.java
-                )
-            ).missingMessages(id).filterNotNull()
-            viewModel.messages.addMessages(newMessages)
-            return newMessages.isNotEmpty()
-        }
+    private suspend fun updateMissedMessages(id: Long) {
+        if (id == -1L) return
 
-        override fun onPostExecute(update: Boolean) {
-            if (update) {
-                UpdateMessagesForApplication(true).execute(viewModel.appId)
-            }
+        val newMessages = MissedMessageUtil(viewModel.client.createService(MessageApi::class.java))
+            .missingMessages(id).filterNotNull()
+        viewModel.messages.addMessages(newMessages)
+
+        if (newMessages.isNotEmpty()) {
+            updateMessagesForApplication(true, viewModel.appId)
         }
     }
 
@@ -512,7 +516,9 @@ internal class MessagesActivity :
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_delete_all) {
-            DeleteMessages().execute(viewModel.appId)
+            launchCoroutine {
+                deleteMessages(viewModel.appId)
+            }
         }
         if (item.itemId == R.id.action_delete_app) {
             val alert = android.app.AlertDialog.Builder(this)
@@ -544,109 +550,74 @@ internal class MessagesActivity :
                 })
     }
 
-    private inner class LoadMore : AsyncTask<Long?, Void?, List<MessageWithImage>>() {
-        override fun doInBackground(vararg appId: Long?): List<MessageWithImage> {
-            return viewModel.messages.loadMore(appId.first()!!)
-        }
-
-        override fun onPostExecute(messageWithImages: List<MessageWithImage>) {
-            updateMessagesAndStopLoading(messageWithImages)
+    private suspend fun loadMore(appId: Long) {
+        val messagesWithImages = viewModel.messages.loadMore(appId)
+        withContext(Dispatchers.Main) {
+            updateMessagesAndStopLoading(messagesWithImages)
         }
     }
 
-    private inner class UpdateMessagesForApplication(withLoadingSpinner: Boolean) :
-        AsyncTask<Long?, Void?, Long>() {
-        init {
-            if (withLoadingSpinner) {
+    private suspend fun updateMessagesForApplication(withLoadingSpinner: Boolean, appId: Long) {
+        if (withLoadingSpinner) {
+            withContext(Dispatchers.Main) {
                 startLoading()
             }
         }
-
-        override fun doInBackground(vararg appIds: Long?): Long {
-            val appId = appIds.first()!!
-            viewModel.messages.loadMoreIfNotPresent(appId)
-            return appId
-        }
-
-        override fun onPostExecute(appId: Long) {
+        viewModel.messages.loadMoreIfNotPresent(appId)
+        withContext(Dispatchers.Main) {
             updateMessagesAndStopLoading(viewModel.messages[appId])
         }
     }
 
-    private inner class NewSingleMessage : AsyncTask<Message?, Void?, Void?>() {
-        override fun doInBackground(vararg newMessages: Message?): Void? {
-            viewModel.messages.addMessages(listOfNotNull(*newMessages))
-            return null
-        }
-
-        override fun onPostExecute(data: Void?) {
-            UpdateMessagesForApplication(false).execute(viewModel.appId)
-        }
+    private suspend fun addSingleMessage(message: Message) {
+        viewModel.messages.addMessages(listOf(message))
+        updateMessagesForApplication(false, viewModel.appId)
     }
 
-    private inner class CommitDeleteMessage : AsyncTask<Void?, Void?, Void?>() {
-        override fun doInBackground(vararg messages: Void?): Void? {
-            viewModel.messages.commitDelete()
-            return null
-        }
-
-        override fun onPostExecute(data: Void?) {
-            UpdateMessagesForApplication(false).execute(viewModel.appId)
-        }
+    private suspend fun commitDeleteMessage() {
+        viewModel.messages.commitDelete()
+        updateMessagesForApplication(false, viewModel.appId)
     }
 
-    private inner class DeleteMessages : AsyncTask<Long?, Void?, Boolean>() {
-        init {
+    private suspend fun deleteMessages(appId: Long) {
+        withContext(Dispatchers.Main) {
             startLoading()
         }
-
-        override fun doInBackground(vararg appId: Long?): Boolean {
-            return viewModel.messages.deleteAll(appId.first()!!)
-        }
-
-        override fun onPostExecute(success: Boolean) {
-            if (!success) {
-                Utils.showSnackBar(this@MessagesActivity, "Delete failed :(")
-            }
-            UpdateMessagesForApplication(false).execute(viewModel.appId)
+        val success = viewModel.messages.deleteAll(appId)
+        if (success) {
+            updateMessagesForApplication(false, viewModel.appId)
+        } else {
+            Utils.showSnackBar(this@MessagesActivity, "Delete failed :(")
         }
     }
 
-    private inner class DeleteClientAndNavigateToLogin : AsyncTask<Void?, Void?, Void?>() {
-        override fun doInBackground(vararg ignore: Void?): Void? {
-            val settings = viewModel.settings
-            val api = ClientFactory.clientToken(
-                settings.url, settings.sslSettings(), settings.token
-            )
-                .createService(ClientApi::class.java)
-            stopService(Intent(this@MessagesActivity, WebSocketService::class.java))
-            try {
-                val clients = Api.execute(api.clients) ?: emptyList()
-                var currentClient: Client? = null
-                for (client in clients) {
-                    if (client.token == settings.token) {
-                        currentClient = client
-                        break
-                    }
+    private fun deleteClientAndNavigateToLogin() {
+        val settings = viewModel.settings
+        val api = ClientFactory.clientToken(settings.url, settings.sslSettings(), settings.token)
+            .createService(ClientApi::class.java)
+        stopService(Intent(this@MessagesActivity, WebSocketService::class.java))
+        try {
+            val clients = Api.execute(api.clients) ?: emptyList()
+            var currentClient: Client? = null
+            for (client in clients) {
+                if (client.token == settings.token) {
+                    currentClient = client
+                    break
                 }
-                if (currentClient != null) {
-                    Log.i("Delete client with id " + currentClient.id)
-                    Api.execute(api.deleteClient(currentClient.id))
-                } else {
-                    Log.e("Could not delete client, client does not exist.")
-                }
-            } catch (e: ApiException) {
-                Log.e("Could not delete client", e)
             }
-            return null
+            if (currentClient != null) {
+                Log.i("Delete client with id " + currentClient.id)
+                Api.execute(api.deleteClient(currentClient.id))
+            } else {
+                Log.e("Could not delete client, client does not exist.")
+            }
+        } catch (e: ApiException) {
+            Log.e("Could not delete client", e)
         }
 
-        override fun onPostExecute(aVoid: Void?) {
-            viewModel.settings.clear()
-            startActivity(Intent(this@MessagesActivity, LoginActivity::class.java))
-            finish()
-            super.onPostExecute(aVoid)
-        }
+        viewModel.settings.clear()
+        startActivity(Intent(this@MessagesActivity, LoginActivity::class.java))
+        finish()
     }
 
     private fun updateMessagesAndStopLoading(messageWithImages: List<MessageWithImage>) {
