@@ -32,9 +32,9 @@ internal class MissedMessageUtil(private val api: MessageApi) {
                 val messages = pagedMessages!!.messages
                 val filtered = filter(messages, till)
                 result.addAll(filtered)
-                if (messages.size != filtered.size
-                    || messages.size == 0
-                    || pagedMessages.paging.next == null) {
+                if (messages.size != filtered.size ||
+                    messages.size == 0 ||
+                    pagedMessages.paging.next == null) {
                     break
                 }
                 since = pagedMessages.paging.since

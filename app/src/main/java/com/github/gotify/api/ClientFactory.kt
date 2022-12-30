@@ -9,23 +9,23 @@ import com.github.gotify.client.auth.ApiKeyAuth
 import com.github.gotify.client.auth.HttpBasicAuth
 
 internal object ClientFactory {
-    private fun unauthorized(baseUrl: String, sslSettings: SSLSettings
-    ): ApiClient {
-        return defaultClient(arrayOfNulls(0), "$baseUrl/", sslSettings)
+    private fun unauthorized(baseUrl: String, sslSettings: SSLSettings): ApiClient {
+        return defaultClient(arrayOf(), "$baseUrl/", sslSettings)
     }
 
     fun basicAuth(
         baseUrl: String,
         sslSettings: SSLSettings,
-        username: String?,
-        password: String?
+        username: String,
+        password: String
     ): ApiClient {
         val client = defaultClient(
             arrayOf("basicAuth"),
-            "$baseUrl/", sslSettings
+            "$baseUrl/",
+            sslSettings
         )
-        val auth = client.apiAuthorizations["basicAuth"] as HttpBasicAuth?
-        auth!!.username = username
+        val auth = client.apiAuthorizations["basicAuth"] as HttpBasicAuth
+        auth.username = username
         auth.password = password
         return client
     }

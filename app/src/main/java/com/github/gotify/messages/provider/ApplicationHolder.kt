@@ -9,13 +9,11 @@ import com.github.gotify.client.api.ApplicationApi
 import com.github.gotify.client.model.Application
 
 internal class ApplicationHolder(private val activity: Activity, private val client: ApiClient) {
-    private var state: List<Application> = listOf()
+    private var state = listOf<Application>()
     private var onUpdate: Runnable? = null
     private var onUpdateFailed: Runnable? = null
 
-    fun wasRequested(): Boolean {
-        return state.isNotEmpty()
-    }
+    fun wasRequested() = state.isNotEmpty()
 
     fun request() {
         client.createService(ApplicationApi::class.java)

@@ -26,9 +26,9 @@ import com.github.gotify.databinding.MessageItemCompactBinding
 import com.github.gotify.messages.provider.MessageWithImage
 import com.squareup.picasso.Picasso
 import io.noties.markwon.Markwon
-import org.threeten.bp.OffsetDateTime
 import java.text.DateFormat
 import java.util.*
+import org.threeten.bp.OffsetDateTime
 
 internal class ListMessageAdapter(
     private val context: Context,
@@ -72,13 +72,13 @@ internal class ListMessageAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val message = items[position]
         if (Extras.useMarkdown(message.message)) {
-            holder.message!!.autoLinkMask = 0
-            markwon.setMarkdown(holder.message!!, message.message.message)
+            holder.message.autoLinkMask = 0
+            markwon.setMarkdown(holder.message, message.message.message)
         } else {
-            holder.message!!.autoLinkMask = Linkify.WEB_URLS
-            holder.message!!.text = message.message.message
+            holder.message.autoLinkMask = Linkify.WEB_URLS
+            holder.message.text = message.message.message
         }
-        holder.title!!.text = message.message.title
+        holder.title.text = message.message.title
         picasso.load(Utils.resolveAbsoluteUrl("${settings.url}/", message.image))
             .error(R.drawable.ic_alarm)
             .placeholder(R.drawable.ic_placeholder)
@@ -87,10 +87,10 @@ internal class ListMessageAdapter(
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val timeFormat = prefs.getString(timeFormatPrefsKey, timeFormatRelative)
         holder.setDateTime(message.message.date, timeFormat == timeFormatRelative)
-        holder.date!!.setOnClickListener { holder.switchTimeFormat() }
+        holder.date.setOnClickListener { holder.switchTimeFormat() }
 
-        holder.delete!!.setOnClickListener {
-            delete.delete(holder.adapterPosition, message.message!!, false)
+        holder.delete.setOnClickListener {
+            delete.delete(holder.adapterPosition, message.message, false)
         }
     }
 
@@ -102,14 +102,14 @@ internal class ListMessageAdapter(
     }
 
     class ViewHolder(binding: ViewBinding) : RecyclerView.ViewHolder(binding.root) {
-        var image: ImageView? = null
-        var message: TextView? = null
-        var title: TextView? = null
-        var date: TextView? = null
-        var delete: ImageButton? = null
+        lateinit var image: ImageView
+        lateinit var message: TextView
+        lateinit var title: TextView
+        lateinit var date: TextView
+        lateinit var delete: ImageButton
 
         private var relativeTimeFormat = true
-        private var dateTime: OffsetDateTime? = null
+        private lateinit var dateTime: OffsetDateTime
 
         init {
             enableCopyToClipboard()
@@ -133,38 +133,35 @@ internal class ListMessageAdapter(
             updateDate()
         }
 
-        fun setDateTime(dateTime: OffsetDateTime?, relativeTimeFormatPreference: Boolean) {
+        fun setDateTime(dateTime: OffsetDateTime, relativeTimeFormatPreference: Boolean) {
             this.dateTime = dateTime
             relativeTimeFormat = relativeTimeFormatPreference
             updateDate()
         }
 
         private fun updateDate() {
-            var text = "?"
-            if (dateTime != null) {
-                text = if (relativeTimeFormat) {
-                    // Relative time format
-                    Utils.dateToRelative(dateTime!!)
+            val text = if (relativeTimeFormat) {
+                // Relative time format
+                Utils.dateToRelative(dateTime)
+            } else {
+                // Absolute time format
+                val time = dateTime.toInstant().toEpochMilli()
+                val date = Date(time)
+                if (DateUtils.isToday(time)) {
+                    DateFormat.getTimeInstance(DateFormat.SHORT).format(date)
                 } else {
-                    // Absolute time format
-                    val time = dateTime!!.toInstant().toEpochMilli()
-                    val date = Date(time)
-                    if (DateUtils.isToday(time)) {
-                        DateFormat.getTimeInstance(DateFormat.SHORT).format(date)
-                    } else {
-                        DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
-                            .format(date)
-                    }
+                    DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(date)
                 }
             }
-            date!!.text = text
+
+            date.text = text
         }
 
         private fun enableCopyToClipboard() {
             super.itemView.setOnLongClickListener { view: View ->
                 val clipboard = view.context
                     .getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
-                val clip = ClipData.newPlainText("GotifyMessageContent", message!!.text.toString())
+                val clip = ClipData.newPlainText("GotifyMessageContent", message.text.toString())
                 if (clipboard != null) {
                     clipboard.setPrimaryClip(clip)
                     Toast.makeText(
@@ -178,7 +175,7 @@ internal class ListMessageAdapter(
         }
     }
 
-    interface Delete {
+    fun interface Delete {
         fun delete(position: Int, message: Message, listAnimation: Boolean)
     }
 }

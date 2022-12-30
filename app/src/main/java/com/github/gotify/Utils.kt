@@ -49,7 +49,7 @@ internal object Utils {
             .toString()
     }
 
-    fun resolveAbsoluteUrl(baseURL: String?, target: String?): String? {
+    fun resolveAbsoluteUrl(baseURL: String, target: String?): String? {
         return if (target == null) {
             null
         } else try {

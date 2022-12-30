@@ -28,7 +28,7 @@ internal class PicassoDataRequestHandler : RequestHandler() {
         val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
 
         if (bitmap == null) {
-            val show = if (uri.length > 50) uri.substring(0, 49) + "..." else uri
+            val show = if (uri.length > 50) uri.take(50) + "..." else uri
             val malformed = RuntimeException("Malformed data uri: $show")
             Log.e("Could not load image", malformed)
             throw malformed

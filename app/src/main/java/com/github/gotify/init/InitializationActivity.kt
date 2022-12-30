@@ -80,7 +80,7 @@ internal class InitializationActivity : AppCompatActivity() {
         }
 
         var response = exception.body
-        response = response.substring(0, 200.coerceAtMost(response.length))
+        response = response.take(200)
         dialog(getString(R.string.other_error, settings.url, exception.code, response))
     }
 

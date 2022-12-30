@@ -17,13 +17,7 @@ internal class Callback<T> private constructor(
         fun onError(t: ApiException)
     }
 
-    private class RetrofitCallback<T>(callback: Callback<T>) : retrofit2.Callback<T> {
-        private val callback: Callback<T>
-
-        init {
-            this.callback = callback
-        }
-
+    private class RetrofitCallback<T>(private val callback: Callback<T>) : retrofit2.Callback<T> {
         override fun onResponse(call: Call<T>, response: Response<T>) {
             if (response.isSuccessful) {
                 callback.onSuccess.onSuccess(response.body())

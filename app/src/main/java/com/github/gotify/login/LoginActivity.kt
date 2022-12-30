@@ -83,7 +83,7 @@ internal class LoginActivity : AppCompatActivity() {
     }
 
     private fun doCheckUrl() {
-        val url = binding.gotifyUrl.text.toString()
+        var url = binding.gotifyUrl.text.toString()
         val parsedUrl = HttpUrl.parse(url)
         if (parsedUrl == null) {
             Utils.showSnackBar(this, "Invalid URL (include http:// or https://)")
@@ -97,19 +97,17 @@ internal class LoginActivity : AppCompatActivity() {
         binding.checkurlProgress.visibility = View.VISIBLE
         binding.checkurl.visibility = View.GONE
 
-        val trimmedUrl = url.trim()
-        val fixedUrl = if (trimmedUrl.endsWith("/")) {
-            trimmedUrl.substring(0, trimmedUrl.length - 1)
-        } else trimmedUrl
+        url = url.trim()
+        if (url.endsWith("/")) url.dropLast(1)
 
         try {
-            ClientFactory.versionApi(fixedUrl, tempSslSettings())
+            ClientFactory.versionApi(url, tempSslSettings())
                 ?.version
-                ?.enqueue(Callback.callInUI(this, onValidUrl(fixedUrl), onInvalidUrl(fixedUrl)))
+                ?.enqueue(Callback.callInUI(this, onValidUrl(url), onInvalidUrl(url)))
         } catch (e: Exception) {
             binding.checkurlProgress.visibility = View.GONE
             binding.checkurl.visibility = View.VISIBLE
-            val errorMsg = getString(R.string.version_failed, "$fixedUrl/version", e.message)
+            val errorMsg = getString(R.string.version_failed, "$url/version", e.message)
             Utils.showSnackBar(this, errorMsg)
         }
     }
@@ -169,7 +167,7 @@ internal class LoginActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         try {
             if (requestCode == FILE_SELECT_CODE) {
-                require(resultCode == RESULT_OK) { String.format("result was %d", resultCode) }
+                require(resultCode == RESULT_OK) { "result was $resultCode" }
                 requireNotNull(data) { "file path was null" }
 
                 val uri = data.data ?: throw IllegalArgumentException("file path was null")
@@ -268,7 +266,7 @@ internal class LoginActivity : AppCompatActivity() {
     private fun onCreatedClient(client: Client) {
         settings.token = client.token
         settings.validateSSL = !disableSslValidation
-        settings.cert = caCertContents.toString()
+        settings.cert = caCertContents
 
         Utils.showSnackBar(this, getString(R.string.created_client))
         startActivity(Intent(this, InitializationActivity::class.java))
@@ -291,6 +289,6 @@ internal class LoginActivity : AppCompatActivity() {
     }
 
     private fun tempSslSettings(): SSLSettings {
-        return SSLSettings(!disableSslValidation, caCertContents.toString())
+        return SSLSettings(!disableSslValidation, caCertContents)
     }
 }

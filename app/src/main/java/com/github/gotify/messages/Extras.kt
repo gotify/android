@@ -3,9 +3,7 @@ package com.github.gotify.messages
 import com.github.gotify.client.model.Message
 
 internal object Extras {
-    fun useMarkdown(message: Message): Boolean {
-        return useMarkdown(message.extras)
-    }
+    fun useMarkdown(message: Message): Boolean = useMarkdown(message.extras)
 
     fun useMarkdown(extras: Map<String, Any>?): Boolean {
         if (extras == null) {

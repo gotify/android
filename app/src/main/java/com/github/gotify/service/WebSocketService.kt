@@ -95,16 +95,8 @@ internal class WebSocketService : Service() {
         )
             .onOpen { onOpen() }
             .onClose { onClose() }
-            .onBadRequest(object : BadRequestRunnable {
-                override fun execute(message: String) {
-                    onBadRequest(message)
-                }
-            })
-            .onNetworkFailure(object : OnNetworkFailureRunnable {
-                override fun execute(minutes: Int) {
-                    onNetworkFailure(minutes)
-                }
-            })
+            .onBadRequest { message -> onBadRequest(message) }
+            .onNetworkFailure { minutes -> onNetworkFailure(minutes) }
             .onMessage { if (it != null) onMessage(it) }
             .onReconnected { notifyMissedNotifications() }
             .start()

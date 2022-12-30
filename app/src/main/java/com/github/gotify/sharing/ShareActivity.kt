@@ -52,8 +52,11 @@ internal class ShareActivity : AppCompatActivity() {
         }
 
         if (!settings.tokenExists()) {
-            Toast.makeText(applicationContext, R.string.not_loggedin_share, Toast.LENGTH_SHORT)
-                .show()
+            Toast.makeText(
+                applicationContext,
+                R.string.not_loggedin_share,
+                Toast.LENGTH_SHORT
+            ).show()
             finish()
             return
         }

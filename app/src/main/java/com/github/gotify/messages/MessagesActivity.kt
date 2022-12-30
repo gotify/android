@@ -46,10 +46,8 @@ import com.github.gotify.init.InitializationActivity
 import com.github.gotify.log.Log
 import com.github.gotify.log.LogsActivity
 import com.github.gotify.login.LoginActivity
-import com.github.gotify.messages.ListMessageAdapter.Delete
 import com.github.gotify.messages.provider.*
 import com.github.gotify.service.WebSocketService
-import com.github.gotify.service.WebSocketService.Companion.NEW_MESSAGE_BROADCAST
 import com.github.gotify.settings.SettingsActivity
 import com.github.gotify.sharing.ShareActivity
 import com.google.android.material.navigation.NavigationView
@@ -86,8 +84,7 @@ internal class MessagesActivity :
         super.onCreate(savedInstanceState)
         binding = ActivityMessagesBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewModel = ViewModelProvider(this, MessagesModelFactory(this))
-            .get(MessagesModel::class.java)
+        viewModel = ViewModelProvider(this, MessagesModelFactory(this))[MessagesModel::class.java]
         Log.i("Entering " + javaClass.simpleName)
         initDrawer()
         val layoutManager = LinearLayoutManager(this)
@@ -99,16 +96,14 @@ internal class MessagesActivity :
             this,
             viewModel.settings,
             viewModel.picassoHandler.get(),
-            emptyList(),
-            object : Delete {
-                override fun delete(position: Int, message: Message, listAnimation: Boolean) {
-                    scheduleDeletion(
-                        position,
-                        message,
-                        listAnimation
-                    )
-                }
-            })
+            emptyList()
+        ) { position, message, listAnimation ->
+            scheduleDeletion(
+                position,
+                message,
+                listAnimation
+            )
+        }
         messagesView.addItemDecoration(dividerItemDecoration)
         messagesView.setHasFixedSize(true)
         messagesView.layoutManager = layoutManager
@@ -191,23 +186,18 @@ internal class MessagesActivity :
         viewModel.targetReferences.clear()
         updateMessagesAndStopLoading(viewModel.messages[viewModel.appId])
         var selectedItem = menu.findItem(R.id.nav_all_messages)
-        for (i in applications.indices) {
-            val app = applications[i]
-            val item = menu.add(R.id.apps, i, APPLICATION_ORDER, app.name)
+        applications.indices.forEach {
+            val app = applications[it]
+            val item = menu.add(R.id.apps, it, APPLICATION_ORDER, app.name)
             item.isCheckable = true
             if (app.id == viewModel.appId) selectedItem = item
-            val t = Utils.toDrawable(
-                resources
-            ) { icon: Drawable? -> item.icon = icon }
+            val t = Utils.toDrawable(resources) { icon: Drawable? ->
+                item.icon = icon
+            }
             viewModel.targetReferences.add(t)
-            viewModel
-                .picassoHandler
+            viewModel.picassoHandler
                 .get()
-                .load(
-                    Utils.resolveAbsoluteUrl(
-                        viewModel.settings.url + "/", app.image
-                    )
-                )
+                .load(Utils.resolveAbsoluteUrl(viewModel.settings.url + "/", app.image))
                 .error(R.drawable.ic_alarm)
                 .placeholder(R.drawable.ic_placeholder)
                 .resize(100, 100)
@@ -239,10 +229,8 @@ internal class MessagesActivity :
         version.text =
             getString(R.string.versions, BuildConfig.VERSION_NAME, settings.serverVersion)
         val refreshAll = headerView.findViewById<ImageButton>(R.id.refresh_all)
-        refreshAll.setOnClickListener { view: View? ->
-            onRefreshAll(
-                view
-            )
+        refreshAll.setOnClickListener {
+            onRefreshAll(it)
         }
     }
 
@@ -259,7 +247,7 @@ internal class MessagesActivity :
         val id = item.itemId
         if (item.groupId == R.id.apps) {
             val app = viewModel.appsHolder.get()[id]
-            updateAppOnDrawerClose = if (app != null) app.id else MessageState.ALL_MESSAGES
+            updateAppOnDrawerClose = app.id
             startLoading()
             binding.appBarDrawer.toolbar.subtitle = item.title
         } else if (id == R.id.nav_all_messages) {
@@ -273,7 +261,7 @@ internal class MessagesActivity :
                 .setPositiveButton(R.string.yes) { _, _ ->
                     doLogout()
                 }
-                .setNegativeButton(R.string.cancel) { a, b -> }
+                .setNegativeButton(R.string.cancel, null)
                 .show()
         } else if (id == R.id.nav_logs) {
             startActivity(Intent(this, LogsActivity::class.java))
@@ -309,22 +297,22 @@ internal class MessagesActivity :
         val nManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         nManager.cancelAll()
         val filter = IntentFilter()
-        filter.addAction(NEW_MESSAGE_BROADCAST)
+        filter.addAction(WebSocketService.NEW_MESSAGE_BROADCAST)
         registerReceiver(receiver, filter)
         launchCoroutine {
             updateMissedMessages(viewModel.messages.getLastReceivedMessage())
         }
-        var selectedIndex: Int = R.id.nav_all_messages
+        var selectedIndex = R.id.nav_all_messages
         val appId = viewModel.appId
         if (appId != MessageState.ALL_MESSAGES) {
             val apps = viewModel.appsHolder.get()
-            for (i in apps.indices) {
-                if (apps[i].id == appId) {
-                    selectedIndex = i
+            apps.indices.forEach {
+                if (apps[it].id == appId) {
+                    selectedIndex = it
                 }
             }
         }
-        listMessageAdapter!!.notifyDataSetChanged()
+        listMessageAdapter.notifyDataSetChanged()
         selectAppInMenu(binding.navView.menu.findItem(selectedIndex))
         super.onResume()
     }
@@ -337,17 +325,26 @@ internal class MessagesActivity :
     private fun selectAppInMenu(appItem: MenuItem?) {
         if (appItem != null) {
             appItem.isChecked = true
-            if (appItem.itemId != R.id.nav_all_messages) binding.appBarDrawer.toolbar.subtitle =
-                appItem.title
+            if (appItem.itemId != R.id.nav_all_messages) {
+                binding.appBarDrawer.toolbar.subtitle = appItem.title
+            }
         }
     }
 
-    private fun scheduleDeletion(position: Int, message: Message, listAnimation: Boolean) {
+    private fun scheduleDeletion(
+        position: Int,
+        message: Message,
+        listAnimation: Boolean
+    ) {
         val adapter = binding.messagesView.adapter as ListMessageAdapter
         val messages = viewModel.messages
         messages.deleteLocal(message)
         adapter.items = messages[viewModel.appId]
-        if (listAnimation) adapter.notifyItemRemoved(position) else adapter.notifyDataSetChanged()
+        if (listAnimation) {
+            adapter.notifyItemRemoved(position)
+        } else {
+            adapter.notifyDataSetChanged()
+        }
         showDeletionSnackbar()
     }
 
@@ -358,17 +355,19 @@ internal class MessagesActivity :
             val adapter = binding.messagesView.adapter as ListMessageAdapter
             val appId = viewModel.appId
             adapter.items = messages[appId]
-            val insertPosition =
-                if (appId == MessageState.ALL_MESSAGES) deletion.allPosition else deletion.appPosition
+            val insertPosition = if (appId == MessageState.ALL_MESSAGES) {
+                deletion.allPosition
+            } else {
+                deletion.appPosition
+            }
             adapter.notifyItemInserted(insertPosition)
         }
     }
 
     private fun showDeletionSnackbar() {
         val view: View = binding.swipeRefresh
-        val snackbar: Snackbar =
-            Snackbar.make(view, R.string.snackbar_deleted, Snackbar.LENGTH_LONG)
-        snackbar.setAction(R.string.snackbar_undo) { v -> undoDelete() }
+        val snackbar = Snackbar.make(view, R.string.snackbar_deleted, Snackbar.LENGTH_LONG)
+        snackbar.setAction(R.string.snackbar_undo) { undoDelete() }
         snackbar.addCallback(SnackbarCallback())
         snackbar.show()
     }
@@ -389,8 +388,9 @@ internal class MessagesActivity :
         }
     }
 
-    private inner class SwipeToDeleteCallback(private val adapter: ListMessageAdapter) :
-        ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+    private inner class SwipeToDeleteCallback(
+        private val adapter: ListMessageAdapter
+    ) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
         private var icon: Drawable?
         private val background: ColorDrawable
 
@@ -411,9 +411,7 @@ internal class MessagesActivity :
             recyclerView: RecyclerView,
             viewHolder: RecyclerView.ViewHolder,
             target: RecyclerView.ViewHolder
-        ): Boolean {
-            return false
-        }
+        ) = false
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
             val position = viewHolder.adapterPosition
@@ -475,14 +473,15 @@ internal class MessagesActivity :
 
     private inner class MessageListOnScrollListener : RecyclerView.OnScrollListener() {
         override fun onScrollStateChanged(view: RecyclerView, scrollState: Int) {}
+
         override fun onScrolled(view: RecyclerView, dx: Int, dy: Int) {
             val linearLayoutManager = view.layoutManager as LinearLayoutManager?
             if (linearLayoutManager != null) {
                 val lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition()
                 val totalItemCount = view.adapter!!.itemCount
-                if (lastVisibleItem > totalItemCount - 15 && totalItemCount != 0 && viewModel.messages.canLoadMore(
-                        viewModel.appId
-                    )
+                if (lastVisibleItem > totalItemCount - 15 &&
+                    totalItemCount != 0 &&
+                    viewModel.messages.canLoadMore(viewModel.appId)
                 ) {
                     if (!isLoadMore) {
                         isLoadMore = true
@@ -540,13 +539,8 @@ internal class MessagesActivity :
         client.createService(ApplicationApi::class.java)
             .deleteApp(appId)
             .enqueue(
-                Callback.callInUI(
-                    this,
-                    { refreshAll() }
-                ) {
-                    Utils.showSnackBar(
-                        this, getString(R.string.error_delete_app)
-                    )
+                Callback.callInUI(this, { refreshAll() }) {
+                    Utils.showSnackBar(this, getString(R.string.error_delete_app))
                 })
     }
 

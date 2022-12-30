@@ -4,13 +4,8 @@ import com.github.gotify.client.api.MessageApi
 import com.github.gotify.client.model.Message
 
 internal class MessageFacade(api: MessageApi, private val applicationHolder: ApplicationHolder) {
-    private val requester: MessageRequester
-    private val state: MessageStateHolder
-
-    init {
-        requester = MessageRequester(api)
-        state = MessageStateHolder()
-    }
+    private val requester = MessageRequester(api)
+    private val state = MessageStateHolder()
 
     @Synchronized
     operator fun get(appId: Long): List<MessageWithImage> {

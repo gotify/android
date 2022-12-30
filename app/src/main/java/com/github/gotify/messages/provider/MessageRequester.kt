@@ -11,7 +11,7 @@ import com.github.gotify.log.Log
 internal class MessageRequester(private val messageApi: MessageApi) {
     fun loadMore(state: MessageState): PagedMessages? {
         return try {
-            Log.i("Loading more messages for " + state.appId)
+            Log.i("Loading more messages for ${state.appId}")
             if (MessageState.ALL_MESSAGES == state.appId) {
                 Api.execute(messageApi.getMessages(LIMIT, state.nextSince))
             } else {
@@ -24,7 +24,7 @@ internal class MessageRequester(private val messageApi: MessageApi) {
     }
 
     fun asyncRemoveMessage(message: Message) {
-        Log.i("Removing message with id " + message.id)
+        Log.i("Removing message with id ${message.id}")
         messageApi.deleteMessage(message.id).enqueue(Callback.call())
     }
 

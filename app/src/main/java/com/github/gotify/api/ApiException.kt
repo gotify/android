@@ -1,7 +1,6 @@
 package com.github.gotify.api
 
 import java.io.IOException
-import java.util.*
 import retrofit2.Response
 
 internal class ApiException : Exception {
@@ -23,12 +22,5 @@ internal class ApiException : Exception {
         code = 0
     }
 
-    override fun toString(): String {
-        return String.format(
-            Locale.ENGLISH,
-            "Code(%d) Response: %s",
-            code,
-            body.substring(0, body.length.coerceAtMost(200))
-        )
-    }
+    override fun toString() = "Code($code) Response: ${body.take(200)}"
 }

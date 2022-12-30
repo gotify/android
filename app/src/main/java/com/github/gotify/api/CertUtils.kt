@@ -16,14 +16,14 @@ import okhttp3.OkHttpClient
 
 internal object CertUtils {
     @SuppressLint("CustomX509TrustManager")
-    private val trustAll: X509TrustManager = object : X509TrustManager {
+    private val trustAll = object : X509TrustManager {
         @SuppressLint("TrustAllX509TrustManager")
         override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {}
 
         @SuppressLint("TrustAllX509TrustManager")
         override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {}
 
-        override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
+        override fun getAcceptedIssuers() = arrayOf<X509Certificate>()
     }
 
     fun parseCertificate(cert: String): Certificate {
@@ -45,8 +45,9 @@ internal object CertUtils {
                 builder.hostnameVerifier { _, _ -> true }
                 return
             }
-            if (settings.cert != null) {
-                val trustManagers = certToTrustManager(settings.cert)
+            val cert = settings.cert
+            if (cert != null) {
+                val trustManagers = certToTrustManager(cert)
                 if (trustManagers.isNotEmpty()) {
                     val context = SSLContext.getInstance("TLS")
                     context.init(arrayOf(), trustManagers, SecureRandom())
@@ -66,7 +67,7 @@ internal object CertUtils {
     private fun certToTrustManager(cert: String): Array<TrustManager> {
         val certificateFactory = CertificateFactory.getInstance("X.509")
         val certificates = certificateFactory.generateCertificates(Utils.stringToInputStream(cert))
-        require(!certificates.isEmpty()) { "expected non-empty set of trusted certificates" }
+        require(certificates.isNotEmpty()) { "expected non-empty set of trusted certificates" }
 
         val caKeyStore = newEmptyKeyStore()
         certificates.forEachIndexed { index, certificate ->

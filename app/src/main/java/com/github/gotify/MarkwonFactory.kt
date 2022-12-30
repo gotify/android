@@ -28,69 +28,65 @@ internal object MarkwonFactory {
             .usePlugin(PicassoImagesPlugin.create(picasso))
             .usePlugin(StrikethroughPlugin.create())
             .usePlugin(TablePlugin.create(context))
-            .usePlugin(
-                object : AbstractMarkwonPlugin() {
-                    override fun configureTheme(builder: MarkwonTheme.Builder) {
-                        builder.linkColor(ContextCompat.getColor(context, R.color.hyperLink))
-                            .isLinkUnderlined(true)
-                    }
-                })
+            .usePlugin(object : AbstractMarkwonPlugin() {
+                override fun configureTheme(builder: MarkwonTheme.Builder) {
+                    builder.linkColor(ContextCompat.getColor(context, R.color.hyperLink))
+                        .isLinkUnderlined(true)
+                }
+            })
             .build()
     }
 
     fun createForNotification(context: Context, picasso: Picasso): Markwon {
-        val headingSizes = floatArrayOf(
-            2f, 1.5f, 1.17f, 1f, .83f, .67f
-        )
+        val headingSizes = floatArrayOf(2f, 1.5f, 1.17f, 1f, .83f, .67f)
         val bulletGapWidth = (8 * context.resources.displayMetrics.density + 0.5f).toInt()
 
         return Markwon.builder(context)
             .usePlugin(CorePlugin.create())
             .usePlugin(PicassoImagesPlugin.create(picasso))
             .usePlugin(StrikethroughPlugin.create())
-            .usePlugin(
-                object : AbstractMarkwonPlugin() {
-                    override fun configureSpansFactory(builder: MarkwonSpansFactory.Builder) {
-                        builder.setFactory(Heading::class.java) { _, props: RenderProps? ->
+            .usePlugin(object : AbstractMarkwonPlugin() {
+                override fun configureSpansFactory(builder: MarkwonSpansFactory.Builder) {
+                    builder.setFactory(Heading::class.java) { _, props: RenderProps? ->
+                        arrayOf<Any>(
+                            RelativeSizeSpan(
+                                headingSizes[CoreProps.HEADING_LEVEL.require(props!!) - 1]
+                            ),
+                            StyleSpan(Typeface.BOLD)
+                        )
+                    }
+                        .setFactory(Emphasis::class.java) { _, _ ->
+                            StyleSpan(Typeface.ITALIC)
+                        }
+                        .setFactory(StrongEmphasis::class.java) { _, _ ->
+                            StyleSpan(Typeface.BOLD)
+                        }
+                        .setFactory(BlockQuote::class.java) { _, _ -> QuoteSpan() }
+                        .setFactory(Code::class.java) { _, _ ->
                             arrayOf<Any>(
-                                RelativeSizeSpan(
-                                    headingSizes[CoreProps.HEADING_LEVEL.require(props!!) - 1]
-                                ),
-                                StyleSpan(Typeface.BOLD)
+                                BackgroundColorSpan(Color.LTGRAY),
+                                TypefaceSpan("monospace")
                             )
                         }
-                            .setFactory(Emphasis::class.java) { _, _ ->
-                                StyleSpan(Typeface.ITALIC)
-                            }
-                            .setFactory(StrongEmphasis::class.java) { _, _ ->
-                                StyleSpan(Typeface.BOLD)
-                            }
-                            .setFactory(BlockQuote::class.java) { _, _ -> QuoteSpan() }
-                            .setFactory(Code::class.java) { _, _ ->
-                                arrayOf<Any>(
-                                    BackgroundColorSpan(Color.LTGRAY),
-                                    TypefaceSpan("monospace")
-                                )
-                            }
-                            .setFactory(ListItem::class.java) { _, _ ->
-                                BulletSpan(bulletGapWidth)
-                            }
-                            .setFactory(Link::class.java) { _, _ -> null }
-                    }
-
-                    override fun configureParser(builder: Parser.Builder) {
-                        builder.extensions(setOf(TablesExtension.create()))
-                    }
-
-                    override fun configureVisitor(builder: MarkwonVisitor.Builder) {
-                        builder.on(
-                            TableCell::class.java
-                        ) { visitor: MarkwonVisitor, node: TableCell? ->
-                            visitor.visitChildren(node!!)
-                            visitor.builder().append(' ')
+                        .setFactory(ListItem::class.java) { _, _ ->
+                            BulletSpan(bulletGapWidth)
                         }
+                        .setFactory(Link::class.java) { _, _ -> null }
+                }
+
+                override fun configureParser(builder: Parser.Builder) {
+                    builder.extensions(setOf(TablesExtension.create()))
+                }
+
+                override fun configureVisitor(builder: MarkwonVisitor.Builder) {
+                    builder.on(
+                        TableCell::class.java
+                    ) { visitor: MarkwonVisitor, node: TableCell? ->
+                        visitor.visitChildren(node!!)
+                        visitor.builder().append(' ')
                     }
-                })
+                }
+            })
             .build()
     }
 }

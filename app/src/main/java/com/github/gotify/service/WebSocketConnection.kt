@@ -19,7 +19,7 @@ import okhttp3.*
 internal class WebSocketConnection(
     private val baseUrl: String,
     settings: SSLSettings,
-    private val token: String,
+    private val token: String?,
     private val connectivityManager: ConnectivityManager,
     private val alarmManager: AlarmManager
 ) {
@@ -33,12 +33,12 @@ internal class WebSocketConnection(
     private var errorCount = 0
 
     private var webSocket: WebSocket? = null
-    private var onMessage: SuccessCallback<Message>? = null
-    private var onClose: Runnable? = null
-    private var onOpen: Runnable? = null
-    private var onBadRequest: BadRequestRunnable? = null
-    private var onNetworkFailure: OnNetworkFailureRunnable? = null
-    private var onReconnected: Runnable? = null
+    private lateinit var onMessage: SuccessCallback<Message>
+    private lateinit var onClose: Runnable
+    private lateinit var onOpen: Runnable
+    private lateinit var onBadRequest: BadRequestRunnable
+    private lateinit var onNetworkFailure: OnNetworkFailureRunnable
+    private lateinit var onReconnected: Runnable
     private var state: State? = null
 
     init {
@@ -149,10 +149,10 @@ internal class WebSocketConnection(
             syncExec {
                 state = State.Connected
                 Log.i("WebSocket($id): opened")
-                onOpen!!.run()
+                onOpen.run()
 
                 if (errorCount > 0) {
-                    onReconnected!!.run()
+                    onReconnected.run()
                     errorCount = 0
                 }
             }
@@ -163,7 +163,7 @@ internal class WebSocketConnection(
             syncExec {
                 Log.i("WebSocket($id): received message $text")
                 val message = Utils.JSON.fromJson(text, Message::class.java)
-                onMessage!!.onSuccess(message)
+                onMessage.onSuccess(message)
             }
             super.onMessage(webSocket, text)
         }
@@ -172,7 +172,7 @@ internal class WebSocketConnection(
             syncExec {
                 if (state == State.Connected) {
                     Log.w("WebSocket($id): closed")
-                    onClose!!.run()
+                    onClose.run()
                 }
                 state = State.Disconnected
             }
@@ -186,7 +186,7 @@ internal class WebSocketConnection(
             syncExec {
                 state = State.Disconnected
                 if (response != null && response.code() >= 400 && response.code() <= 499) {
-                    onBadRequest!!.execute(message)
+                    onBadRequest.execute(message)
                     close()
                     return@syncExec
                 }
@@ -200,7 +200,7 @@ internal class WebSocketConnection(
 
                 val minutes = (errorCount * 2 - 1).coerceAtMost(20)
 
-                onNetworkFailure!!.execute(minutes)
+                onNetworkFailure.execute(minutes)
                 scheduleReconnect(TimeUnit.MINUTES.toSeconds(minutes.toLong()))
             }
             super.onFailure(webSocket, t, response)
@@ -215,11 +215,11 @@ internal class WebSocketConnection(
         }
     }
 
-    internal interface BadRequestRunnable {
+    internal fun interface BadRequestRunnable {
         fun execute(message: String)
     }
 
-    internal interface OnNetworkFailureRunnable {
+    internal fun interface OnNetworkFailureRunnable {
         fun execute(minutes: Int)
     }
 

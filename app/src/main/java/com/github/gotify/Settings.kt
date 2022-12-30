@@ -9,8 +9,8 @@ internal class Settings(context: Context) {
     var url: String
         get() = sharedPreferences.getString("url", "")!!
         set(value) = sharedPreferences.edit().putString("url", value).apply()
-    var token: String
-        get() = sharedPreferences.getString("token", "")!!
+    var token: String?
+        get() = sharedPreferences.getString("token", null)
         set(value) = sharedPreferences.edit().putString("token", value).apply()
     var user: User? = null
         get() {
@@ -26,8 +26,8 @@ internal class Settings(context: Context) {
     var serverVersion: String
         get() = sharedPreferences.getString("version", "UNKNOWN")!!
         set(value) = sharedPreferences.edit().putString("version", value).apply()
-    var cert: String
-        get() = sharedPreferences.getString("cert", "")!!
+    var cert: String?
+        get() = sharedPreferences.getString("cert", null)
         set(value) = sharedPreferences.edit().putString("cert", value).apply()
     var validateSSL: Boolean
         get() = sharedPreferences.getBoolean("validateSSL", true)
@@ -37,13 +37,13 @@ internal class Settings(context: Context) {
         sharedPreferences = context.getSharedPreferences("gotify", Context.MODE_PRIVATE)
     }
 
-    fun tokenExists(): Boolean = token.isNotEmpty()
+    fun tokenExists(): Boolean = !token.isNullOrEmpty()
 
     fun clear() {
         url = ""
-        token = ""
+        token = null
         validateSSL = true
-        cert = ""
+        cert = null
     }
 
     fun setUser(name: String?, admin: Boolean) {
