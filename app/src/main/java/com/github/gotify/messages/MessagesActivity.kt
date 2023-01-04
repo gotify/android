@@ -87,6 +87,7 @@ internal class MessagesActivity :
         viewModel = ViewModelProvider(this, MessagesModelFactory(this))[MessagesModel::class.java]
         Log.i("Entering " + javaClass.simpleName)
         initDrawer()
+
         val layoutManager = LinearLayoutManager(this)
         val messagesView: RecyclerView = binding.messagesView
         val dividerItemDecoration = DividerItemDecoration(
@@ -104,20 +105,24 @@ internal class MessagesActivity :
                 listAnimation
             )
         }
+
         messagesView.addItemDecoration(dividerItemDecoration)
         messagesView.setHasFixedSize(true)
         messagesView.layoutManager = layoutManager
         messagesView.addOnScrollListener(MessageListOnScrollListener())
         messagesView.adapter = listMessageAdapter
+
         val appsHolder = viewModel.appsHolder
         appsHolder.onUpdate { onUpdateApps(appsHolder.get()) }
         if (appsHolder.wasRequested()) onUpdateApps(appsHolder.get()) else appsHolder.request()
+
         val itemTouchHelper = ItemTouchHelper(
             SwipeToDeleteCallback(
                 listMessageAdapter
             )
         )
         itemTouchHelper.attachToRecyclerView(messagesView)
+
         val swipeRefreshLayout: SwipeRefreshLayout = binding.swipeRefresh
         swipeRefreshLayout.setOnRefreshListener { onRefresh() }
         binding.drawerLayout.addDrawerListener(
@@ -133,6 +138,7 @@ internal class MessagesActivity :
                     }
                 }
             })
+
         swipeRefreshLayout.isEnabled = false
         messagesView
             .viewTreeObserver
@@ -144,6 +150,7 @@ internal class MessagesActivity :
                     swipeRefreshLayout.isEnabled = true
                 }
             }
+
         launchCoroutine {
             updateMessagesForApplication(true, viewModel.appId)
         }
@@ -214,16 +221,22 @@ internal class MessagesActivity :
         )
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
+
         binding.navView.setNavigationItemSelectedListener(this)
-        val headerView: View = binding.navView.getHeaderView(0)
+        val headerView = binding.navView.getHeaderView(0)
+
         val settings = viewModel.settings
+
         val user = headerView.findViewById<TextView>(R.id.header_user)
         user.text = settings.user?.name
+
         val connection = headerView.findViewById<TextView>(R.id.header_connection)
         connection.text = getString(R.string.connection, settings.user?.name, settings.url)
+
         val version = headerView.findViewById<TextView>(R.id.header_version)
         version.text =
             getString(R.string.versions, BuildConfig.VERSION_NAME, settings.serverVersion)
+
         val refreshAll = headerView.findViewById<ImageButton>(R.id.refresh_all)
         refreshAll.setOnClickListener {
             refreshAll()
