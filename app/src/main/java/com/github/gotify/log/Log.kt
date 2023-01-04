@@ -14,7 +14,7 @@ internal object Log {
 
     fun get(): String {
         val logs = HyperLog.getDeviceLogsAsStringList(false)
-        return logs.takeLast(200).joinToString("\n")
+        return logs.takeLast(200).reversed().joinToString("\n")
     }
 
     fun e(message: String) {
