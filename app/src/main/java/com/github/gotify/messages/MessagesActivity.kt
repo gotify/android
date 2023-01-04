@@ -154,10 +154,6 @@ internal class MessagesActivity :
         binding.learnGotify.setOnClickListener { openDocumentation() }
     }
 
-    private fun onRefreshAll(view: View?) {
-        refreshAll()
-    }
-
     private fun refreshAll() {
         try {
             viewModel.picassoHandler.evict()
@@ -230,7 +226,7 @@ internal class MessagesActivity :
             getString(R.string.versions, BuildConfig.VERSION_NAME, settings.serverVersion)
         val refreshAll = headerView.findViewById<ImageButton>(R.id.refresh_all)
         refreshAll.setOnClickListener {
-            onRefreshAll(it)
+            refreshAll()
         }
     }
 
