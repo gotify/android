@@ -18,6 +18,11 @@ internal class ApiException : Exception {
         code = response.code()
     }
 
+    constructor(exceptionBody: String, response: Response<*>) : super("Api Error", null) {
+        body = exceptionBody
+        code = response.code()
+    }
+
     constructor(cause: Throwable?) : super("Request failed.", cause) {
         code = 0
     }

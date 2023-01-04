@@ -600,7 +600,7 @@ internal class MessagesActivity :
             .createService(ClientApi::class.java)
         stopService(Intent(this@MessagesActivity, WebSocketService::class.java))
         try {
-            val clients = Api.execute(api.clients) ?: emptyList()
+            val clients = Api.execute(api.clients)
             var currentClient: Client? = null
             for (client in clients) {
                 if (client.token == settings.token) {

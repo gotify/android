@@ -29,7 +29,7 @@ internal class MissedMessageUtil(private val api: MessageApi) {
             var since: Long? = null
             while (true) {
                 val pagedMessages = Api.execute(api.getMessages(10, since))
-                val messages = pagedMessages!!.messages
+                val messages = pagedMessages.messages
                 val filtered = filter(messages, till)
                 result.addAll(filtered)
                 if (messages.size != filtered.size ||
