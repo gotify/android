@@ -18,6 +18,7 @@ import java.io.File
 import java.io.IOException
 import okhttp3.Cache
 import okhttp3.OkHttpClient
+import java.util.concurrent.ConcurrentHashMap
 
 internal class PicassoHandler(private val context: Context, private val settings: Settings) {
     companion object {
@@ -31,7 +32,7 @@ internal class PicassoHandler(private val context: Context, private val settings
     )
 
     private val picasso: Picasso = makePicasso()
-    private val appIdToAppImage = mutableMapOf<Long, String>()
+    private val appIdToAppImage = ConcurrentHashMap<Long, String>()
 
     private fun makePicasso(): Picasso {
         val builder = OkHttpClient.Builder()
