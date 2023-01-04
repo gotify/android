@@ -112,8 +112,8 @@ internal class WebSocketService : Service() {
             getString(R.string.websocket_closed), getString(R.string.websocket_reconnect)
         )
         ClientFactory.userApiWithToken(settings)
-            ?.currentUser()
-            ?.enqueue(Callback.call({ doReconnect() }) { exception ->
+            .currentUser()
+            .enqueue(Callback.call({ doReconnect() }) { exception ->
                 if (exception.code == 401) {
                     showForegroundNotification(
                         getString(R.string.user_action),

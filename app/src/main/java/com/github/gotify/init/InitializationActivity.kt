@@ -59,8 +59,8 @@ internal class InitializationActivity : AppCompatActivity() {
 
     private fun tryAuthenticate() {
         ClientFactory.userApiWithToken(settings)
-                ?.currentUser()
-                ?.enqueue(
+                .currentUser()
+                .enqueue(
                     Callback.callInUI(this, { if (it != null) authenticated(it) }) { apiException ->
                         failed(apiException)
                     }
@@ -124,7 +124,7 @@ internal class InitializationActivity : AppCompatActivity() {
         errorCallback: Callback.ErrorCallback
     ) {
         ClientFactory.versionApi(settings.url, settings.sslSettings())
-            ?.version
-            ?.enqueue(Callback.callInUI(this, callback, errorCallback))
+            .version
+            .enqueue(Callback.callInUI(this, callback, errorCallback))
     }
 }

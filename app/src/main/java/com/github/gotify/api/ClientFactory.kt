@@ -39,22 +39,22 @@ internal object ClientFactory {
             arrayOf("clientTokenHeader"),
             "$baseUrl/", sslSettings
         )
-        val tokenAuth = client.apiAuthorizations["clientTokenHeader"] as ApiKeyAuth?
-        tokenAuth!!.apiKey = token
+        val tokenAuth = client.apiAuthorizations["clientTokenHeader"] as ApiKeyAuth
+        tokenAuth.apiKey = token
         return client
     }
 
-    fun versionApi(baseUrl: String, sslSettings: SSLSettings): VersionApi? {
+    fun versionApi(baseUrl: String, sslSettings: SSLSettings): VersionApi {
         return unauthorized(baseUrl, sslSettings).createService(VersionApi::class.java)
     }
 
-    fun userApiWithToken(settings: Settings): UserApi? {
+    fun userApiWithToken(settings: Settings): UserApi {
         return clientToken(settings.url, settings.sslSettings(), settings.token)
             .createService(UserApi::class.java)
     }
 
     private fun defaultClient(
-        authentications: Array<String?>,
+        authentications: Array<String>,
         baseUrl: String,
         sslSettings: SSLSettings
     ): ApiClient {

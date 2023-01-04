@@ -102,8 +102,8 @@ internal class LoginActivity : AppCompatActivity() {
 
         try {
             ClientFactory.versionApi(url, tempSslSettings())
-                ?.version
-                ?.enqueue(Callback.callInUI(this, onValidUrl(url), onInvalidUrl(url)))
+                .version
+                .enqueue(Callback.callInUI(this, onValidUrl(url), onInvalidUrl(url)))
         } catch (e: Exception) {
             binding.checkurlProgress.visibility = View.GONE
             binding.checkurl.visibility = View.VISIBLE
