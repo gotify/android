@@ -19,12 +19,10 @@ internal class ApplicationHolder(private val activity: Activity, private val cli
         client.createService(ApplicationApi::class.java)
             .apps
             .enqueue(
-                Callback.callInUI(
-                    activity,
-                    { apps: List<Application>? ->
-                        if (apps != null) onReceiveApps(apps)
-                    }
-                ) { e: ApiException -> onFailedApps(e) })
+                Callback.callInUI(activity, { onReceiveApps(it) }) { e: ApiException ->
+                    onFailedApps(e)
+                }
+            )
     }
 
     private fun onReceiveApps(apps: List<Application>) {

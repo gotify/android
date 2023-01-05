@@ -80,7 +80,7 @@ internal class WebSocketService : Service() {
         showForegroundNotification(getString(R.string.websocket_init))
 
         if (lastReceivedMessage.get() == NOT_LOADED) {
-            missingMessageUtil.lastReceivedMessage { lastReceivedMessage.set(it ?: 0L) }
+            missingMessageUtil.lastReceivedMessage { lastReceivedMessage.set(it) }
         }
 
         val cm = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -97,7 +97,7 @@ internal class WebSocketService : Service() {
             .onClose { onClose() }
             .onBadRequest { message -> onBadRequest(message) }
             .onNetworkFailure { minutes -> onNetworkFailure(minutes) }
-            .onMessage { if (it != null) onMessage(it) }
+            .onMessage { onMessage(it) }
             .onReconnected { notifyMissedNotifications() }
             .start()
 

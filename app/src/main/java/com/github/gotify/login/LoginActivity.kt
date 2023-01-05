@@ -194,7 +194,7 @@ internal class LoginActivity : AppCompatActivity() {
             settings.url = url
             binding.checkurlProgress.visibility = View.GONE
             binding.checkurl.visibility = View.VISIBLE
-            binding.checkurl.text = getString(R.string.found_gotify_version, version?.version)
+            binding.checkurl.text = getString(R.string.found_gotify_version, version.version)
             binding.username.visibility = View.VISIBLE
             binding.username.requestFocus()
             binding.password.visibility = View.VISIBLE
@@ -254,7 +254,7 @@ internal class LoginActivity : AppCompatActivity() {
             val newClient = Client().name(nameProvider.text.toString())
             client.createService(ClientApi::class.java)
                 .createClient(newClient)
-                .enqueue(Callback.callInUI(this, { if (it != null) onCreatedClient(it) }) {
+                .enqueue(Callback.callInUI(this, { onCreatedClient(it) }) {
                     onFailedToCreateClient()
                 })
         }

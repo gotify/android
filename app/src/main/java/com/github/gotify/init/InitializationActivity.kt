@@ -59,12 +59,12 @@ internal class InitializationActivity : AppCompatActivity() {
 
     private fun tryAuthenticate() {
         ClientFactory.userApiWithToken(settings)
-                .currentUser()
-                .enqueue(
-                    Callback.callInUI(this, { if (it != null) authenticated(it) }) { apiException ->
-                        failed(apiException)
-                    }
-                )
+            .currentUser()
+            .enqueue(
+                Callback.callInUI(this, { authenticated(it) }) { apiException ->
+                    failed(apiException)
+                }
+            )
     }
 
     private fun failed(exception: ApiException) {
