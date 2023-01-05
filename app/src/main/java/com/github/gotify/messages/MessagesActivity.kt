@@ -128,11 +128,11 @@ internal class MessagesActivity :
         binding.drawerLayout.addDrawerListener(
             object : SimpleDrawerListener() {
                 override fun onDrawerClosed(drawerView: View) {
-                    if (updateAppOnDrawerClose != null) {
-                        viewModel.appId = updateAppOnDrawerClose!!
+                    updateAppOnDrawerClose?.let { selectApp ->
+                        updateAppOnDrawerClose = null
+                        viewModel.appId = selectApp
                         launchCoroutine {
-                            updateMessagesForApplication(true, updateAppOnDrawerClose!!)
-                            updateAppOnDrawerClose = null
+                            updateMessagesForApplication(true, selectApp)
                         }
                         invalidateOptionsMenu()
                     }
