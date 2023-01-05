@@ -83,7 +83,7 @@ internal class LoginActivity : AppCompatActivity() {
     }
 
     private fun doCheckUrl() {
-        var url = binding.gotifyUrl.text.toString()
+        val url = binding.gotifyUrl.text.toString().trim().trimEnd('/')
         val parsedUrl = HttpUrl.parse(url)
         if (parsedUrl == null) {
             Utils.showSnackBar(this, "Invalid URL (include http:// or https://)")
@@ -96,9 +96,6 @@ internal class LoginActivity : AppCompatActivity() {
 
         binding.checkurlProgress.visibility = View.VISIBLE
         binding.checkurl.visibility = View.GONE
-
-        url = url.trim()
-        if (url.endsWith("/")) url.dropLast(1)
 
         try {
             ClientFactory.versionApi(url, tempSslSettings())
