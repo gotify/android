@@ -1,0 +1,5 @@
+Gotify is a service for sending and receiving push notifications.
+
+This app subscribes to gotify/server and creates push notifications for incoming messages.
+
+Note: A self-hosted gotify/server is required for this app to work. 
