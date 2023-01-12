@@ -31,8 +31,8 @@ import com.github.gotify.init.InitializationActivity
 import com.github.gotify.log.Log
 import com.github.gotify.log.LogsActivity
 import com.github.gotify.log.UncaughtExceptionHandler
-import java.security.cert.X509Certificate
 import okhttp3.HttpUrl
+import java.security.cert.X509Certificate
 
 internal class LoginActivity : AppCompatActivity() {
     companion object {
@@ -125,7 +125,9 @@ internal class LoginActivity : AppCompatActivity() {
     private fun toggleShowAdvanced() {
         val selectedCertName = if (caCertContents != null) {
             getNameOfCertContent(caCertContents!!)
-        } else null
+        } else {
+            null
+        }
 
         advancedDialog = AdvancedDialog(this, layoutInflater)
             .onDisableSSLChanged { _, disable ->

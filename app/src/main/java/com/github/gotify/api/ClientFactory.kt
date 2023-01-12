@@ -37,7 +37,8 @@ internal object ClientFactory {
     ): ApiClient {
         val client = defaultClient(
             arrayOf("clientTokenHeader"),
-            "$baseUrl/", sslSettings
+            "$baseUrl/",
+            sslSettings
         )
         val tokenAuth = client.apiAuthorizations["clientTokenHeader"] as ApiKeyAuth
         tokenAuth.apiKey = token

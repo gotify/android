@@ -1,7 +1,7 @@
 package com.github.gotify.api
 
-import java.io.IOException
 import retrofit2.Call
+import java.io.IOException
 
 internal object Api {
     @Throws(ApiException::class)

@@ -3,10 +3,19 @@ package com.github.gotify
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
-import android.text.style.*
+import android.text.style.BackgroundColorSpan
+import android.text.style.BulletSpan
+import android.text.style.QuoteSpan
+import android.text.style.RelativeSizeSpan
+import android.text.style.StyleSpan
+import android.text.style.TypefaceSpan
 import androidx.core.content.ContextCompat
 import com.squareup.picasso.Picasso
-import io.noties.markwon.*
+import io.noties.markwon.AbstractMarkwonPlugin
+import io.noties.markwon.Markwon
+import io.noties.markwon.MarkwonSpansFactory
+import io.noties.markwon.MarkwonVisitor
+import io.noties.markwon.RenderProps
 import io.noties.markwon.core.CorePlugin
 import io.noties.markwon.core.CoreProps
 import io.noties.markwon.core.MarkwonTheme
@@ -17,7 +26,13 @@ import io.noties.markwon.image.picasso.PicassoImagesPlugin
 import io.noties.markwon.movement.MovementMethodPlugin
 import org.commonmark.ext.gfm.tables.TableCell
 import org.commonmark.ext.gfm.tables.TablesExtension
-import org.commonmark.node.*
+import org.commonmark.node.BlockQuote
+import org.commonmark.node.Code
+import org.commonmark.node.Emphasis
+import org.commonmark.node.Heading
+import org.commonmark.node.Link
+import org.commonmark.node.ListItem
+import org.commonmark.node.StrongEmphasis
 import org.commonmark.parser.Parser
 
 internal object MarkwonFactory {

@@ -14,10 +14,10 @@ import com.github.gotify.log.Log
 import com.github.gotify.messages.provider.MessageImageCombiner
 import com.squareup.picasso.OkHttp3Downloader
 import com.squareup.picasso.Picasso
-import java.io.File
-import java.io.IOException
 import okhttp3.Cache
 import okhttp3.OkHttpClient
+import java.io.File
+import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 
 internal class PicassoHandler(private val context: Context, private val settings: Settings) {

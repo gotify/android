@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import com.github.gotify.SSLSettings
 import com.github.gotify.Utils
 import com.github.gotify.log.Log
+import okhttp3.OkHttpClient
 import java.io.IOException
 import java.security.GeneralSecurityException
 import java.security.KeyStore
@@ -11,8 +12,10 @@ import java.security.SecureRandom
 import java.security.cert.Certificate
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
-import javax.net.ssl.*
-import okhttp3.OkHttpClient
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
+import javax.net.ssl.TrustManagerFactory
+import javax.net.ssl.X509TrustManager
 
 internal object CertUtils {
     @SuppressLint("CustomX509TrustManager")

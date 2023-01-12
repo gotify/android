@@ -1,7 +1,10 @@
 package com.github.gotify.messages
 
 import android.app.NotificationManager
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Canvas
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -45,21 +48,21 @@ import com.github.gotify.init.InitializationActivity
 import com.github.gotify.log.Log
 import com.github.gotify.log.LogsActivity
 import com.github.gotify.login.LoginActivity
-import com.github.gotify.messages.provider.*
+import com.github.gotify.messages.provider.MessageState
+import com.github.gotify.messages.provider.MessageWithImage
 import com.github.gotify.service.WebSocketService
 import com.github.gotify.settings.SettingsActivity
 import com.github.gotify.sharing.ShareActivity
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.BaseTransientBottomBar.BaseCallback
 import com.google.android.material.snackbar.Snackbar
-import java.io.IOException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.IOException
 
 internal class MessagesActivity :
     AppCompatActivity(),
-    NavigationView.OnNavigationItemSelectedListener
-{
+    NavigationView.OnNavigationItemSelectedListener {
     private lateinit var binding: ActivityMessagesBinding
     private lateinit var viewModel: MessagesModel
     private var isLoadMore = false
@@ -90,7 +93,8 @@ internal class MessagesActivity :
         val layoutManager = LinearLayoutManager(this)
         val messagesView: RecyclerView = binding.messagesView
         val dividerItemDecoration = DividerItemDecoration(
-            messagesView.context, layoutManager.orientation
+            messagesView.context,
+            layoutManager.orientation
         )
         listMessageAdapter = ListMessageAdapter(
             this,
@@ -132,7 +136,8 @@ internal class MessagesActivity :
                         invalidateOptionsMenu()
                     }
                 }
-            })
+            }
+        )
 
         swipeRefreshLayout.isEnabled = false
         messagesView

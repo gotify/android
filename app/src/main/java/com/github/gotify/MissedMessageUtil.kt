@@ -35,7 +35,8 @@ internal class MissedMessageUtil(private val api: MessageApi) {
                 result.addAll(filtered)
                 if (messages.size != filtered.size ||
                     messages.size == 0 ||
-                    pagedMessages.paging.next == null) {
+                    pagedMessages.paging.next == null
+                ) {
                     break
                 }
                 since = pagedMessages.paging.since

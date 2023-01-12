@@ -1,6 +1,10 @@
 package com.github.gotify.service
 
-import android.app.*
+import android.app.AlarmManager
+import android.app.Notification
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
@@ -11,7 +15,12 @@ import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import com.github.gotify.*
+import com.github.gotify.MarkwonFactory
+import com.github.gotify.MissedMessageUtil
+import com.github.gotify.NotificationSupport
+import com.github.gotify.R
+import com.github.gotify.Settings
+import com.github.gotify.Utils
 import com.github.gotify.api.Callback
 import com.github.gotify.api.ClientFactory
 import com.github.gotify.client.api.MessageApi
@@ -107,7 +116,8 @@ internal class WebSocketService : Service() {
 
     private fun onClose() {
         showForegroundNotification(
-            getString(R.string.websocket_closed), getString(R.string.websocket_reconnect)
+            getString(R.string.websocket_closed),
+            getString(R.string.websocket_reconnect)
         )
         ClientFactory.userApiWithToken(settings)
             .currentUser()
@@ -121,8 +131,10 @@ internal class WebSocketService : Service() {
                                 getString(R.string.websocket_closed_logout)
                             )
                         } else {
-                            Log.i("WebSocket closed but the user still authenticated, " +
-                                    "trying to reconnect")
+                            Log.i(
+                                "WebSocket closed but the user still authenticated, " +
+                                    "trying to reconnect"
+                            )
                             doReconnect()
                         }
                     }
@@ -146,7 +158,8 @@ internal class WebSocketService : Service() {
         val intervalUnit = resources
             .getQuantityString(R.plurals.websocket_retry_interval, minutes, minutes)
         showForegroundNotification(
-            status, "${getString(R.string.websocket_reconnect)} $intervalUnit"
+            status,
+            "${getString(R.string.websocket_reconnect)} $intervalUnit"
         )
     }
 
@@ -218,7 +231,10 @@ internal class WebSocketService : Service() {
         val notificationIntent = Intent(this, MessagesActivity::class.java)
 
         val pendingIntent = PendingIntent.getActivity(
-            this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE
+            this,
+            0,
+            notificationIntent,
+            PendingIntent.FLAG_IMMUTABLE
         )
         val notificationBuilder =
             NotificationCompat.Builder(this, NotificationSupport.Channel.FOREGROUND)
@@ -297,7 +313,8 @@ internal class WebSocketService : Service() {
         )
 
         val b = NotificationCompat.Builder(
-            this, NotificationSupport.convertPriorityToChannel(priority)
+            this,
+            NotificationSupport.convertPriorityToChannel(priority)
         )
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -358,7 +375,8 @@ internal class WebSocketService : Service() {
         )
 
         val builder = NotificationCompat.Builder(
-            this, NotificationSupport.convertPriorityToChannel(priority)
+            this,
+            NotificationSupport.convertPriorityToChannel(priority)
         )
 
         builder.setAutoCancel(true)

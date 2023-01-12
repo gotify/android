@@ -11,10 +11,15 @@ import com.github.gotify.api.Callback.SuccessCallback
 import com.github.gotify.api.CertUtils
 import com.github.gotify.client.model.Message
 import com.github.gotify.log.Log
-import java.util.*
+import okhttp3.HttpUrl
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.WebSocket
+import okhttp3.WebSocketListener
+import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
-import okhttp3.*
 
 internal class WebSocketConnection(
     private val baseUrl: String,
