@@ -40,20 +40,16 @@ internal class Callback<T> private constructor(
             onError: ErrorCallback
         ): retrofit2.Callback<T> {
             return call(
-                {
-                    context.runOnUiThread {
-                        onSuccess.onSuccess(it)
-                    }
-                },
-                {
-                    context.runOnUiThread {
-                        onError.onError(it)
-                    }
-                })
+                onSuccess = { data -> context.runOnUiThread { onSuccess.onSuccess(data) } },
+                onError = { exception -> context.runOnUiThread { onError.onError(exception) } }
+            )
         }
 
         fun <T> call(): retrofit2.Callback<T> {
-            return call({},{})
+            return call(
+                onSuccess = {},
+                onError = {}
+            )
         }
 
         fun <T> call(onSuccess: SuccessCallback<T>, onError: ErrorCallback): retrofit2.Callback<T> {
@@ -68,18 +64,21 @@ internal class Callback<T> private constructor(
         }
 
         private fun <T> errorCallback(): Callback<T> {
-            return Callback({}, { Log.e("Error while api call", it) })
+            return Callback(
+                onSuccess = {},
+                onError = { exception -> Log.e("Error while api call", exception) }
+            )
         }
 
         private fun <T> merge(left: Callback<T>, right: Callback<T>): Callback<T> {
             return Callback(
-                {
-                    left.onSuccess.onSuccess(it)
-                    right.onSuccess.onSuccess(it)
+                onSuccess = { data ->
+                    left.onSuccess.onSuccess(data)
+                    right.onSuccess.onSuccess(data)
                 },
-                {
-                    left.onError.onError(it)
-                    right.onError.onError(it)
+                onError = { exception ->
+                    left.onError.onError(exception)
+                    right.onError.onError(exception)
                 }
             )
         }

@@ -220,9 +220,13 @@ internal class LoginActivity : AppCompatActivity() {
         val client = ClientFactory.basicAuth(settings.url, tempSslSettings(), username, password)
         client.createService(UserApi::class.java)
             .currentUser()
-            .enqueue(Callback.callInUI(this, { newClientDialog(client) }) {
-                onInvalidLogin()
-            })
+            .enqueue(
+                Callback.callInUI(
+                    this,
+                    onSuccess = { newClientDialog(client) },
+                    onError = { onInvalidLogin() }
+                )
+            )
     }
 
     private fun onInvalidLogin() {
@@ -240,9 +244,7 @@ internal class LoginActivity : AppCompatActivity() {
             .setMessage(R.string.create_client_message)
             .setView(clientName)
             .setPositiveButton(R.string.create, doCreateClient(client, clientName))
-            .setNegativeButton(R.string.cancel) { _, _ ->
-                onCancelClientDialog()
-            }
+            .setNegativeButton(R.string.cancel) { _, _ -> onCancelClientDialog() }
             .show()
     }
 
@@ -254,9 +256,13 @@ internal class LoginActivity : AppCompatActivity() {
             val newClient = Client().name(nameProvider.text.toString())
             client.createService(ClientApi::class.java)
                 .createClient(newClient)
-                .enqueue(Callback.callInUI(this, { onCreatedClient(it) }) {
-                    onFailedToCreateClient()
-                })
+                .enqueue(
+                    Callback.callInUI(
+                        this,
+                        onSuccess = { client -> onCreatedClient(client) },
+                        onError = { onFailedToCreateClient() }
+                    )
+                )
         }
     }
 

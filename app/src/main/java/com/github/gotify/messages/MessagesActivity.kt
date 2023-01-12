@@ -189,14 +189,12 @@ internal class MessagesActivity :
         viewModel.targetReferences.clear()
         updateMessagesAndStopLoading(viewModel.messages[viewModel.appId])
         var selectedItem = menu.findItem(R.id.nav_all_messages)
-        applications.indices.forEach {
-            val app = applications[it]
-            val item = menu.add(R.id.apps, it, APPLICATION_ORDER, app.name)
+        applications.indices.forEach { index ->
+            val app = applications[index]
+            val item = menu.add(R.id.apps, index, APPLICATION_ORDER, app.name)
             item.isCheckable = true
             if (app.id == viewModel.appId) selectedItem = item
-            val t = Utils.toDrawable(resources) { icon: Drawable? ->
-                item.icon = icon
-            }
+            val t = Utils.toDrawable(resources) { icon -> item.icon = icon }
             viewModel.targetReferences.add(t)
             viewModel.picassoHandler
                 .get()
@@ -238,9 +236,7 @@ internal class MessagesActivity :
             getString(R.string.versions, BuildConfig.VERSION_NAME, settings.serverVersion)
 
         val refreshAll = headerView.findViewById<ImageButton>(R.id.refresh_all)
-        refreshAll.setOnClickListener {
-            refreshAll()
-        }
+        refreshAll.setOnClickListener { refreshAll() }
     }
 
     override fun onBackPressed() {
@@ -267,9 +263,7 @@ internal class MessagesActivity :
             AlertDialog.Builder(ContextThemeWrapper(this, R.style.AppTheme_Dialog))
                 .setTitle(R.string.logout)
                 .setMessage(getString(R.string.logout_confirm))
-                .setPositiveButton(R.string.yes) { _, _ ->
-                    doLogout()
-                }
+                .setPositiveButton(R.string.yes) { _, _ -> doLogout() }
                 .setNegativeButton(R.string.cancel, null)
                 .show()
         } else if (id == R.id.nav_logs) {
@@ -315,9 +309,9 @@ internal class MessagesActivity :
         val appId = viewModel.appId
         if (appId != MessageState.ALL_MESSAGES) {
             val apps = viewModel.appsHolder.get()
-            apps.indices.forEach {
-                if (apps[it].id == appId) {
-                    selectedIndex = it
+            apps.indices.forEach { index ->
+                if (apps[index].id == appId) {
+                    selectedIndex = index
                 }
             }
         }
@@ -532,10 +526,8 @@ internal class MessagesActivity :
             val alert = android.app.AlertDialog.Builder(this)
             alert.setTitle(R.string.delete_app)
             alert.setMessage(R.string.ack)
-            alert.setPositiveButton(
-                R.string.yes
-            ) { _, _ -> deleteApp(viewModel.appId) }
-            alert.setNegativeButton(R.string.no) { dialog, _ -> dialog.dismiss() }
+            alert.setPositiveButton(R.string.yes) { _, _ -> deleteApp(viewModel.appId) }
+            alert.setNegativeButton(R.string.no, null)
             alert.show()
         }
         return super.onContextItemSelected(item)
@@ -548,9 +540,12 @@ internal class MessagesActivity :
         client.createService(ApplicationApi::class.java)
             .deleteApp(appId)
             .enqueue(
-                Callback.callInUI(this, { refreshAll() }) {
-                    Utils.showSnackBar(this, getString(R.string.error_delete_app))
-                })
+                Callback.callInUI(
+                    this,
+                    onSuccess = { refreshAll() },
+                    onError = { Utils.showSnackBar(this, getString(R.string.error_delete_app)) }
+                )
+            )
     }
 
     private suspend fun loadMore(appId: Long) {

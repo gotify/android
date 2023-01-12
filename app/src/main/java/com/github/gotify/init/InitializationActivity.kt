@@ -61,9 +61,11 @@ internal class InitializationActivity : AppCompatActivity() {
         ClientFactory.userApiWithToken(settings)
             .currentUser()
             .enqueue(
-                Callback.callInUI(this, { authenticated(it) }) { apiException ->
-                    failed(apiException)
-                }
+                Callback.callInUI(
+                    this,
+                    onSuccess = { user -> authenticated(user) },
+                    onError = { exception -> failed(exception) }
+                )
             )
     }
 
@@ -110,13 +112,14 @@ internal class InitializationActivity : AppCompatActivity() {
     }
 
     private fun requestVersion(runnable: Runnable) {
-        requestVersion({ version: VersionInfo? ->
-            if (version != null) {
+        requestVersion(
+            callback = { version: VersionInfo ->
                 Log.i("Server version: ${version.version}@${version.buildDate}")
                 settings.serverVersion = version.version
-            }
-            runnable.run()
-        }) { runnable.run() }
+                runnable.run()
+            },
+            errorCallback = { runnable.run() }
+        )
     }
 
     private fun requestVersion(

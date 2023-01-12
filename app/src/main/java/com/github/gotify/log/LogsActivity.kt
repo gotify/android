@@ -47,7 +47,7 @@ internal class LogsActivity : AppCompatActivity() {
         }
 
         if (!isDestroyed) {
-            handler.postDelayed(this::updateLogs, 5000)
+            handler.postDelayed({ updateLogs() }, 5000)
         }
     }
 

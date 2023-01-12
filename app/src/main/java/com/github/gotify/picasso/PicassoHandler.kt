@@ -66,10 +66,15 @@ internal class PicassoHandler(private val context: Context, private val settings
         ClientFactory.clientToken(settings.url, settings.sslSettings(), settings.token)
             .createService(ApplicationApi::class.java)
             .apps
-            .enqueue(Callback.call({ apps ->
-                appIdToAppImage.clear()
-                appIdToAppImage.putAll(MessageImageCombiner.appIdToImage(apps ?: emptyList()))
-            }) { appIdToAppImage.clear() })
+            .enqueue(
+                Callback.call(
+                    onSuccess = { apps ->
+                        appIdToAppImage.clear()
+                        appIdToAppImage.putAll(MessageImageCombiner.appIdToImage(apps))
+                    },
+                    onError = { appIdToAppImage.clear() }
+                )
+            )
     }
 
     fun get() = picasso

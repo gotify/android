@@ -55,12 +55,8 @@ internal object MarkwonFactory {
                             StyleSpan(Typeface.BOLD)
                         )
                     }
-                        .setFactory(Emphasis::class.java) { _, _ ->
-                            StyleSpan(Typeface.ITALIC)
-                        }
-                        .setFactory(StrongEmphasis::class.java) { _, _ ->
-                            StyleSpan(Typeface.BOLD)
-                        }
+                        .setFactory(Emphasis::class.java) { _, _ -> StyleSpan(Typeface.ITALIC) }
+                        .setFactory(StrongEmphasis::class.java) { _, _ -> StyleSpan(Typeface.BOLD) }
                         .setFactory(BlockQuote::class.java) { _, _ -> QuoteSpan() }
                         .setFactory(Code::class.java) { _, _ ->
                             arrayOf<Any>(
@@ -68,9 +64,7 @@ internal object MarkwonFactory {
                                 TypefaceSpan("monospace")
                             )
                         }
-                        .setFactory(ListItem::class.java) { _, _ ->
-                            BulletSpan(bulletGapWidth)
-                        }
+                        .setFactory(ListItem::class.java) { _, _ -> BulletSpan(bulletGapWidth) }
                         .setFactory(Link::class.java) { _, _ -> null }
                 }
 
@@ -79,9 +73,7 @@ internal object MarkwonFactory {
                 }
 
                 override fun configureVisitor(builder: MarkwonVisitor.Builder) {
-                    builder.on(
-                        TableCell::class.java
-                    ) { visitor: MarkwonVisitor, node: TableCell? ->
+                    builder.on(TableCell::class.java) { visitor: MarkwonVisitor, node: TableCell? ->
                         visitor.visitChildren(node!!)
                         visitor.builder().append(' ')
                     }

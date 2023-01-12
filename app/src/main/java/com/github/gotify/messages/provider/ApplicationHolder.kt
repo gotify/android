@@ -2,7 +2,6 @@ package com.github.gotify.messages.provider
 
 import android.app.Activity
 import com.github.gotify.Utils
-import com.github.gotify.api.ApiException
 import com.github.gotify.api.Callback
 import com.github.gotify.client.ApiClient
 import com.github.gotify.client.api.ApplicationApi
@@ -19,9 +18,11 @@ internal class ApplicationHolder(private val activity: Activity, private val cli
         client.createService(ApplicationApi::class.java)
             .apps
             .enqueue(
-                Callback.callInUI(activity, { onReceiveApps(it) }) { e: ApiException ->
-                    onFailedApps(e)
-                }
+                Callback.callInUI(
+                    activity,
+                    onSuccess = { apps -> onReceiveApps(apps) },
+                    onError = { onFailedApps() }
+                )
             )
     }
 
@@ -30,7 +31,7 @@ internal class ApplicationHolder(private val activity: Activity, private val cli
         if (onUpdate != null) onUpdate!!.run()
     }
 
-    private fun onFailedApps(e: ApiException) {
+    private fun onFailedApps() {
         Utils.showSnackBar(activity, "Could not request applications, see logs.")
         if (onUpdateFailed != null) onUpdateFailed!!.run()
     }

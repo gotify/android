@@ -6,20 +6,21 @@ import com.github.gotify.api.Callback
 import com.github.gotify.api.Callback.SuccessCallback
 import com.github.gotify.client.api.MessageApi
 import com.github.gotify.client.model.Message
-import com.github.gotify.client.model.PagedMessages
 import com.github.gotify.log.Log
 
 internal class MissedMessageUtil(private val api: MessageApi) {
     fun lastReceivedMessage(successCallback: SuccessCallback<Long>) {
         api.getMessages(1, 0L).enqueue(
-            Callback.call({ messages: PagedMessages ->
-                if (messages.messages.size == 1) {
-                    successCallback.onSuccess(messages.messages[0].id)
-                } else {
-                    successCallback.onSuccess(NO_MESSAGES)
-                }
-            }
-            ) {}
+            Callback.call(
+                onSuccess = { messages ->
+                    if (messages.messages.size == 1) {
+                        successCallback.onSuccess(messages.messages[0].id)
+                    } else {
+                        successCallback.onSuccess(NO_MESSAGES)
+                    }
+                },
+                onError = {}
+            )
         )
     }
 

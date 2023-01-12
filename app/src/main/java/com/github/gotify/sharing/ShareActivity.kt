@@ -153,8 +153,8 @@ internal class ShareActivity : AppCompatActivity() {
 
     private fun populateSpinner(apps: List<Application>) {
         val appNameList = mutableListOf<String>()
-        apps.forEach { app ->
-            appNameList.add(app.name)
+        apps.forEach {
+            appNameList.add(it.name)
         }
 
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, appNameList)

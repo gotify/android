@@ -97,7 +97,7 @@ internal class WebSocketService : Service() {
             .onClose { onClose() }
             .onBadRequest { message -> onBadRequest(message) }
             .onNetworkFailure { minutes -> onNetworkFailure(minutes) }
-            .onMessage { onMessage(it) }
+            .onMessage { message -> onMessage(message) }
             .onReconnected { notifyMissedNotifications() }
             .start()
 
@@ -113,17 +113,23 @@ internal class WebSocketService : Service() {
         )
         ClientFactory.userApiWithToken(settings)
             .currentUser()
-            .enqueue(Callback.call({ doReconnect() }) { exception ->
-                if (exception.code == 401) {
-                    showForegroundNotification(
-                        getString(R.string.user_action),
-                        getString(R.string.websocket_closed_logout)
-                    )
-                } else {
-                    Log.i("WebSocket closed but the user still authenticated, trying to reconnect")
-                    doReconnect()
-                }
-            })
+            .enqueue(
+                Callback.call(
+                    onSuccess = { doReconnect() },
+                    onError = { exception ->
+                        if (exception.code == 401) {
+                            showForegroundNotification(
+                                getString(R.string.user_action),
+                                getString(R.string.websocket_closed_logout)
+                            )
+                        } else {
+                            Log.i("WebSocket closed but the user still authenticated, " +
+                                    "trying to reconnect")
+                            doReconnect()
+                        }
+                    }
+                )
+            )
     }
 
     private fun doReconnect() {
