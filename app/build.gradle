@@ -1,8 +1,8 @@
 plugins {
-    id "com.diffplug.spotless" version "6.11.0"
+    id 'com.android.application'
     id 'kotlin-android'
+    id 'org.jmailen.kotlinter' version '3.13.0'
 }
-apply plugin: 'com.android.application'
 
 android {
     namespace "com.github.gotify"
@@ -81,14 +81,5 @@ configurations {
     all {
         exclude group: 'org.json', module: 'json'
         exclude group: 'androidx.lifecycle', module: 'lifecycle-viewmodel-ktx'
-    }
-}
-
-spotless {
-    java {
-        target '**/*.java'
-        googleJavaFormat().aosp()
-        removeUnusedImports()
-        importOrder('', 'static *')
     }
 }
