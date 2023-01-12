@@ -21,8 +21,6 @@ import com.github.gotify.log.UncaughtExceptionHandler
 import com.github.gotify.messages.Extras
 import com.github.gotify.messages.MessagesActivity
 import com.github.gotify.picasso.PicassoHandler
-import com.github.gotify.service.WebSocketConnection.BadRequestRunnable
-import com.github.gotify.service.WebSocketConnection.OnNetworkFailureRunnable
 import io.noties.markwon.Markwon
 import java.util.concurrent.atomic.AtomicLong
 
@@ -167,15 +165,15 @@ internal class WebSocketService : Service() {
         if (messages.size > 5) {
             onGroupedMessages(messages)
         } else {
-            for (message in messages) {
-                onMessage(message)
+            messages.forEach {
+                onMessage(it)
             }
         }
     }
 
     private fun onGroupedMessages(messages: List<Message>) {
         var highestPriority = 0L
-        for (message in messages) {
+        messages.forEach { message ->
             if (lastReceivedMessage.get() < message.id) {
                 lastReceivedMessage.set(message.id)
                 highestPriority = highestPriority.coerceAtLeast(message.priority)

@@ -25,7 +25,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.github.gotify.BuildConfig
 import com.github.gotify.MissedMessageUtil
 import com.github.gotify.R
@@ -116,14 +115,10 @@ internal class MessagesActivity :
         appsHolder.onUpdate { onUpdateApps(appsHolder.get()) }
         if (appsHolder.wasRequested()) onUpdateApps(appsHolder.get()) else appsHolder.request()
 
-        val itemTouchHelper = ItemTouchHelper(
-            SwipeToDeleteCallback(
-                listMessageAdapter
-            )
-        )
+        val itemTouchHelper = ItemTouchHelper(SwipeToDeleteCallback(listMessageAdapter))
         itemTouchHelper.attachToRecyclerView(messagesView)
 
-        val swipeRefreshLayout: SwipeRefreshLayout = binding.swipeRefresh
+        val swipeRefreshLayout = binding.swipeRefresh
         swipeRefreshLayout.setOnRefreshListener { onRefresh() }
         binding.drawerLayout.addDrawerListener(
             object : SimpleDrawerListener() {
@@ -431,11 +426,11 @@ internal class MessagesActivity :
             actionState: Int,
             isCurrentlyActive: Boolean
         ) {
-            if (icon != null) {
+            icon?.let {
                 val itemView = viewHolder.itemView
                 val iconHeight = itemView.height / 3
-                val scale = iconHeight / icon!!.intrinsicHeight.toDouble()
-                val iconWidth = (icon!!.intrinsicWidth * scale).toInt()
+                val scale = iconHeight / it.intrinsicHeight.toDouble()
+                val iconWidth = (it.intrinsicWidth * scale).toInt()
                 val iconMarginLeftRight = 50
                 val iconMarginTopBottom = (itemView.height - iconHeight) / 2
                 val iconTop = itemView.top + iconMarginTopBottom
@@ -444,7 +439,7 @@ internal class MessagesActivity :
                     // Swiping to the right
                     val iconLeft = itemView.left + iconMarginLeftRight
                     val iconRight = itemView.left + iconMarginLeftRight + iconWidth
-                    icon!!.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+                    it.setBounds(iconLeft, iconTop, iconRight, iconBottom)
                     background.setBounds(
                         itemView.left,
                         itemView.top,
@@ -455,7 +450,7 @@ internal class MessagesActivity :
                     // Swiping to the left
                     val iconLeft = itemView.right - iconMarginLeftRight - iconWidth
                     val iconRight = itemView.right - iconMarginLeftRight
-                    icon!!.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+                    it.setBounds(iconLeft, iconTop, iconRight, iconBottom)
                     background.setBounds(
                         itemView.right + dX.toInt(),
                         itemView.top,
@@ -464,11 +459,11 @@ internal class MessagesActivity :
                     )
                 } else {
                     // View is unswiped
-                    icon!!.setBounds(0, 0, 0, 0)
+                    it.setBounds(0, 0, 0, 0)
                     background.setBounds(0, 0, 0, 0)
                 }
                 background.draw(c)
-                icon!!.draw(c)
+                it.draw(c)
             }
             super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         }
@@ -535,8 +530,7 @@ internal class MessagesActivity :
 
     private fun deleteApp(appId: Long) {
         val settings = viewModel.settings
-        val client =
-            ClientFactory.clientToken(settings.url, settings.sslSettings(), settings.token)
+        val client = ClientFactory.clientToken(settings.url, settings.sslSettings(), settings.token)
         client.createService(ApplicationApi::class.java)
             .deleteApp(appId)
             .enqueue(

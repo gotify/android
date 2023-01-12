@@ -31,7 +31,7 @@ internal class PicassoHandler(private val context: Context, private val settings
         PICASSO_CACHE_SIZE.toLong()
     )
 
-    private val picasso: Picasso = makePicasso()
+    private val picasso = makePicasso()
     private val appIdToAppImage = ConcurrentHashMap<Long, String>()
 
     private fun makePicasso(): Picasso {
