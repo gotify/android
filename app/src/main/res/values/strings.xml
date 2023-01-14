@@ -23,7 +23,7 @@
     <string name="websocket_closed_logout">Please login, the authentication token isn\'t valid anymore.</string>
     <string name="websocket_closed">Connection closed</string>
     <string name="grouped_message">Received %d messages while being disconnected</string>
-    <string name="delete_all">Clear messages</string>
+    <string name="delete_all">Delete all messages</string>
     <string name="delete_app">Delete application</string>
     <string name="error_delete_app">Could not delete this app</string>
     <string name="delete_logs">Delete logs</string>
@@ -62,7 +62,7 @@
     <string name="no_certificate_selected">No certificate selected</string>
     <string name="remove_ca_certificate">Remove CA Certificate</string>
     <string name="warning">Warning</string>
-    <string name="http_warning">Using http is insecure and it\'s recommend to use https instead. Use your favorite search engine to get more information about this topic.</string>
+    <string name="http_warning">Using HTTP is insecure and it\'s recommend to use HTTPS instead. Use your favorite search engine to get more information about this topic.</string>
     <string name="i_understand">I Understand</string>
     <string name="connection">%s@%s</string>
     <string name="no_messages_yet">There are no messages, yet.\nSend a message to Gotify\nand it will appear here.</string>
