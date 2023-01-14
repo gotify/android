@@ -335,12 +335,12 @@ internal class WebSocketService : Service() {
             .setContentIntent(contentIntent)
 
         var formattedMessage = message as CharSequence
-        lateinit var newMessage: String
+        var newMessage: String? = null
         if (Extras.useMarkdown(extras)) {
             formattedMessage = markwon.toMarkdown(message)
             newMessage = formattedMessage.toString()
         }
-        b.setContentText(newMessage)
+        b.setContentText(newMessage ?: message)
         b.setStyle(NotificationCompat.BigTextStyle().bigText(formattedMessage))
 
         val notificationImageUrl = Extras.getNestedValue(
