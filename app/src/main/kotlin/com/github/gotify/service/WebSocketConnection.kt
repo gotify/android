@@ -7,7 +7,6 @@ import android.os.Handler
 import android.os.Looper
 import com.github.gotify.SSLSettings
 import com.github.gotify.Utils
-import com.github.gotify.api.Callback.SuccessCallback
 import com.github.gotify.api.CertUtils
 import com.github.gotify.client.model.Message
 import com.github.gotify.log.Log
@@ -38,7 +37,7 @@ internal class WebSocketConnection(
     private var errorCount = 0
 
     private var webSocket: WebSocket? = null
-    private lateinit var onMessage: SuccessCallback<Message>
+    private lateinit var onMessageCallback: (Message) -> Unit
     private lateinit var onClose: Runnable
     private lateinit var onOpen: Runnable
     private lateinit var onBadRequest: BadRequestRunnable
@@ -56,8 +55,8 @@ internal class WebSocketConnection(
     }
 
     @Synchronized
-    fun onMessage(onMessage: SuccessCallback<Message>): WebSocketConnection {
-        this.onMessage = onMessage
+    fun onMessage(onMessage: (Message) -> Unit): WebSocketConnection {
+        this.onMessageCallback = onMessage
         return this
     }
 
@@ -168,7 +167,7 @@ internal class WebSocketConnection(
             syncExec {
                 Log.i("WebSocket($id): received message $text")
                 val message = Utils.JSON.fromJson(text, Message::class.java)
-                onMessage.onSuccess(message)
+                onMessageCallback(message)
             }
             super.onMessage(webSocket, text)
         }

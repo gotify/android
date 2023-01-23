@@ -5,6 +5,19 @@ import java.io.IOException
 
 internal object Api {
     @Throws(ApiException::class)
+    fun execute(call: Call<Void>) {
+        try {
+            val response = call.execute()
+
+            if (!response.isSuccessful) {
+                throw ApiException(response)
+            }
+        } catch (e: IOException) {
+            throw ApiException(e)
+        }
+    }
+
+    @Throws(ApiException::class)
     fun <T> execute(call: Call<T>): T {
         try {
             val response = call.execute()

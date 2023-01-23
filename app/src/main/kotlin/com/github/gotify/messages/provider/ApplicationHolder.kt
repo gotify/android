@@ -20,7 +20,7 @@ internal class ApplicationHolder(private val activity: Activity, private val cli
             .enqueue(
                 Callback.callInUI(
                     activity,
-                    onSuccess = { apps -> onReceiveApps(apps) },
+                    onSuccess = Callback.SuccessBody { apps -> onReceiveApps(apps) },
                     onError = { onFailedApps() }
                 )
             )

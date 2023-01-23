@@ -68,7 +68,7 @@ internal class PicassoHandler(private val context: Context, private val settings
             .apps
             .enqueue(
                 Callback.call(
-                    onSuccess = { apps ->
+                    onSuccess = Callback.SuccessBody { apps ->
                         appIdToAppImage.clear()
                         appIdToAppImage.putAll(MessageImageCombiner.appIdToImage(apps))
                     },

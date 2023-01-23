@@ -10,7 +10,15 @@ internal class Callback<T> private constructor(
     private val onError: ErrorCallback
 ) {
     fun interface SuccessCallback<T> {
-        fun onSuccess(data: T)
+        fun onSuccess(response: Response<T>)
+    }
+
+    fun interface SuccessBody<T> : SuccessCallback<T> {
+        override fun onSuccess(response: Response<T>) {
+            onResultSuccess(response.body() ?: throw ApiException("null response", response))
+        }
+
+        fun onResultSuccess(data: T)
     }
 
     fun interface ErrorCallback {
@@ -20,9 +28,7 @@ internal class Callback<T> private constructor(
     private class RetrofitCallback<T>(private val callback: Callback<T>) : retrofit2.Callback<T> {
         override fun onResponse(call: Call<T>, response: Response<T>) {
             if (response.isSuccessful) {
-                callback.onSuccess.onSuccess(
-                    response.body() ?: throw ApiException("null response", response)
-                )
+                callback.onSuccess.onSuccess(response)
             } else {
                 callback.onError.onError(ApiException(response))
             }
@@ -40,19 +46,12 @@ internal class Callback<T> private constructor(
             onError: ErrorCallback
         ): retrofit2.Callback<T> {
             return call(
-                onSuccess = { data -> context.runOnUiThread { onSuccess.onSuccess(data) } },
+                onSuccess = { response -> context.runOnUiThread { onSuccess.onSuccess(response) } },
                 onError = { exception -> context.runOnUiThread { onError.onError(exception) } }
             )
         }
 
-        fun <T> call(): retrofit2.Callback<T> {
-            return call(
-                onSuccess = {},
-                onError = {}
-            )
-        }
-
-        fun <T> call(onSuccess: SuccessCallback<T>, onError: ErrorCallback): retrofit2.Callback<T> {
+        fun <T> call(onSuccess: SuccessCallback<T> = SuccessCallback {}, onError: ErrorCallback = ErrorCallback {}): retrofit2.Callback<T> {
             return RetrofitCallback(merge(of(onSuccess, onError), errorCallback()))
         }
 

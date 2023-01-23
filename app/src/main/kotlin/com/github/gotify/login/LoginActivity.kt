@@ -192,7 +192,7 @@ internal class LoginActivity : AppCompatActivity() {
     }
 
     private fun onValidUrl(url: String): SuccessCallback<VersionInfo> {
-        return SuccessCallback { version ->
+        return Callback.SuccessBody { version ->
             settings.url = url
             binding.checkurlProgress.visibility = View.GONE
             binding.checkurl.visibility = View.VISIBLE
@@ -261,7 +261,7 @@ internal class LoginActivity : AppCompatActivity() {
                 .enqueue(
                     Callback.callInUI(
                         this,
-                        onSuccess = { client -> onCreatedClient(client) },
+                        onSuccess = Callback.SuccessBody { client -> onCreatedClient(client) },
                         onError = { onFailedToCreateClient() }
                     )
                 )

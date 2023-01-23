@@ -63,7 +63,7 @@ internal class InitializationActivity : AppCompatActivity() {
             .enqueue(
                 Callback.callInUI(
                     this,
-                    onSuccess = { user -> authenticated(user) },
+                    onSuccess = Callback.SuccessBody { user -> authenticated(user) },
                     onError = { exception -> failed(exception) }
                 )
             )
@@ -113,7 +113,7 @@ internal class InitializationActivity : AppCompatActivity() {
 
     private fun requestVersion(runnable: Runnable) {
         requestVersion(
-            callback = { version: VersionInfo ->
+            callback = Callback.SuccessBody { version: VersionInfo ->
                 Log.i("Server version: ${version.version}@${version.buildDate}")
                 settings.serverVersion = version.version
                 runnable.run()

@@ -3,20 +3,19 @@ package com.github.gotify
 import com.github.gotify.api.Api
 import com.github.gotify.api.ApiException
 import com.github.gotify.api.Callback
-import com.github.gotify.api.Callback.SuccessCallback
 import com.github.gotify.client.api.MessageApi
 import com.github.gotify.client.model.Message
 import com.github.gotify.log.Log
 
 internal class MissedMessageUtil(private val api: MessageApi) {
-    fun lastReceivedMessage(successCallback: SuccessCallback<Long>) {
+    fun lastReceivedMessage(acceptID: (Long) -> Unit) {
         api.getMessages(1, 0L).enqueue(
             Callback.call(
-                onSuccess = { messages ->
+                onSuccess = Callback.SuccessBody { messages ->
                     if (messages.messages.size == 1) {
-                        successCallback.onSuccess(messages.messages[0].id)
+                        acceptID(messages.messages[0].id)
                     } else {
-                        successCallback.onSuccess(NO_MESSAGES)
+                        acceptID(NO_MESSAGES)
                     }
                 },
                 onError = {}
