@@ -23,7 +23,9 @@ import com.github.gotify.login.LoginActivity
 import com.github.gotify.messages.MessagesActivity
 import com.github.gotify.service.WebSocketService
 import com.github.gotify.settings.ThemeHelper
-import com.livinglifetechway.quickpermissions_kotlin.runWithPermissions
+import com.livinglifetechway.quickpermissionskotlin.runWithPermissions
+import com.livinglifetechway.quickpermissionskotlin.util.QuickPermissionsOptions
+import com.livinglifetechway.quickpermissionskotlin.util.QuickPermissionsRequest
 
 internal class InitializationActivity : AppCompatActivity() {
 
@@ -137,20 +139,52 @@ internal class InitializationActivity : AppCompatActivity() {
 
     private fun runWithNeededPermissions(action: () -> Unit) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val quickPermissionsOption = QuickPermissionsOptions(
+                handleRationale = true,
+                handlePermanentlyDenied = true,
+                rationaleMethod = { req -> processPermissionRationale(req) },
+                permissionsDeniedMethod = { req -> processPermissionRationale(req) },
+                permanentDeniedMethod = { req -> processPermissionsPermanentDenied(req) }
+            )
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 // Android 13 and above
                 runWithPermissions(
                     Manifest.permission.SCHEDULE_EXACT_ALARM,
                     Manifest.permission.POST_NOTIFICATIONS,
+                    options = quickPermissionsOption,
                     callback = action
                 )
             } else {
                 // Android 12 and Android 12L
-                runWithPermissions(Manifest.permission.SCHEDULE_EXACT_ALARM, callback = action)
+                runWithPermissions(
+                    Manifest.permission.SCHEDULE_EXACT_ALARM,
+                    options = quickPermissionsOption,
+                    callback = action
+                )
             }
         } else {
             // Android 11 and below
             action()
         }
+    }
+
+    private fun processPermissionRationale(req: QuickPermissionsRequest) {
+        AlertDialog.Builder(this)
+            .setMessage(getString(R.string.permissions_denied_temp))
+            .setPositiveButton(getString(R.string.permissions_dialog_grant)) { _, _ ->
+                req.proceed()
+            }
+            .setCancelable(false)
+            .show()
+    }
+
+    private fun processPermissionsPermanentDenied(req: QuickPermissionsRequest) {
+        AlertDialog.Builder(this)
+            .setMessage(getString(R.string.permissions_denied_permanent))
+            .setPositiveButton(getString(R.string.permissions_dialog_grant)) { _, _ ->
+                req.openAppSettings()
+            }
+            .setCancelable(false)
+            .show()
     }
 }

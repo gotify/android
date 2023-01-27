@@ -45,6 +45,9 @@
     <string name="select_ca_failed">Failed to read CA: %s</string>
     <string name="login">Login</string>
     <string name="check_url">Check URL</string>
+    <string name="permissions_dialog_grant">Grant</string>
+    <string name="permissions_denied_temp">Please grant the following required permissions.</string>
+    <string name="permissions_denied_permanent">Please grant the required permissions in the settings.</string>
     <string name="gotify_logo">Gotify logo</string>
     <string name="refresh_all">Refresh all</string>
     <string name="logout_confirm">Do you really want to logout?</string>
