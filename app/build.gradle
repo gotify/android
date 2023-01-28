@@ -36,6 +36,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+    kotlinOptions {
+        jvmTarget = '11'
+    }
     lintOptions {
         disable 'GoogleAppIndexingWarning'
         lintConfig file('../lint.xml')
@@ -68,6 +71,7 @@ dependencies {
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
     implementation 'androidx.preference:preference:1.2.0'
 
+    implementation 'com.github.cyb3rko:QuickPermissions-Kotlin:1.0.2'
     implementation 'com.hypertrack:hyperlog:0.0.10'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'io.noties.markwon:core:4.6.2'
