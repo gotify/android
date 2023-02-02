@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.preference.PreferenceManager
 import com.github.gotify.NotificationSupport
 import com.github.gotify.R
@@ -30,6 +31,7 @@ import com.livinglifetechway.quickpermissionskotlin.util.QuickPermissionsRequest
 internal class InitializationActivity : AppCompatActivity() {
 
     private lateinit var settings: Settings
+    private var splashScreenActive = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,8 +39,6 @@ internal class InitializationActivity : AppCompatActivity() {
         val theme = PreferenceManager.getDefaultSharedPreferences(this)
             .getString(getString(R.string.setting_key_theme), getString(R.string.theme_default))!!
         ThemeHelper.setTheme(this, theme)
-
-        setContentView(R.layout.splash)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationSupport.createChannels(
@@ -48,6 +48,8 @@ internal class InitializationActivity : AppCompatActivity() {
         UncaughtExceptionHandler.registerCurrentThread()
         settings = Settings(this)
         Log.i("Entering ${javaClass.simpleName}")
+
+        installSplashScreen().setKeepOnScreenCondition { splashScreenActive }
 
         if (settings.tokenExists()) {
             runWithNeededPermissions {
@@ -59,6 +61,7 @@ internal class InitializationActivity : AppCompatActivity() {
     }
 
     private fun showLogin() {
+        splashScreenActive = false
         startActivity(Intent(this, LoginActivity::class.java))
         finish()
     }
@@ -76,6 +79,8 @@ internal class InitializationActivity : AppCompatActivity() {
     }
 
     private fun failed(exception: ApiException) {
+        splashScreenActive = false
+        setContentView(R.layout.splash)
         when (exception.code) {
             0 -> {
                 dialog(getString(R.string.not_available, settings.url))
@@ -98,6 +103,7 @@ internal class InitializationActivity : AppCompatActivity() {
             .setMessage(message)
             .setPositiveButton(R.string.retry) { _, _ -> tryAuthenticate() }
             .setNegativeButton(R.string.logout) { _, _ -> showLogin() }
+            .setCancelable(false)
             .show()
     }
 
@@ -106,6 +112,7 @@ internal class InitializationActivity : AppCompatActivity() {
 
         settings.setUser(user.name, user.isAdmin)
         requestVersion {
+            splashScreenActive = false
             startActivity(Intent(this, MessagesActivity::class.java))
             finish()
         }
