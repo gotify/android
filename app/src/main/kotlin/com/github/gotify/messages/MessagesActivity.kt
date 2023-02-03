@@ -522,12 +522,12 @@ internal class MessagesActivity :
             }
         }
         if (item.itemId == R.id.action_delete_app) {
-            val alert = android.app.AlertDialog.Builder(this)
-            alert.setTitle(R.string.delete_app)
-            alert.setMessage(R.string.ack)
-            alert.setPositiveButton(R.string.yes) { _, _ -> deleteApp(viewModel.appId) }
-            alert.setNegativeButton(R.string.no, null)
-            alert.show()
+            MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.delete_app)
+                .setMessage(R.string.ack)
+                .setPositiveButton(R.string.yes) { _, _ -> deleteApp(viewModel.appId) }
+                .setNegativeButton(R.string.no, null)
+                .show()
         }
         return super.onContextItemSelected(item)
     }

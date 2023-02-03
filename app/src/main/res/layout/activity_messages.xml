@@ -62,11 +62,11 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/learn_gotify"
-                            style="@style/Widget.AppCompat.Button.Colored"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="32dp"
                             android:text="Learn how to send messages"
+                            android:textColor="@android:color/white"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/textView2" />
