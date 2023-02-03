@@ -16,9 +16,7 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.GravityCompat
@@ -53,6 +51,7 @@ import com.github.gotify.messages.provider.MessageWithImage
 import com.github.gotify.service.WebSocketService
 import com.github.gotify.settings.SettingsActivity
 import com.github.gotify.sharing.ShareActivity
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.BaseTransientBottomBar.BaseCallback
 import com.google.android.material.snackbar.Snackbar
@@ -260,7 +259,7 @@ internal class MessagesActivity :
             startLoading()
             binding.appBarDrawer.toolbar.subtitle = ""
         } else if (id == R.id.logout) {
-            AlertDialog.Builder(ContextThemeWrapper(this, R.style.AppTheme_Dialog))
+            MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.logout)
                 .setMessage(getString(R.string.logout_confirm))
                 .setPositiveButton(R.string.yes) { _, _ -> doLogout() }

@@ -45,7 +45,7 @@
                         android:scrollbars="none"
                         android:orientation="vertical">
 
-                        <TextView
+                        <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/textView2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintVertical_bias="0.3" />
 
-                        <Button
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/learn_gotify"
                             style="@style/Widget.AppCompat.Button.Colored"
                             android:layout_width="wrap_content"

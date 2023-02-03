@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/nav_header_height"
     android:layout_alignParentBottom="false"
@@ -26,7 +25,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/gotify" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/header_user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,7 +35,7 @@
         app:layout_constraintBottom_toTopOf="@+id/header_connection"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/header_connection"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -46,7 +45,7 @@
         app:layout_constraintBottom_toTopOf="@+id/header_version"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/header_version"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
