@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.preference.PreferenceManager
@@ -24,6 +23,7 @@ import com.github.gotify.login.LoginActivity
 import com.github.gotify.messages.MessagesActivity
 import com.github.gotify.service.WebSocketService
 import com.github.gotify.settings.ThemeHelper
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.livinglifetechway.quickpermissionskotlin.runWithPermissions
 import com.livinglifetechway.quickpermissionskotlin.util.QuickPermissionsOptions
 import com.livinglifetechway.quickpermissionskotlin.util.QuickPermissionsRequest
@@ -98,7 +98,7 @@ internal class InitializationActivity : AppCompatActivity() {
     }
 
     private fun dialog(message: String) {
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle(R.string.oops)
             .setMessage(message)
             .setPositiveButton(R.string.retry) { _, _ -> tryAuthenticate() }
@@ -176,7 +176,7 @@ internal class InitializationActivity : AppCompatActivity() {
     }
 
     private fun processPermissionRationale(req: QuickPermissionsRequest) {
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setMessage(getString(R.string.permissions_denied_temp))
             .setPositiveButton(getString(R.string.permissions_dialog_grant)) { _, _ ->
                 req.proceed()
@@ -186,7 +186,7 @@ internal class InitializationActivity : AppCompatActivity() {
     }
 
     private fun processPermissionsPermanentDenied(req: QuickPermissionsRequest) {
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setMessage(getString(R.string.permissions_denied_permanent))
             .setPositiveButton(getString(R.string.permissions_dialog_grant)) { _, _ ->
                 req.openAppSettings()
