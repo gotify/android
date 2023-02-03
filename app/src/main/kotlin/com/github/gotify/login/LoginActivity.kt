@@ -8,10 +8,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.widget.EditText
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.view.ContextThemeWrapper
 import com.github.gotify.R
 import com.github.gotify.SSLSettings
 import com.github.gotify.Settings
@@ -27,10 +24,13 @@ import com.github.gotify.client.api.UserApi
 import com.github.gotify.client.model.Client
 import com.github.gotify.client.model.VersionInfo
 import com.github.gotify.databinding.ActivityLoginBinding
+import com.github.gotify.databinding.ClientNameDialogBinding
 import com.github.gotify.init.InitializationActivity
 import com.github.gotify.log.Log
 import com.github.gotify.log.LogsActivity
 import com.github.gotify.log.UncaughtExceptionHandler
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputEditText
 import okhttp3.HttpUrl
 import java.security.cert.X509Certificate
 
@@ -59,7 +59,7 @@ internal class LoginActivity : AppCompatActivity() {
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
 
-        binding.gotifyUrl.addTextChangedListener(object : TextWatcher {
+        binding.gotifyUrlEditext.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
 
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
@@ -83,7 +83,7 @@ internal class LoginActivity : AppCompatActivity() {
     }
 
     private fun doCheckUrl() {
-        val url = binding.gotifyUrl.text.toString().trim().trimEnd('/')
+        val url = binding.gotifyUrlEditext.text.toString().trim().trimEnd('/')
         val parsedUrl = HttpUrl.parse(url)
         if (parsedUrl == null) {
             Utils.showSnackBar(this, "Invalid URL (include http:// or https://)")
@@ -110,7 +110,7 @@ internal class LoginActivity : AppCompatActivity() {
     }
 
     private fun showHttpWarning() {
-        AlertDialog.Builder(ContextThemeWrapper(this, R.style.AppTheme_Dialog))
+        MaterialAlertDialogBuilder(this)
             .setTitle(R.string.warning)
             .setCancelable(true)
             .setMessage(R.string.http_warning)
@@ -213,8 +213,8 @@ internal class LoginActivity : AppCompatActivity() {
     }
 
     private fun doLogin() {
-        val username = binding.username.text.toString()
-        val password = binding.password.text.toString()
+        val username = binding.usernameEditext.text.toString()
+        val password = binding.passwordEditext.text.toString()
 
         binding.login.visibility = View.GONE
         binding.loginProgress.visibility = View.VISIBLE
@@ -238,21 +238,22 @@ internal class LoginActivity : AppCompatActivity() {
     }
 
     private fun newClientDialog(client: ApiClient) {
-        val clientName = EditText(this)
-        clientName.setText(Build.MODEL)
+        val clientDialogBinding = ClientNameDialogBinding.inflate(layoutInflater)
+        val clientDialogEditext = clientDialogBinding.clientNameEditext
+        clientDialogEditext.setText(Build.MODEL)
 
-        AlertDialog.Builder(ContextThemeWrapper(this, R.style.AppTheme_Dialog))
+        MaterialAlertDialogBuilder(this)
             .setTitle(R.string.create_client_title)
             .setMessage(R.string.create_client_message)
-            .setView(clientName)
-            .setPositiveButton(R.string.create, doCreateClient(client, clientName))
+            .setView(clientDialogBinding.root)
+            .setPositiveButton(R.string.create, doCreateClient(client, clientDialogEditext))
             .setNegativeButton(R.string.cancel) { _, _ -> onCancelClientDialog() }
             .show()
     }
 
     private fun doCreateClient(
         client: ApiClient,
-        nameProvider: EditText
+        nameProvider: TextInputEditText
     ): DialogInterface.OnClickListener {
         return DialogInterface.OnClickListener { _, _ ->
             val newClient = Client().name(nameProvider.text.toString())

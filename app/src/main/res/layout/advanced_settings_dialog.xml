@@ -4,19 +4,20 @@
     android:layout_height="match_parent"
     android:padding="20dp">
 
-    <CheckBox
+    <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/disableSSL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/disabled_validate_ssl" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/toggle_ca_cert"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
         android:text="@string/select_ca_certificate" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/seleceted_ca_cert"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

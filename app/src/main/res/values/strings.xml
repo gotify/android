@@ -35,7 +35,7 @@
     <string name="logs">Logs</string>
     <string name="message_image_desc">The image of a message</string>
     <string name="delete_message">Delete message</string>
-    <string name="gotify_url">https://push.example.com</string>
+    <string name="gotify_url">Gotify URL</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="disabled_validate_ssl">Disable SSL Validation</string>
