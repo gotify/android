@@ -248,6 +248,7 @@ internal class LoginActivity : AppCompatActivity() {
             .setView(clientDialogBinding.root)
             .setPositiveButton(R.string.create, doCreateClient(client, clientDialogEditext))
             .setNegativeButton(R.string.cancel) { _, _ -> onCancelClientDialog() }
+            .setCancelable(false)
             .show()
     }
 
