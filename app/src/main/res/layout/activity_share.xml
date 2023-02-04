@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp">
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
             android:layout_marginHorizontal="20dp"
             android:layout_marginBottom="20dp">
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/txtAppListDesc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -112,7 +112,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="0" />
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/missingAppsText"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -122,13 +122,14 @@
                 android:visibility="visible" />
         </LinearLayout>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/push_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|center_horizontal"
             android:layout_marginHorizontal="20dp"
             android:layout_marginBottom="20dp"
+            android:textColor="@android:color/white"
             android:text="@string/push_button" />
 
     </LinearLayout>

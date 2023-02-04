@@ -17,7 +17,7 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/log_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

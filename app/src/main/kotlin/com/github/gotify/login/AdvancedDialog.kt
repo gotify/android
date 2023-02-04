@@ -1,11 +1,11 @@
 package com.github.gotify.login
 
-import android.app.AlertDialog
 import android.content.Context
 import android.view.LayoutInflater
 import android.widget.CompoundButton
 import com.github.gotify.R
 import com.github.gotify.databinding.AdvancedSettingsDialogBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 internal class AdvancedDialog(
     private val context: Context,
@@ -42,7 +42,7 @@ internal class AdvancedDialog(
         } else {
             showRemoveCACertificate(selectedCertificate)
         }
-        AlertDialog.Builder(context)
+        MaterialAlertDialogBuilder(context)
             .setView(binding.root)
             .setTitle(R.string.advanced_settings)
             .setPositiveButton(context.getString(R.string.done), null)

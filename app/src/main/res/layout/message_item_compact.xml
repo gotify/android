@@ -8,7 +8,7 @@
     android:padding="10dp"
     android:background="?android:colorBackground">
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/message_date"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
@@ -17,7 +17,7 @@
         app:layout_constraintEnd_toStartOf="@+id/message_delete"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/message_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/message_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight">
+    <style name="AppTheme" parent="Theme.Material3.DayNight">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -21,12 +21,8 @@
         <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.Material3.Dark" />
 
     <style name="AppTheme.PopupOverlay" parent="AppTheme" />
-
-    <style name="AppTheme.Dialog" parent="AppTheme" >
-        <item name="colorPrimary">@color/colorNavPrimary</item>
-    </style>
 
 </resources>

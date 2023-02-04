@@ -101,6 +101,13 @@ internal class ListMessageAdapter(
         return currentItem.message.id
     }
 
+    // Fix for message not being selectable (https://issuetracker.google.com/issues/37095917)
+    override fun onViewAttachedToWindow(holder: ViewHolder) {
+        super.onViewAttachedToWindow(holder)
+        holder.message.isEnabled = false
+        holder.message.isEnabled = true
+    }
+
     class ViewHolder(binding: ViewBinding) : RecyclerView.ViewHolder(binding.root) {
         lateinit var image: ImageView
         lateinit var message: TextView

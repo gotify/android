@@ -13,19 +13,18 @@
         tools:context=".login.LoginActivity"
         tools:layout_editor_absoluteY="25dp">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/open_logs"
-            android:layout_width="70dp"
+            android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:insetTop="0dp"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            style="@style/Widget.Material3.Button.TextButton"
             android:text="@string/logs"
-            app:backgroundTint="#00FFFFFF"
             android:textColor="@color/colorNavPrimary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ProgressBar
+        <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/checkurl_progress"
             android:layout_width="49dp"
             android:layout_height="wrap_content"
@@ -34,19 +33,21 @@
             android:layout_weight="1"
             android:minWidth="40dp"
             android:minHeight="40dp"
+            android:indeterminateOnly="true"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.501"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/checkurl" />
 
-        <ProgressBar
+        <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/login_progress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:minWidth="40dp"
             android:minHeight="40dp"
+            android:indeterminateOnly="true"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -68,65 +69,86 @@
             app:srcCompat="@drawable/gotify"
             android:contentDescription="@string/gotify_logo" />
 
-        <EditText
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/gotify_url"
             android:layout_width="0dp"
-            android:layout_height="42dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:ems="10"
-            android:hint="@string/gotify_url"
-            android:inputType="textUri"
-            android:singleLine="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/gotify_logo_image"
             app:layout_constraintWidth_max="280dp"
-            tools:text="Gotify URL" />
+            tools:text="Gotify URL">
 
-        <EditText
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/gotify_url_editext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:inputType="textUri"
+                android:hint="@string/gotify_url" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/username"
             android:layout_width="0dp"
-            android:layout_height="47dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:ems="10"
-            android:hint="@string/username"
-            android:inputType="textPersonName"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/checkurl"
-            app:layout_constraintWidth_max="280dp"
-            tools:text="Username"/>
+            app:layout_constraintWidth_max="280dp">
 
-        <EditText
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/username_editext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:inputType="textPersonName"
+                android:hint="@string/username" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/password"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:ems="10"
-            android:hint="@string/password"
-            android:inputType="textPassword"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/username"
-            app:layout_constraintWidth_max="280dp"
-            tools:text="Password" />
+            app:layout_constraintWidth_max="280dp">
 
-        <Button
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/password_editext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:inputType="textPassword"
+                android:hint="@string/password" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/login"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:background="@color/colorPrimaryDark"
+            android:backgroundTint="@color/colorPrimaryDark"
             android:textColor="@android:color/white"
             android:text="@string/login"
             android:visibility="gone"
@@ -135,13 +157,13 @@
             app:layout_constraintTop_toBottomOf="@+id/password"
             app:layout_constraintWidth_max="280dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/checkurl"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:background="@color/colorPrimaryDark"
+            android:backgroundTint="@color/colorPrimaryDark"
             android:text="@string/check_url"
             android:textColor="@android:color/white"
             android:visibility="visible"
@@ -152,7 +174,7 @@
 
         <ImageButton
             android:id="@+id/advanced_settings"
-            style="@style/Widget.AppCompat.Button.Borderless"
+            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:text="@string/check_url"
