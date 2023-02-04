@@ -10,7 +10,7 @@ internal object MessageImageCombiner {
         messages.forEach {
             val messageWithImage = MessageWithImage()
             messageWithImage.message = it
-            messageWithImage.image = appIdToImage[it.appid]!!
+            messageWithImage.image = appIdToImage[it.appid]
             result.add(messageWithImage)
         }
         return result

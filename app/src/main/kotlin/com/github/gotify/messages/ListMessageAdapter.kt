@@ -79,10 +79,12 @@ internal class ListMessageAdapter(
             holder.message.text = message.message.message
         }
         holder.title.text = message.message.title
-        picasso.load(Utils.resolveAbsoluteUrl("${settings.url}/", message.image))
-            .error(R.drawable.ic_alarm)
-            .placeholder(R.drawable.ic_placeholder)
-            .into(holder.image)
+        if (message.image != null) {
+            picasso.load(Utils.resolveAbsoluteUrl("${settings.url}/", message.image))
+                .error(R.drawable.ic_alarm)
+                .placeholder(R.drawable.ic_placeholder)
+                .into(holder.image)
+        }
 
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val timeFormat = prefs.getString(timeFormatPrefsKey, timeFormatRelative)
