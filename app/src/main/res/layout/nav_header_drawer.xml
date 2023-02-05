@@ -32,6 +32,8 @@
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:maxLines="2"
+        android:ellipsize="end"
         app:layout_constraintBottom_toTopOf="@+id/header_connection"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="jmattheis" />
@@ -42,6 +44,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="2dp"
         android:textSize="12sp"
+        android:maxLines="2"
+        android:ellipsize="end"
         app:layout_constraintBottom_toTopOf="@+id/header_version"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="https://your.domain.de" />
