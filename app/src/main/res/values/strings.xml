@@ -67,7 +67,6 @@
     <string name="warning">Warning</string>
     <string name="http_warning">Using HTTP is insecure and it\'s recommend to use HTTPS instead. Use your favorite search engine to get more information about this topic.</string>
     <string name="i_understand">I Understand</string>
-    <string name="connection">%s@%s</string>
     <string name="no_messages_yet">There are no messages, yet.\nSend a message to Gotify\nand it will appear here.</string>
     <string name="title_activity_settings">Settings</string>
     <string name="settings_appearance">Appearance</string>
