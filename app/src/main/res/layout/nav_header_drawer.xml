@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/nav_header_height"
     android:layout_alignParentBottom="false"
@@ -30,29 +31,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="jmattheis"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         app:layout_constraintBottom_toTopOf="@+id/header_connection"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="jmattheis" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/header_connection"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="2dp"
-        android:text="admin@your.domain.de"
         android:textSize="12sp"
         app:layout_constraintBottom_toTopOf="@+id/header_version"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="https://your.domain.de" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/header_version"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="admin@your.domain.de"
         android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="gotify/android vX.X.X; gotify/server vX.X.X" />
 
     <ImageButton
         android:id="@+id/refresh_all"
