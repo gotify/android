@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/nav_header_height"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/nav_header_height"
     android:layout_alignParentBottom="false"
     android:background="@drawable/side_nav_bar"
     android:gravity="bottom"
@@ -22,7 +23,8 @@
         android:focusableInTouchMode="true"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:scaleType="fitCenter"
-        app:layout_constraintBottom_toTopOf="@+id/header_user"
+        android:layout_marginTop="30dp"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/gotify" />
 
@@ -34,7 +36,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:maxLines="2"
         android:ellipsize="end"
-        app:layout_constraintBottom_toTopOf="@+id/header_connection"
+        app:layout_constraintTop_toBottomOf="@id/imageView"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="jmattheis" />
 
@@ -46,7 +48,7 @@
         android:textSize="12sp"
         android:maxLines="2"
         android:ellipsize="end"
-        app:layout_constraintBottom_toTopOf="@+id/header_version"
+        app:layout_constraintTop_toBottomOf="@id/header_user"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="https://your.domain.de" />
 
@@ -55,7 +57,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="10sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header_connection"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="gotify/android vX.X.X; gotify/server vX.X.X" />
 
