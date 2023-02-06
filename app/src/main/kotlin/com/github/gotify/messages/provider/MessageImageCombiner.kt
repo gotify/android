@@ -6,14 +6,7 @@ import com.github.gotify.client.model.Message
 internal object MessageImageCombiner {
     fun combine(messages: List<Message>, applications: List<Application>): List<MessageWithImage> {
         val appIdToImage = appIdToImage(applications)
-        val result = mutableListOf<MessageWithImage>()
-        messages.forEach {
-            val messageWithImage = MessageWithImage()
-            messageWithImage.message = it
-            messageWithImage.image = appIdToImage[it.appid]!!
-            result.add(messageWithImage)
-        }
-        return result
+        return messages.map { MessageWithImage(message = it, image = appIdToImage[it.appid]) }
     }
 
     fun appIdToImage(applications: List<Application>): Map<Long, String> {
