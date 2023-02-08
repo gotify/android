@@ -228,7 +228,7 @@ internal class MessagesActivity :
         user.text = settings.user?.name
 
         val connection = headerView.findViewById<TextView>(R.id.header_connection)
-        connection.text = getString(R.string.connection, settings.user?.name, settings.url)
+        connection.text = settings.url
 
         val version = headerView.findViewById<TextView>(R.id.header_version)
         version.text =
