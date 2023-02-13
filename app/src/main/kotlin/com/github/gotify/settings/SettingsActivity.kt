@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -14,6 +15,7 @@ import androidx.preference.ListPreferenceDialogFragmentCompat
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import androidx.preference.SwitchPreferenceCompat
 import com.github.gotify.R
 import com.github.gotify.databinding.SettingsActivityBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -48,17 +50,36 @@ internal class SettingsActivity : AppCompatActivity(), OnSharedPreferenceChangeL
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-        if (getString(R.string.setting_key_theme) == key) {
-            ThemeHelper.setTheme(
-                this,
-                sharedPreferences.getString(key, getString(R.string.theme_default))!!
-            )
+        when (key) {
+            getString(R.string.setting_key_theme) -> {
+                ThemeHelper.setTheme(
+                    this,
+                    sharedPreferences.getString(key, getString(R.string.theme_default))!!
+                )
+            }
+            getString(R.string.setting_key_notification_channels) -> {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
+
+                val dialogBuilder = MaterialAlertDialogBuilder(this)
+                    .setTitle(R.string.setting_notification_channels_dialog_title)
+                    .setMessage(R.string.setting_notification_channels_dialog_message)
+                    .setPositiveButton(android.R.string.ok, null)
+
+                if (!isFinishing) {
+                    dialogBuilder.show()
+                }
+            }
         }
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                findPreference<SwitchPreferenceCompat>(
+                    getString(R.string.setting_key_notification_channels)
+                )?.isEnabled = true
+            }
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

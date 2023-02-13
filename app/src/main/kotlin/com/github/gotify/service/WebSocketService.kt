@@ -5,6 +5,7 @@ import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
@@ -312,13 +313,26 @@ internal class WebSocketService : Service() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val b = NotificationCompat.Builder(
-            this,
-            NotificationSupport.convertPriorityToChannel(priority)
-        )
+        val channelId: String
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+            NotificationSupport.areAppChannelsRequested(this)
+        ) {
+            channelId = NotificationSupport.getChannelID(priority, appId.toString())
+            NotificationSupport.createChannelIfNonexistent(
+                this,
+                (this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager),
+                appId.toString(),
+                appId.toString(),
+                channelId
+            )
+        } else {
+            channelId = NotificationSupport.convertPriorityToChannel(priority)
+        }
+
+        val b = NotificationCompat.Builder(this, channelId)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            showNotificationGroup(priority)
+            showNotificationGroup(channelId)
         }
 
         b.setAutoCancel(true)
@@ -365,7 +379,7 @@ internal class WebSocketService : Service() {
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    fun showNotificationGroup(priority: Long) {
+    fun showNotificationGroup(channelId: String) {
         val intent = Intent(this, MessagesActivity::class.java)
         val contentIntent = PendingIntent.getActivity(
             this,
@@ -376,7 +390,7 @@ internal class WebSocketService : Service() {
 
         val builder = NotificationCompat.Builder(
             this,
-            NotificationSupport.convertPriorityToChannel(priority)
+            channelId
         )
 
         builder.setAutoCancel(true)

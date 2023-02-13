@@ -1,56 +1,92 @@
 package com.github.gotify
 
 import android.app.NotificationChannel
+import android.app.NotificationChannelGroup
 import android.app.NotificationManager
+import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.preference.PreferenceManager
+import com.github.gotify.client.model.Application
 import com.github.gotify.log.Log
 
 internal object NotificationSupport {
     @RequiresApi(Build.VERSION_CODES.O)
-    fun createChannels(notificationManager: NotificationManager) {
-        try {
-            // Low importance so that persistent notification can be sorted towards bottom of
-            // notification shade. Also prevents vibrations caused by persistent notification
-            val foreground = NotificationChannel(
-                Channel.FOREGROUND,
-                "Gotify foreground notification",
-                NotificationManager.IMPORTANCE_LOW
-            )
-            foreground.setShowBadge(false)
+    fun createForegroundChannel(context: Context, notificationManager: NotificationManager) {
+        // Low importance so that persistent notification can be sorted towards bottom of
+        // notification shade. Also prevents vibrations caused by persistent notification
+        val foreground = NotificationChannel(
+            Channel.FOREGROUND,
+            context.getString(R.string.notification_channel_title_foreground),
+            NotificationManager.IMPORTANCE_LOW
+        ).apply {
+            setShowBadge(false)
+        }
+        notificationManager.createNotificationChannel(foreground)
+    }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun createChannels(
+        context: Context,
+        notificationManager: NotificationManager,
+        applications: List<Application>
+    ) {
+        if (areAppChannelsRequested(context)) {
+            notificationManager.notificationChannels.forEach { channel ->
+                if (channel.id != Channel.FOREGROUND) {
+                    notificationManager.deleteNotificationChannel(channel.id)
+                }
+            }
+            applications.forEach { app ->
+                createAppChannels(context, notificationManager, app.id.toString(), app.name)
+            }
+        } else {
+            notificationManager.notificationChannelGroups.forEach { group ->
+                notificationManager.deleteNotificationChannelGroup(group.id)
+            }
+            createGeneralChannels(context, notificationManager)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun createGeneralChannels(
+        context: Context,
+        notificationManager: NotificationManager
+    ) {
+        try {
             val messagesImportanceMin = NotificationChannel(
                 Channel.MESSAGES_IMPORTANCE_MIN,
-                "Min priority messages (<1)",
+                context.getString(R.string.notification_channel_title_min),
                 NotificationManager.IMPORTANCE_MIN
             )
 
             val messagesImportanceLow = NotificationChannel(
                 Channel.MESSAGES_IMPORTANCE_LOW,
-                "Low priority messages (1-3)",
+                context.getString(R.string.notification_channel_title_low),
                 NotificationManager.IMPORTANCE_LOW
             )
 
             val messagesImportanceDefault = NotificationChannel(
                 Channel.MESSAGES_IMPORTANCE_DEFAULT,
-                "Normal priority messages (4-7)",
+                context.getString(R.string.notification_channel_title_normal),
                 NotificationManager.IMPORTANCE_DEFAULT
-            )
-            messagesImportanceDefault.enableLights(true)
-            messagesImportanceDefault.lightColor = Color.CYAN
-            messagesImportanceDefault.enableVibration(true)
+            ).apply {
+                enableLights(true)
+                lightColor = Color.CYAN
+                enableVibration(true)
+            }
 
             val messagesImportanceHigh = NotificationChannel(
                 Channel.MESSAGES_IMPORTANCE_HIGH,
-                "High priority messages (>7)",
+                context.getString(R.string.notification_channel_title_high),
                 NotificationManager.IMPORTANCE_HIGH
-            )
-            messagesImportanceHigh.enableLights(true)
-            messagesImportanceHigh.lightColor = Color.CYAN
-            messagesImportanceHigh.enableVibration(true)
+            ).apply {
+                enableLights(true)
+                lightColor = Color.CYAN
+                enableVibration(true)
+            }
 
-            notificationManager.createNotificationChannel(foreground)
             notificationManager.createNotificationChannel(messagesImportanceMin)
             notificationManager.createNotificationChannel(messagesImportanceLow)
             notificationManager.createNotificationChannel(messagesImportanceDefault)
@@ -58,6 +94,88 @@ internal object NotificationSupport {
         } catch (e: Exception) {
             Log.e("Could not create channel", e)
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    fun createChannelIfNonexistent(
+        context: Context,
+        notificationManager: NotificationManager,
+        groupId: String,
+        groupName: String,
+        channelId: String
+    ) {
+        if (!doesNotificationChannelExist(context, channelId)) {
+            createAppChannels(context, notificationManager, groupId, groupName)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun createAppChannels(
+        context: Context,
+        notificationManager: NotificationManager,
+        groupId: String,
+        groupName: String
+    ) {
+        try {
+            notificationManager.createNotificationChannelGroup(
+                NotificationChannelGroup(
+                    groupId,
+                    groupName
+                )
+            )
+
+            val messagesImportanceMin = NotificationChannel(
+                getChannelID(Channel.MESSAGES_IMPORTANCE_MIN, groupId),
+                context.getString(R.string.notification_channel_title_min),
+                NotificationManager.IMPORTANCE_MIN
+            ).apply {
+                group = groupId
+            }
+
+            val messagesImportanceLow = NotificationChannel(
+                getChannelID(Channel.MESSAGES_IMPORTANCE_LOW, groupId),
+                context.getString(R.string.notification_channel_title_low),
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
+                group = groupId
+            }
+
+            val messagesImportanceDefault = NotificationChannel(
+                getChannelID(Channel.MESSAGES_IMPORTANCE_DEFAULT, groupId),
+                context.getString(R.string.notification_channel_title_normal),
+                NotificationManager.IMPORTANCE_DEFAULT
+            ).apply {
+                enableLights(true)
+                lightColor = Color.CYAN
+                enableVibration(true)
+                group = groupId
+            }
+
+            val messagesImportanceHigh = NotificationChannel(
+                getChannelID(Channel.MESSAGES_IMPORTANCE_HIGH, groupId),
+                context.getString(R.string.notification_channel_title_high),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                enableLights(true)
+                lightColor = Color.CYAN
+                enableVibration(true)
+                group = groupId
+            }
+
+            notificationManager.createNotificationChannel(messagesImportanceMin)
+            notificationManager.createNotificationChannel(messagesImportanceLow)
+            notificationManager.createNotificationChannel(messagesImportanceDefault)
+            notificationManager.createNotificationChannel(messagesImportanceHigh)
+        } catch (e: Exception) {
+            Log.e("Could not create channel", e)
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private fun doesNotificationChannelExist(context: Context, channelId: String): Boolean {
+        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val channel = manager.getNotificationChannel(channelId)
+        return channel != null
     }
 
     /**
@@ -85,6 +203,21 @@ internal object NotificationSupport {
         } else {
             Channel.MESSAGES_IMPORTANCE_HIGH
         }
+    }
+
+    private fun getChannelID(importance: String, groupId: String): String {
+        return "$importance::$groupId"
+    }
+
+    fun getChannelID(priority: Long, groupId: String): String {
+        return getChannelID(convertPriorityToChannel(priority), groupId)
+    }
+
+    fun areAppChannelsRequested(context: Context): Boolean {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+            context.getString(R.string.setting_key_notification_channels),
+            context.resources.getBoolean(R.bool.notification_channels)
+        )
     }
 
     object Group {

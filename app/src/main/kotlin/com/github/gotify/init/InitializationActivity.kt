@@ -2,6 +2,7 @@ package com.github.gotify.init
 
 import android.Manifest
 import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -41,8 +42,9 @@ internal class InitializationActivity : AppCompatActivity() {
         ThemeHelper.setTheme(this, theme)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationSupport.createChannels(
-                this.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            NotificationSupport.createForegroundChannel(
+                this,
+                (this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
             )
         }
         UncaughtExceptionHandler.registerCurrentThread()

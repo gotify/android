@@ -24,4 +24,13 @@
             android:title="@string/setting_time_format" />
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="@string/setting_notifications" >
+        <SwitchPreferenceCompat
+            android:enabled="false"
+            android:defaultValue="@bool/notification_channels"
+            android:key="@string/setting_key_notification_channels"
+            android:title="@string/setting_notification_channels"
+            app:singleLineTitle="false" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

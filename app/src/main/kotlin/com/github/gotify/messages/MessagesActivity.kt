@@ -9,6 +9,7 @@ import android.graphics.Canvas
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -28,6 +29,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.gotify.BuildConfig
 import com.github.gotify.MissedMessageUtil
+import com.github.gotify.NotificationSupport
 import com.github.gotify.R
 import com.github.gotify.Utils
 import com.github.gotify.Utils.launchCoroutine
@@ -204,6 +206,14 @@ internal class MessagesActivity :
                 .into(t)
         }
         selectAppInMenu(selectedItem)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationSupport.createChannels(
+                this,
+                (this.getSystemService(NOTIFICATION_SERVICE) as NotificationManager),
+                applications
+            )
+        }
     }
 
     private fun initDrawer() {
