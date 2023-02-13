@@ -57,18 +57,6 @@ internal class SettingsActivity : AppCompatActivity(), OnSharedPreferenceChangeL
                     sharedPreferences.getString(key, getString(R.string.theme_default))!!
                 )
             }
-            getString(R.string.setting_key_notification_channels) -> {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
-
-                val dialogBuilder = MaterialAlertDialogBuilder(this)
-                    .setTitle(R.string.setting_notification_channels_dialog_title)
-                    .setMessage(R.string.setting_notification_channels_dialog_message)
-                    .setPositiveButton(android.R.string.ok, null)
-
-                if (!isFinishing) {
-                    dialogBuilder.show()
-                }
-            }
         }
     }
 
@@ -86,6 +74,8 @@ internal class SettingsActivity : AppCompatActivity(), OnSharedPreferenceChangeL
             super.onViewCreated(view, savedInstanceState)
             val messageLayout: ListPreference? =
                 findPreference(getString(R.string.setting_key_message_layout))
+            val notificationChannels: SwitchPreferenceCompat? =
+                findPreference(getString(R.string.setting_key_notification_channels))
             messageLayout?.onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { _, _ ->
                     MaterialAlertDialogBuilder(requireContext())
@@ -101,6 +91,20 @@ internal class SettingsActivity : AppCompatActivity(), OnSharedPreferenceChangeL
                             null
                         )
                         .show()
+                    true
+                }
+            notificationChannels?.onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { _, _ ->
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                        return@OnPreferenceChangeListener true
+                    }
+
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setTitle(R.string.setting_notification_channels_dialog_title)
+                        .setMessage(R.string.setting_notification_channels_dialog_message)
+                        .setPositiveButton(android.R.string.ok, null)
+                        .show()
+
                     true
                 }
         }
