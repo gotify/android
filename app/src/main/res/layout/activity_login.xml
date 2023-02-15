@@ -20,6 +20,7 @@
             android:insetTop="0dp"
             style="@style/Widget.Material3.Button.TextButton"
             android:text="@string/logs"
+            android:background="@null"
             android:textColor="@color/colorNavPrimary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -179,6 +180,7 @@
             android:layout_height="wrap_content"
             android:text="@string/check_url"
             android:visibility="visible"
+            android:background="@null"
             app:layout_constraintEnd_toEndOf="@+id/gotify_url"
             app:layout_constraintTop_toTopOf="@+id/checkurl"
             app:srcCompat="@drawable/ic_settings" />
