@@ -3,6 +3,7 @@ package com.github.gotify
 import android.app.NotificationChannel
 import android.app.NotificationChannelGroup
 import android.app.NotificationManager
+import android.app.Service
 import android.content.Context
 import android.graphics.Color
 import android.os.Build
@@ -99,13 +100,13 @@ internal object NotificationSupport {
     @RequiresApi(api = Build.VERSION_CODES.O)
     fun createChannelIfNonexistent(
         context: Context,
-        notificationManager: NotificationManager,
         groupId: String,
-        groupName: String,
         channelId: String
     ) {
         if (!doesNotificationChannelExist(context, channelId)) {
-            createAppChannels(context, notificationManager, groupId, groupName)
+            val notificationManager = (context as Service)
+                .getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            createAppChannels(context, notificationManager, groupId, groupId)
         }
     }
 
