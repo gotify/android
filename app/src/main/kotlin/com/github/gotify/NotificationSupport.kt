@@ -206,7 +206,7 @@ internal object NotificationSupport {
     }
 
     private fun getChannelID(importance: String, groupId: String): String {
-        return "$importance::$groupId"
+        return "$groupId::$importance"
     }
 
     fun getChannelID(priority: Long, groupId: String): String {
