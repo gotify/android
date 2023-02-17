@@ -78,33 +78,15 @@ internal class SettingsActivity : AppCompatActivity(), OnSharedPreferenceChangeL
                 findPreference(getString(R.string.setting_key_notification_channels))
             messageLayout?.onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { _, _ ->
-                    MaterialAlertDialogBuilder(requireContext())
-                        .setTitle(R.string.setting_message_layout_dialog_title)
-                        .setMessage(R.string.setting_message_layout_dialog_message)
-                        .setPositiveButton(
-                            getString(R.string.setting_message_layout_dialog_button1)
-                        ) { _, _ ->
-                            restartApp()
-                        }
-                        .setNegativeButton(
-                            getString(R.string.setting_message_layout_dialog_button2),
-                            null
-                        )
-                        .show()
+                    showRestartDialog()
                     true
                 }
             notificationChannels?.onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { _, _ ->
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-                        return@OnPreferenceChangeListener true
+                        return@OnPreferenceChangeListener false
                     }
-
-                    MaterialAlertDialogBuilder(requireContext())
-                        .setTitle(R.string.setting_notification_channels_dialog_title)
-                        .setMessage(R.string.setting_notification_channels_dialog_message)
-                        .setPositiveButton(android.R.string.ok, null)
-                        .show()
-
+                    showRestartDialog()
                     true
                 }
         }
@@ -125,6 +107,17 @@ internal class SettingsActivity : AppCompatActivity(), OnSharedPreferenceChangeL
                 parentFragmentManager,
                 "androidx.preference.PreferenceFragment.DIALOG"
             )
+        }
+
+        private fun showRestartDialog() {
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.setting_restart_dialog_title)
+                .setMessage(R.string.setting_restart_dialog_message)
+                .setPositiveButton(getString(R.string.setting_restart_dialog_button1)) { _, _ ->
+                    restartApp()
+                }
+                .setNegativeButton(getString(R.string.setting_restart_dialog_button2), null)
+                .show()
         }
 
         private fun restartApp() {
