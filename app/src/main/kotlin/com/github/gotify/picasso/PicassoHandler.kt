@@ -6,12 +6,9 @@ import android.graphics.BitmapFactory
 import com.github.gotify.R
 import com.github.gotify.Settings
 import com.github.gotify.Utils
-import com.github.gotify.api.Callback
 import com.github.gotify.api.CertUtils
-import com.github.gotify.api.ClientFactory
-import com.github.gotify.client.api.ApplicationApi
+import com.github.gotify.client.model.Application
 import com.github.gotify.log.Log
-import com.github.gotify.messages.provider.MessageImageCombiner
 import com.squareup.picasso.OkHttp3Downloader
 import com.squareup.picasso.Picasso
 import okhttp3.Cache
@@ -32,7 +29,7 @@ internal class PicassoHandler(private val context: Context, private val settings
     )
 
     private val picasso = makePicasso()
-    private val appIdToAppImage = ConcurrentHashMap<Long, String>()
+    private val appIdToApp = ConcurrentHashMap<Long, Application>()
 
     private fun makePicasso(): Picasso {
         val builder = OkHttpClient.Builder()
@@ -54,7 +51,7 @@ internal class PicassoHandler(private val context: Context, private val settings
         }
         try {
             return getImageFromUrl(
-                Utils.resolveAbsoluteUrl("${settings.url}/", appIdToAppImage[appId])
+                Utils.resolveAbsoluteUrl("${settings.url}/", appIdToApp[appId]?.image)
             )
         } catch (e: IOException) {
             Log.e("Could not load image for notification", e)
@@ -62,19 +59,9 @@ internal class PicassoHandler(private val context: Context, private val settings
         return BitmapFactory.decodeResource(context.resources, R.drawable.gotify)
     }
 
-    fun updateAppIds() {
-        ClientFactory.clientToken(settings.url, settings.sslSettings(), settings.token)
-            .createService(ApplicationApi::class.java)
-            .apps
-            .enqueue(
-                Callback.call(
-                    onSuccess = Callback.SuccessBody { apps ->
-                        appIdToAppImage.clear()
-                        appIdToAppImage.putAll(MessageImageCombiner.appIdToImage(apps))
-                    },
-                    onError = { appIdToAppImage.clear() }
-                )
-            )
+    fun updateApps(apps: List<Application>) {
+        appIdToApp.clear()
+        appIdToApp.putAll(apps.associateBy { it.id })
     }
 
     fun get() = picasso

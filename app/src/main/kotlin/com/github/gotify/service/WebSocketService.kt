@@ -23,7 +23,9 @@ import com.github.gotify.Settings
 import com.github.gotify.Utils
 import com.github.gotify.api.Callback
 import com.github.gotify.api.ClientFactory
+import com.github.gotify.client.api.ApplicationApi
 import com.github.gotify.client.api.MessageApi
+import com.github.gotify.client.model.Application
 import com.github.gotify.client.model.Message
 import com.github.gotify.log.Log
 import com.github.gotify.log.UncaughtExceptionHandler
@@ -111,7 +113,41 @@ internal class WebSocketService : Service() {
         val intentFilter = IntentFilter()
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
 
-        picassoHandler.updateAppIds()
+        fetchAppIds(
+            onSuccess = { apps ->
+                picassoHandler.updateApps(apps)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    createNotificationChannels(apps)
+                }
+            },
+            onError = { picassoHandler.updateApps(listOf()) }
+        )
+    }
+
+    private fun fetchAppIds(
+        onSuccess: (apps: List<Application>) -> Unit,
+        onError: () -> Unit
+    ) {
+        ClientFactory.clientToken(settings.url, settings.sslSettings(), settings.token)
+            .createService(ApplicationApi::class.java)
+            .apps
+            .enqueue(
+                Callback.call(
+                    onSuccess = Callback.SuccessBody { apps ->
+                        onSuccess(apps)
+                    },
+                    onError = { onError() }
+                )
+            )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun createNotificationChannels(apps: List<Application>) {
+        NotificationSupport.createChannels(
+            this,
+            (this.getSystemService(NOTIFICATION_SERVICE) as NotificationManager),
+            apps
+        )
     }
 
     private fun onClose() {

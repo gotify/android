@@ -9,7 +9,7 @@ internal object MessageImageCombiner {
         return messages.map { MessageWithImage(message = it, image = appIdToImage[it.appid]) }
     }
 
-    fun appIdToImage(applications: List<Application>): Map<Long, String> {
+    private fun appIdToImage(applications: List<Application>): Map<Long, String> {
         val map = mutableMapOf<Long, String>()
         applications.forEach {
             map[it.id] = it.image
