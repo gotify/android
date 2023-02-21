@@ -33,6 +33,7 @@ import com.github.gotify.messages.Extras
 import com.github.gotify.messages.MessagesActivity
 import com.github.gotify.picasso.PicassoHandler
 import io.noties.markwon.Markwon
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
 
 internal class WebSocketService : Service() {
@@ -43,6 +44,7 @@ internal class WebSocketService : Service() {
 
     private lateinit var settings: Settings
     private var connection: WebSocketConnection? = null
+    private val appIdToApp = ConcurrentHashMap<Long, Application>()
 
     private val lastReceivedMessage = AtomicLong(NOT_LOADED)
     private lateinit var missingMessageUtil: MissedMessageUtil
@@ -113,41 +115,29 @@ internal class WebSocketService : Service() {
         val intentFilter = IntentFilter()
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
 
-        fetchAppIds(
-            onSuccess = { apps ->
-                picassoHandler.updateApps(apps)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    createNotificationChannels(apps)
-                }
-            },
-            onError = { picassoHandler.updateApps(listOf()) }
-        )
+        fetchApps()
     }
 
-    private fun fetchAppIds(
-        onSuccess: (apps: List<Application>) -> Unit,
-        onError: () -> Unit
-    ) {
+    private fun fetchApps() {
         ClientFactory.clientToken(settings.url, settings.sslSettings(), settings.token)
             .createService(ApplicationApi::class.java)
             .apps
             .enqueue(
                 Callback.call(
                     onSuccess = Callback.SuccessBody { apps ->
-                        onSuccess(apps)
+                        appIdToApp.clear()
+                        appIdToApp.putAll(apps.associateBy { it.id })
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            NotificationSupport.createChannels(
+                                this,
+                                (this.getSystemService(NOTIFICATION_SERVICE) as NotificationManager),
+                                apps
+                            )
+                        }
                     },
-                    onError = { onError() }
+                    onError = { appIdToApp.clear() }
                 )
             )
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun createNotificationChannels(apps: List<Application>) {
-        NotificationSupport.createChannels(
-            this,
-            (this.getSystemService(NOTIFICATION_SERVICE) as NotificationManager),
-            apps
-        )
     }
 
     private fun onClose() {
@@ -372,7 +362,7 @@ internal class WebSocketService : Service() {
             .setDefaults(Notification.DEFAULT_ALL)
             .setWhen(System.currentTimeMillis())
             .setSmallIcon(R.drawable.ic_gotify)
-            .setLargeIcon(picassoHandler.getIcon(appId))
+            .setLargeIcon(picassoHandler.getIcon(appIdToApp[appId]))
             .setTicker("${getString(R.string.app_name)} - $title")
             .setGroup(NotificationSupport.Group.MESSAGES)
             .setContentTitle(title)

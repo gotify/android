@@ -15,7 +15,6 @@ import okhttp3.Cache
 import okhttp3.OkHttpClient
 import java.io.File
 import java.io.IOException
-import java.util.concurrent.ConcurrentHashMap
 
 internal class PicassoHandler(private val context: Context, private val settings: Settings) {
     companion object {
@@ -29,7 +28,6 @@ internal class PicassoHandler(private val context: Context, private val settings
     )
 
     private val picasso = makePicasso()
-    private val appIdToApp = ConcurrentHashMap<Long, Application>()
 
     private fun makePicasso(): Picasso {
         val builder = OkHttpClient.Builder()
@@ -45,23 +43,18 @@ internal class PicassoHandler(private val context: Context, private val settings
     @Throws(IOException::class)
     fun getImageFromUrl(url: String?): Bitmap = picasso.load(url).get()
 
-    fun getIcon(appId: Long): Bitmap {
-        if (appId == -1L) {
+    fun getIcon(app: Application?): Bitmap {
+        if (app == null) {
             return BitmapFactory.decodeResource(context.resources, R.drawable.gotify)
         }
         try {
             return getImageFromUrl(
-                Utils.resolveAbsoluteUrl("${settings.url}/", appIdToApp[appId]?.image)
+                Utils.resolveAbsoluteUrl("${settings.url}/", app.image)
             )
         } catch (e: IOException) {
             Log.e("Could not load image for notification", e)
         }
         return BitmapFactory.decodeResource(context.resources, R.drawable.gotify)
-    }
-
-    fun updateApps(apps: List<Application>) {
-        appIdToApp.clear()
-        appIdToApp.putAll(apps.associateBy { it.id })
     }
 
     fun get() = picasso
