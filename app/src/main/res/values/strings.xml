@@ -74,12 +74,15 @@
     <string name="setting_key_theme">theme</string>
     <string name="setting_message_layout">Message layout</string>
     <string name="setting_key_message_layout">message_layout</string>
-    <string name="setting_message_layout_dialog_title">Restart App?</string>
-    <string name="setting_message_layout_dialog_message">The change will be effective on next app start.\n\nDo you want to restart now?</string>
-    <string name="setting_message_layout_dialog_button1">Restart</string>
-    <string name="setting_message_layout_dialog_button2">Later</string>
+    <string name="setting_restart_dialog_title">Restart App?</string>
+    <string name="setting_restart_dialog_message">The change will be effective on next app start.\n\nDo you want to restart now?</string>
+    <string name="setting_restart_dialog_button1">Restart</string>
+    <string name="setting_restart_dialog_button2">Later</string>
     <string name="setting_time_format">Time format</string>
     <string name="setting_key_time_format">time_format</string>
+    <string name="setting_notifications">Notifications</string>
+    <string name="setting_notification_channels">Separate app notification channels</string>
+    <string name="setting_key_notification_channels">notification_channels</string>
     <string name="push_message">Push message</string>
     <string name="appListDescription">App:</string>
     <string name="priorityDescription">Priority:</string>
@@ -97,4 +100,10 @@
         <item quantity="one">in %d minute</item>
         <item quantity="other">in %d minutes</item>
     </plurals>
+
+    <string name="notification_channel_title_foreground">Gotify foreground notification</string>
+    <string name="notification_channel_title_min">Min priority messages (&lt;1)</string>
+    <string name="notification_channel_title_low">Low priority messages (1–3)</string>
+    <string name="notification_channel_title_normal">Normal priority messages (4–7)</string>
+    <string name="notification_channel_title_high">High priority messages (>7)</string>
 </resources>

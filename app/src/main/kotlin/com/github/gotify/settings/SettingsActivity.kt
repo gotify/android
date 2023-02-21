@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -14,6 +15,7 @@ import androidx.preference.ListPreferenceDialogFragmentCompat
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import androidx.preference.SwitchPreferenceCompat
 import com.github.gotify.R
 import com.github.gotify.databinding.SettingsActivityBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -48,38 +50,43 @@ internal class SettingsActivity : AppCompatActivity(), OnSharedPreferenceChangeL
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-        if (getString(R.string.setting_key_theme) == key) {
-            ThemeHelper.setTheme(
-                this,
-                sharedPreferences.getString(key, getString(R.string.theme_default))!!
-            )
+        when (key) {
+            getString(R.string.setting_key_theme) -> {
+                ThemeHelper.setTheme(
+                    this,
+                    sharedPreferences.getString(key, getString(R.string.theme_default))!!
+                )
+            }
         }
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                findPreference<SwitchPreferenceCompat>(
+                    getString(R.string.setting_key_notification_channels)
+                )?.isEnabled = true
+            }
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
             val messageLayout: ListPreference? =
                 findPreference(getString(R.string.setting_key_message_layout))
+            val notificationChannels: SwitchPreferenceCompat? =
+                findPreference(getString(R.string.setting_key_notification_channels))
             messageLayout?.onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { _, _ ->
-                    MaterialAlertDialogBuilder(requireContext())
-                        .setTitle(R.string.setting_message_layout_dialog_title)
-                        .setMessage(R.string.setting_message_layout_dialog_message)
-                        .setPositiveButton(
-                            getString(R.string.setting_message_layout_dialog_button1)
-                        ) { _, _ ->
-                            restartApp()
-                        }
-                        .setNegativeButton(
-                            getString(R.string.setting_message_layout_dialog_button2),
-                            null
-                        )
-                        .show()
+                    showRestartDialog()
+                    true
+                }
+            notificationChannels?.onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { _, _ ->
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                        return@OnPreferenceChangeListener false
+                    }
+                    showRestartDialog()
                     true
                 }
         }
@@ -100,6 +107,17 @@ internal class SettingsActivity : AppCompatActivity(), OnSharedPreferenceChangeL
                 parentFragmentManager,
                 "androidx.preference.PreferenceFragment.DIALOG"
             )
+        }
+
+        private fun showRestartDialog() {
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.setting_restart_dialog_title)
+                .setMessage(R.string.setting_restart_dialog_message)
+                .setPositiveButton(getString(R.string.setting_restart_dialog_button1)) { _, _ ->
+                    restartApp()
+                }
+                .setNegativeButton(getString(R.string.setting_restart_dialog_button2), null)
+                .show()
         }
 
         private fun restartApp() {

@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.Material3.DayNight">
@@ -24,5 +24,9 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.Material3.Dark" />
 
     <style name="AppTheme.PopupOverlay" parent="AppTheme" />
+
+    <style name="Preference.SwitchPreferenceCompat" parent="@style/Preference.SwitchPreferenceCompat.Material" tools:ignore="ResourceCycle">
+        <item name="widgetLayout">@layout/preference_switch</item>
+    </style>
 
 </resources>

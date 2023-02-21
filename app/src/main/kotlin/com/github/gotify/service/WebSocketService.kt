@@ -6,7 +6,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.Uri
@@ -23,7 +22,9 @@ import com.github.gotify.Settings
 import com.github.gotify.Utils
 import com.github.gotify.api.Callback
 import com.github.gotify.api.ClientFactory
+import com.github.gotify.client.api.ApplicationApi
 import com.github.gotify.client.api.MessageApi
+import com.github.gotify.client.model.Application
 import com.github.gotify.client.model.Message
 import com.github.gotify.log.Log
 import com.github.gotify.log.UncaughtExceptionHandler
@@ -31,6 +32,7 @@ import com.github.gotify.messages.Extras
 import com.github.gotify.messages.MessagesActivity
 import com.github.gotify.picasso.PicassoHandler
 import io.noties.markwon.Markwon
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
 
 internal class WebSocketService : Service() {
@@ -41,6 +43,7 @@ internal class WebSocketService : Service() {
 
     private lateinit var settings: Settings
     private var connection: WebSocketConnection? = null
+    private val appIdToApp = ConcurrentHashMap<Long, Application>()
 
     private val lastReceivedMessage = AtomicLong(NOT_LOADED)
     private lateinit var missingMessageUtil: MissedMessageUtil
@@ -108,10 +111,29 @@ internal class WebSocketService : Service() {
             .onReconnected { notifyMissedNotifications() }
             .start()
 
-        val intentFilter = IntentFilter()
-        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
+        fetchApps()
+    }
 
-        picassoHandler.updateAppIds()
+    private fun fetchApps() {
+        ClientFactory.clientToken(settings.url, settings.sslSettings(), settings.token)
+            .createService(ApplicationApi::class.java)
+            .apps
+            .enqueue(
+                Callback.call(
+                    onSuccess = Callback.SuccessBody { apps ->
+                        appIdToApp.clear()
+                        appIdToApp.putAll(apps.associateBy { it.id })
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            NotificationSupport.createChannels(
+                                this,
+                                (this.getSystemService(NOTIFICATION_SERVICE) as NotificationManager),
+                                apps
+                            )
+                        }
+                    },
+                    onError = { appIdToApp.clear() }
+                )
+            )
     }
 
     private fun onClose() {
@@ -312,20 +334,31 @@ internal class WebSocketService : Service() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val b = NotificationCompat.Builder(
-            this,
-            NotificationSupport.convertPriorityToChannel(priority)
-        )
+        val channelId: String
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+            NotificationSupport.areAppChannelsRequested(this)
+        ) {
+            channelId = NotificationSupport.getChannelID(priority, appId.toString())
+            NotificationSupport.createChannelIfNonexistent(
+                this,
+                appId.toString(),
+                channelId
+            )
+        } else {
+            channelId = NotificationSupport.convertPriorityToChannel(priority)
+        }
+
+        val b = NotificationCompat.Builder(this, channelId)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            showNotificationGroup(priority)
+            showNotificationGroup(channelId)
         }
 
         b.setAutoCancel(true)
             .setDefaults(Notification.DEFAULT_ALL)
             .setWhen(System.currentTimeMillis())
             .setSmallIcon(R.drawable.ic_gotify)
-            .setLargeIcon(picassoHandler.getIcon(appId))
+            .setLargeIcon(picassoHandler.getIcon(appIdToApp[appId]))
             .setTicker("${getString(R.string.app_name)} - $title")
             .setGroup(NotificationSupport.Group.MESSAGES)
             .setContentTitle(title)
@@ -365,7 +398,7 @@ internal class WebSocketService : Service() {
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    fun showNotificationGroup(priority: Long) {
+    fun showNotificationGroup(channelId: String) {
         val intent = Intent(this, MessagesActivity::class.java)
         val contentIntent = PendingIntent.getActivity(
             this,
@@ -376,7 +409,7 @@ internal class WebSocketService : Service() {
 
         val builder = NotificationCompat.Builder(
             this,
-            NotificationSupport.convertPriorityToChannel(priority)
+            channelId
         )
 
         builder.setAutoCancel(true)
