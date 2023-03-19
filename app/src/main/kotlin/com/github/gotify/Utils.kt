@@ -1,6 +1,8 @@
 package com.github.gotify
 
 import android.app.Activity
+import android.app.ActivityManager
+import android.content.Context
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -114,5 +116,11 @@ internal object Utils {
 
     fun interface DrawableReceiver {
         fun loaded(drawable: Drawable?)
+    }
+
+    fun Context.setExcludeFromRecent(value: Boolean) {
+        getSystemService(ActivityManager::class.java)
+            .appTasks?.takeIf { it.isNotEmpty() }
+            ?.get(0)?.setExcludeFromRecents(value)
     }
 }

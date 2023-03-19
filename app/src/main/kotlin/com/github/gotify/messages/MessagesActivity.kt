@@ -22,6 +22,7 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout.SimpleDrawerListener
 import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,6 +32,7 @@ import com.github.gotify.MissedMessageUtil
 import com.github.gotify.R
 import com.github.gotify.Utils
 import com.github.gotify.Utils.launchCoroutine
+import com.github.gotify.Utils.setExcludeFromRecent
 import com.github.gotify.api.Api
 import com.github.gotify.api.ApiException
 import com.github.gotify.api.Callback
@@ -150,6 +152,9 @@ internal class MessagesActivity :
                 }
             }
 
+
+        setExcludeFromRecent(PreferenceManager.getDefaultSharedPreferences(this)
+            .getBoolean(getString(R.string.setting_key_exclude_from_recent), false))
         launchCoroutine {
             updateMessagesForApplication(true, viewModel.appId)
         }
