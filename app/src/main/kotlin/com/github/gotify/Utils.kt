@@ -118,9 +118,8 @@ internal object Utils {
         fun loaded(drawable: Drawable?)
     }
 
-    fun Context.setExcludeFromRecent(value: Boolean) {
-        getSystemService(ActivityManager::class.java)
-            .appTasks?.takeIf { it.isNotEmpty() }
-            ?.get(0)?.setExcludeFromRecents(value)
+    fun setExcludeFromRecent(context: Context, excludeFromRecent: Boolean) {
+        context.getSystemService(ActivityManager::class.java).appTasks?.getOrNull(0)
+            ?.setExcludeFromRecents(excludeFromRecent)
     }
 }

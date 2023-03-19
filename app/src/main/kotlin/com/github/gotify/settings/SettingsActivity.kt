@@ -1,6 +1,5 @@
 package com.github.gotify.settings
 
-import android.app.ActivityManager
 import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
@@ -18,7 +17,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreferenceCompat
 import com.github.gotify.R
-import com.github.gotify.Utils.setExcludeFromRecent
+import com.github.gotify.Utils
 import com.github.gotify.databinding.SettingsActivityBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -95,7 +94,7 @@ internal class SettingsActivity : AppCompatActivity(), OnSharedPreferenceChangeL
                 getString(R.string.setting_key_exclude_from_recent)
             )?.onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { _, value ->
-                    requireContext().setExcludeFromRecent(value as Boolean)
+                    Utils.setExcludeFromRecent(requireContext(), value as Boolean)
                     return@OnPreferenceChangeListener true
                 }
         }
