@@ -17,6 +17,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreferenceCompat
 import com.github.gotify.R
+import com.github.gotify.Utils
 import com.github.gotify.databinding.SettingsActivityBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -72,22 +73,29 @@ internal class SettingsActivity : AppCompatActivity(), OnSharedPreferenceChangeL
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
-            val messageLayout: ListPreference? =
-                findPreference(getString(R.string.setting_key_message_layout))
-            val notificationChannels: SwitchPreferenceCompat? =
-                findPreference(getString(R.string.setting_key_notification_channels))
-            messageLayout?.onPreferenceChangeListener =
+            findPreference<ListPreference>(
+                getString(R.string.setting_key_message_layout)
+            )?.onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { _, _ ->
                     showRestartDialog()
                     true
                 }
-            notificationChannels?.onPreferenceChangeListener =
+            findPreference<SwitchPreferenceCompat>(
+                getString(R.string.setting_key_notification_channels)
+            )?.onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { _, _ ->
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
                         return@OnPreferenceChangeListener false
                     }
                     showRestartDialog()
                     true
+                }
+            findPreference<SwitchPreferenceCompat>(
+                getString(R.string.setting_key_exclude_from_recent)
+            )?.onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { _, value ->
+                    Utils.setExcludeFromRecent(requireContext(), value as Boolean)
+                    return@OnPreferenceChangeListener true
                 }
         }
 

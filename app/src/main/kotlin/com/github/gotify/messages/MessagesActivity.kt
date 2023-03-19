@@ -22,6 +22,7 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout.SimpleDrawerListener
 import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -150,6 +151,9 @@ internal class MessagesActivity :
                 }
             }
 
+        val excludeFromRecent = PreferenceManager.getDefaultSharedPreferences(this)
+            .getBoolean(getString(R.string.setting_key_exclude_from_recent), false)
+        Utils.setExcludeFromRecent(this, excludeFromRecent)
         launchCoroutine {
             updateMessagesForApplication(true, viewModel.appId)
         }
