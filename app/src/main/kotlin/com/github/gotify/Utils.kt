@@ -11,6 +11,7 @@ import android.text.format.DateUtils
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.preference.PreferenceManager
 import com.github.gotify.client.JSON
 import com.github.gotify.log.Log
 import com.google.android.material.snackbar.Snackbar
@@ -121,5 +122,15 @@ internal object Utils {
     fun setExcludeFromRecent(context: Context, excludeFromRecent: Boolean) {
         context.getSystemService(ActivityManager::class.java).appTasks?.getOrNull(0)
             ?.setExcludeFromRecents(excludeFromRecent)
+    }
+
+    //call this method before super.onCreate()
+    fun setTheme(activity: Activity) {
+        if (PreferenceManager.getDefaultSharedPreferences(activity).getBoolean(
+                activity.resources.getString(R.string.setting_key_translucent_status_bar), false
+            )
+        ) {
+            activity.setTheme(R.style.AppTheme_NoActionBar_TranslucentStatus)
+        }
     }
 }

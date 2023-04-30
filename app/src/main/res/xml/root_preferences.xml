@@ -28,6 +28,12 @@
             android:key="@string/setting_key_exclude_from_recent"
             android:title="@string/setting_exclude_from_recent"
             app:singleLineTitle="false" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="@bool/translucent_status_bar"
+            android:key="@string/setting_key_translucent_status_bar"
+            android:title="@string/setting_translucent_status_bar"
+            app:singleLineTitle="false" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/setting_notifications" >

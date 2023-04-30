@@ -15,10 +15,26 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-    
+
+    <style name="AppTheme.NoActionBar.TranslucentStatus">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <!--Android 5.x should set statusBarColor with transparent, or It will be grey-->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
     <style name="AppTheme.SplashScreen" parent="Theme.SplashScreen">
         <item name="windowSplashScreenAnimatedIcon">@drawable/gotify_splash</item>
         <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>
+    </style>
+
+    <style name="AppTheme.SplashScreen.TranslucentStatus" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenAnimatedIcon">@drawable/gotify_splash</item>
+        <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <!--Android 5.x should set statusBarColor with transparent, or It will be grey-->
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.Material3.Dark" />

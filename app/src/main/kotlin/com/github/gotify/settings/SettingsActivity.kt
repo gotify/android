@@ -25,6 +25,7 @@ internal class SettingsActivity : AppCompatActivity(), OnSharedPreferenceChangeL
     private lateinit var binding: SettingsActivityBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Utils.setTheme(this)
         super.onCreate(savedInstanceState)
         binding = SettingsActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -96,6 +97,13 @@ internal class SettingsActivity : AppCompatActivity(), OnSharedPreferenceChangeL
                 Preference.OnPreferenceChangeListener { _, value ->
                     Utils.setExcludeFromRecent(requireContext(), value as Boolean)
                     return@OnPreferenceChangeListener true
+                }
+            findPreference<SwitchPreferenceCompat>(
+                getString(R.string.setting_key_translucent_status_bar)
+            )?.onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { _, value ->
+                    showRestartDialog()
+                    true
                 }
         }
 

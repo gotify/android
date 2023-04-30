@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.github.gotify.R
 import com.github.gotify.Settings
+import com.github.gotify.Utils
 import com.github.gotify.Utils.launchCoroutine
 import com.github.gotify.api.Api
 import com.github.gotify.api.ApiException
@@ -29,6 +30,7 @@ internal class ShareActivity : AppCompatActivity() {
     private lateinit var appsHolder: ApplicationHolder
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Utils.setTheme(this)
         super.onCreate(savedInstanceState)
         binding = ActivityShareBinding.inflate(layoutInflater)
         setContentView(binding.root)

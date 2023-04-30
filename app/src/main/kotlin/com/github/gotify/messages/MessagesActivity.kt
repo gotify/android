@@ -83,6 +83,7 @@ internal class MessagesActivity :
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Utils.setTheme(this)
         super.onCreate(savedInstanceState)
         binding = ActivityMessagesBinding.inflate(layoutInflater)
         setContentView(binding.root)

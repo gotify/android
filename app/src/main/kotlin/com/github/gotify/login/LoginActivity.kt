@@ -48,6 +48,7 @@ internal class LoginActivity : AppCompatActivity() {
     private lateinit var advancedDialog: AdvancedDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Utils.setTheme(this)
         super.onCreate(savedInstanceState)
         UncaughtExceptionHandler.registerCurrentThread()
         binding = ActivityLoginBinding.inflate(layoutInflater)

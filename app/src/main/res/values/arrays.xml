@@ -36,4 +36,5 @@
     <string name="time_format_value_relative">time_format_relative</string>
     <bool name="notification_channels">false</bool>
     <bool name="exclude_from_recent">false</bool>
+    <bool name="translucent_status_bar">false</bool>
 </resources>

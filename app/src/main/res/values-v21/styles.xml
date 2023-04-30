@@ -5,4 +5,11 @@
         <item name="windowNoTitle">true</item>
         <item name="android:statusBarColor">#000</item>
     </style>
+    <style name="AppTheme.NoActionBar.TranslucentStatus">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <!--Android 5.x should set statusBarColor with transparent, or It will be grey-->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
 </resources>
