@@ -86,7 +86,7 @@
     <string name="setting_key_exclude_from_recent">exclude_from_recent</string>
     <string name="setting_key_translucent_status_bar">translucent_status_bar</string>
     <string name="setting_exclude_from_recent">Exclude from recents</string>
-    <string name="setting_translucent_status_bar">TranslucentStatusBar</string>
+    <string name="setting_translucent_status_bar">Translucent status bar</string>
     <string name="push_message">Push message</string>
     <string name="appListDescription">App:</string>
     <string name="priorityDescription">Priority:</string>
