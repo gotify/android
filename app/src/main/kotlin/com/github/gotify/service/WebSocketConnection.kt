@@ -116,11 +116,16 @@ internal class WebSocketConnection(
     @Synchronized
     fun close() {
         if (webSocket != null) {
+            webSocket?.close(1000, "")
+            closed()
             Log.i("WebSocket(${ID.get()}): closing existing connection.")
-            state = State.Disconnected
-            webSocket!!.close(1000, "")
-            webSocket = null
         }
+    }
+
+    @Synchronized
+    private fun closed() {
+        webSocket = null
+        state = State.Disconnected
     }
 
     @Synchronized
@@ -150,7 +155,7 @@ internal class WebSocketConnection(
 
     private inner class Listener(private val id: Long) : WebSocketListener() {
         override fun onOpen(webSocket: WebSocket, response: Response) {
-            syncExec {
+            syncExec(id) {
                 state = State.Connected
                 Log.i("WebSocket($id): opened")
                 onOpen.run()
@@ -164,7 +169,7 @@ internal class WebSocketConnection(
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {
-            syncExec {
+            syncExec(id) {
                 Log.i("WebSocket($id): received message $text")
                 val message = Utils.JSON.fromJson(text, Message::class.java)
                 onMessageCallback(message)
@@ -173,12 +178,12 @@ internal class WebSocketConnection(
         }
 
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-            syncExec {
+            syncExec(id) {
                 if (state == State.Connected) {
                     Log.w("WebSocket($id): closed")
                     onClose.run()
                 }
-                state = State.Disconnected
+                closed()
             }
             super.onClosed(webSocket, code, reason)
         }
@@ -187,11 +192,10 @@ internal class WebSocketConnection(
             val code = if (response != null) "StatusCode: ${response.code()}" else ""
             val message = if (response != null) response.message() else ""
             Log.e("WebSocket($id): failure $code Message: $message", t)
-            syncExec {
-                state = State.Disconnected
+            syncExec(id) {
+                closed()
                 if (response != null && response.code() >= 400 && response.code() <= 499) {
                     onBadRequest.execute(message)
-                    close()
                     return@syncExec
                 }
 
@@ -209,13 +213,12 @@ internal class WebSocketConnection(
             }
             super.onFailure(webSocket, t, response)
         }
+    }
 
-        private fun syncExec(runnable: Runnable) {
-            synchronized(this) {
-                if (ID.get() == id) {
-                    runnable.run()
-                }
-            }
+    @Synchronized
+    private fun syncExec(id: Long, runnable: () -> Unit) {
+        if (ID.get() == id) {
+            runnable()
         }
     }
 
