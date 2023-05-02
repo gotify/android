@@ -5,9 +5,11 @@ import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.net.ConnectivityManager
+import android.net.Network
 import android.net.Uri
 import android.os.Build
 import android.os.IBinder
@@ -43,6 +45,14 @@ internal class WebSocketService : Service() {
 
     private lateinit var settings: Settings
     private var connection: WebSocketConnection? = null
+    private val networkCallback: ConnectivityManager.NetworkCallback =
+        object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                super.onAvailable(network)
+                Log.i("WebSocket: Network available, reconnect if needed.")
+                connection?.start()
+            }
+        }
     private val appIdToApp = ConcurrentHashMap<Long, Application>()
 
     private val lastReceivedMessage = AtomicLong(NOT_LOADED)
@@ -67,9 +77,12 @@ internal class WebSocketService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (connection != null) {
-            connection!!.close()
+        connection?.close()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            (getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
+                .unregisterNetworkCallback(networkCallback)
         }
+
         Log.w("Destroy ${javaClass.simpleName}")
     }
 
@@ -110,7 +123,9 @@ internal class WebSocketService : Service() {
             .onMessage { message -> onMessage(message) }
             .onReconnected { notifyMissedNotifications() }
             .start()
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            cm.registerDefaultNetworkCallback(networkCallback)
+        }
         fetchApps()
     }
 
