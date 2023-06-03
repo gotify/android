@@ -1,12 +1,17 @@
 package com.github.gotify.init
 
 import android.Manifest
+import android.app.AlarmManager
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.preference.PreferenceManager
 import com.github.gotify.NotificationSupport
@@ -34,6 +39,17 @@ internal class InitializationActivity : AppCompatActivity() {
     private lateinit var settings: Settings
     private var splashScreenActive = true
 
+    @RequiresApi(Build.VERSION_CODES.S)
+    private val activityResultLauncher =
+        registerForActivityResult(StartActivityForResult()) {
+            val manager = ContextCompat.getSystemService(this, AlarmManager::class.java)
+            if (manager?.canScheduleExactAlarms() == true) {
+                tryAuthenticate()
+            } else {
+                alarmDialog()
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.init(this)
@@ -55,7 +71,14 @@ internal class InitializationActivity : AppCompatActivity() {
 
         if (settings.tokenExists()) {
             runWithNeededPermissions {
-                tryAuthenticate()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    val manager = ContextCompat.getSystemService(this, AlarmManager::class.java)
+                    if (manager?.canScheduleExactAlarms() == false) {
+                        alarmDialog()
+                    } else {
+                        tryAuthenticate()
+                    }
+                }
             }
         } else {
             showLogin()
@@ -109,6 +132,22 @@ internal class InitializationActivity : AppCompatActivity() {
             .show()
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun alarmDialog() {
+        MaterialAlertDialogBuilder(this)
+            .setMessage(getString(R.string.permissions_alarm_prompt))
+            .setPositiveButton(getString(R.string.permissions_dialog_grant)) { _, _ ->
+                Intent(
+                    android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+                    Uri.parse("package:$packageName")
+                ).apply {
+                    activityResultLauncher.launch(this)
+                }
+            }
+            .setCancelable(false)
+            .show()
+    }
+
     private fun authenticated(user: User) {
         Log.i("Authenticated as ${user.name}")
 
@@ -158,15 +197,7 @@ internal class InitializationActivity : AppCompatActivity() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 // Android 13 and above
                 runWithPermissions(
-                    Manifest.permission.SCHEDULE_EXACT_ALARM,
                     Manifest.permission.POST_NOTIFICATIONS,
-                    options = quickPermissionsOption,
-                    callback = action
-                )
-            } else {
-                // Android 12 and Android 12L
-                runWithPermissions(
-                    Manifest.permission.SCHEDULE_EXACT_ALARM,
                     options = quickPermissionsOption,
                     callback = action
                 )
@@ -179,7 +210,7 @@ internal class InitializationActivity : AppCompatActivity() {
 
     private fun processPermissionRationale(req: QuickPermissionsRequest) {
         MaterialAlertDialogBuilder(this)
-            .setMessage(getString(R.string.permissions_denied_temp))
+            .setMessage(getString(R.string.permissions_notification_denied_temp))
             .setPositiveButton(getString(R.string.permissions_dialog_grant)) { _, _ ->
                 req.proceed()
             }
@@ -189,7 +220,7 @@ internal class InitializationActivity : AppCompatActivity() {
 
     private fun processPermissionsPermanentDenied(req: QuickPermissionsRequest) {
         MaterialAlertDialogBuilder(this)
-            .setMessage(getString(R.string.permissions_denied_permanent))
+            .setMessage(getString(R.string.permissions_notification_denied_permanent))
             .setPositiveButton(getString(R.string.permissions_dialog_grant)) { _, _ ->
                 req.openAppSettings()
             }
