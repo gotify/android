@@ -521,9 +521,16 @@ internal class MessagesActivity :
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_delete_all) {
-            launchCoroutine {
-                deleteMessages(viewModel.appId)
-            }
+            MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.delete_all)
+                .setMessage(R.string.ack)
+                .setPositiveButton(R.string.yes) { _, _ ->
+                    launchCoroutine {
+                        deleteMessages(viewModel.appId)
+                    }
+                }
+                .setNegativeButton(R.string.no, null)
+                .show()
         }
         if (item.itemId == R.id.action_delete_app) {
             MaterialAlertDialogBuilder(this)
