@@ -78,6 +78,8 @@ internal class InitializationActivity : AppCompatActivity() {
                     } else {
                         tryAuthenticate()
                     }
+                } else {
+                    tryAuthenticate()
                 }
             }
         } else {
