@@ -42,12 +42,7 @@ internal class InitializationActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.S)
     private val activityResultLauncher =
         registerForActivityResult(StartActivityForResult()) {
-            val manager = ContextCompat.getSystemService(this, AlarmManager::class.java)
-            if (manager?.canScheduleExactAlarms() == true) {
-                tryAuthenticate()
-            } else {
-                alarmDialog()
-            }
+            requestAlarmPermissionOrAuthenticate()
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,18 +67,23 @@ internal class InitializationActivity : AppCompatActivity() {
         if (settings.tokenExists()) {
             runWithNeededPermissions {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    val manager = ContextCompat.getSystemService(this, AlarmManager::class.java)
-                    if (manager?.canScheduleExactAlarms() == false) {
-                        alarmDialog()
-                    } else {
-                        tryAuthenticate()
-                    }
+                    requestAlarmPermissionOrAuthenticate()
                 } else {
                     tryAuthenticate()
                 }
             }
         } else {
             showLogin()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun requestAlarmPermissionOrAuthenticate() {
+        val manager = ContextCompat.getSystemService(this, AlarmManager::class.java)
+        if (manager?.canScheduleExactAlarms() == true) {
+            tryAuthenticate()
+        } else {
+            alarmDialog()
         }
     }
 
