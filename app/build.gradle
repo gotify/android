@@ -39,12 +39,14 @@ android {
     kotlinOptions {
         jvmTarget = '11'
     }
-    lintOptions {
+    packagingOptions {
+        resources {
+            excludes += ['META-INF/DEPENDENCIES']
+        }
+    }
+    lint {
         disable 'GoogleAppIndexingWarning'
         lintConfig file('../lint.xml')
-    }
-    packagingOptions {
-        exclude 'META-INF/DEPENDENCIES'
     }
 }
 
