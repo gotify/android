@@ -66,9 +66,11 @@ internal class InitializationActivity : AppCompatActivity() {
 
         if (settings.tokenExists()) {
             runWithNeededPermissions {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU) {
+                    // Android 14 and above
                     requestAlarmPermissionOrAuthenticate()
                 } else {
+                    // Android 13 and below
                     tryAuthenticate()
                 }
             }
@@ -188,7 +190,8 @@ internal class InitializationActivity : AppCompatActivity() {
     }
 
     private fun runWithNeededPermissions(action: () -> Unit) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Android 13 and above
             val quickPermissionsOption = QuickPermissionsOptions(
                 handleRationale = true,
                 handlePermanentlyDenied = true,
@@ -196,16 +199,13 @@ internal class InitializationActivity : AppCompatActivity() {
                 permissionsDeniedMethod = { req -> processPermissionRationale(req) },
                 permanentDeniedMethod = { req -> processPermissionsPermanentDenied(req) }
             )
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                // Android 13 and above
-                runWithPermissions(
-                    Manifest.permission.POST_NOTIFICATIONS,
-                    options = quickPermissionsOption,
-                    callback = action
-                )
-            }
+            runWithPermissions(
+                Manifest.permission.POST_NOTIFICATIONS,
+                options = quickPermissionsOption,
+                callback = action
+            )
         } else {
-            // Android 11 and below
+            // Android 12 and below
             action()
         }
     }
