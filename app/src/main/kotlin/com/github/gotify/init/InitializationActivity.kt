@@ -65,7 +65,7 @@ internal class InitializationActivity : AppCompatActivity() {
         installSplashScreen().setKeepOnScreenCondition { splashScreenActive }
 
         if (settings.tokenExists()) {
-            runWithNeededPermissions {
+            runWithPostNotificationsPermission {
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU) {
                     // Android 14 and above
                     requestAlarmPermissionOrAuthenticate()
@@ -189,7 +189,7 @@ internal class InitializationActivity : AppCompatActivity() {
             .enqueue(Callback.callInUI(this, callback, errorCallback))
     }
 
-    private fun runWithNeededPermissions(action: () -> Unit) {
+    private fun runWithPostNotificationsPermission(action: () -> Unit) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // Android 13 and above
             val quickPermissionsOption = QuickPermissionsOptions(
