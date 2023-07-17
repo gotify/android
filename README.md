@@ -54,7 +54,7 @@ The foreground notification showing the connection status can be manually minimi
 
 ## Building
 
-Use Java 11 and execute the following command to build the apk.
+Use Java 17 and execute the following command to build the apk.
 
 ```bash
 $ ./gradlew build
