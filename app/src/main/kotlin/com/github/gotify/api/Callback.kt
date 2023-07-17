@@ -51,7 +51,10 @@ internal class Callback<T> private constructor(
             )
         }
 
-        fun <T> call(onSuccess: SuccessCallback<T> = SuccessCallback {}, onError: ErrorCallback = ErrorCallback {}): retrofit2.Callback<T> {
+        fun <T> call(
+            onSuccess: SuccessCallback<T> = SuccessCallback {},
+            onError: ErrorCallback = ErrorCallback {}
+        ): retrofit2.Callback<T> {
             return RetrofitCallback(merge(of(onSuccess, onError), errorCallback()))
         }
 

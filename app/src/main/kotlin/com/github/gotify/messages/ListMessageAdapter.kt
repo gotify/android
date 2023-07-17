@@ -26,9 +26,9 @@ import com.github.gotify.databinding.MessageItemCompactBinding
 import com.github.gotify.messages.provider.MessageWithImage
 import com.squareup.picasso.Picasso
 import io.noties.markwon.Markwon
-import org.threeten.bp.OffsetDateTime
 import java.text.DateFormat
 import java.util.Date
+import org.threeten.bp.OffsetDateTime
 
 internal class ListMessageAdapter(
     private val context: Context,

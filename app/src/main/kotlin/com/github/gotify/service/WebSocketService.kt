@@ -141,7 +141,7 @@ internal class WebSocketService : Service() {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             NotificationSupport.createChannels(
                                 this,
-                                (this.getSystemService(NOTIFICATION_SERVICE) as NotificationManager),
+                                (getSystemService(NOTIFICATION_SERVICE) as NotificationManager),
                                 apps
                             )
                         }

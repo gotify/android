@@ -1,7 +1,7 @@
 package com.github.gotify.api
 
-import retrofit2.Response
 import java.io.IOException
+import retrofit2.Response
 
 internal class ApiException : Exception {
     var body: String = ""
