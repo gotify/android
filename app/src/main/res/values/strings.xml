@@ -3,8 +3,8 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="found_gotify_version">Found Gotify v%s</string>
-    <string name="version_failed_status_code">Request to \'%s\' failed with status code %d</string>
-    <string name="version_failed">Request to \'%s\' failed. %s.</string>
+    <string name="version_failed_status_code">Request to \'%1$s\' failed with status code %2$d</string>
+    <string name="version_failed">Request to \'%1$s\' failed. %2$s.</string>
     <string name="wronguserpw">There is no user with this username and password</string>
     <string name="create_client_title">Client Name</string>
     <string name="create_client_message">Choose a name for your session</string>
@@ -18,7 +18,7 @@
     <string name="oops">Oops</string>
     <string name="not_available">Cannot connect to %s</string>
     <string name="auth_failed">Server returned 401 unauthorized while trying to get current user. This can be caused by deleting the client for this session.</string>
-    <string name="other_error">Could not get current user. Server (%s) responded with code %d: body (first 200 chars): %s</string>
+    <string name="other_error">Could not get current user. Server (%1$s) responded with code %2$d: body (first 200 chars): %3$s</string>
     <string name="user_action">User action required</string>
     <string name="websocket_closed_logout">Please login, the authentication token isn\'t valid anymore.</string>
     <string name="websocket_closed">Connection closed</string>
@@ -59,7 +59,7 @@
     <string name="websocket_listening">Connected</string>
     <string name="websocket_could_not_connect">Could not connect</string>
     <string name="websocket_init">Initializing</string>
-    <string name="versions">gotify/android v%s; gotify/server v%s</string>
+    <string name="versions">gotify/android v%1$s; gotify/server v%2$s</string>
     <string name="advanced_settings">Advanced Settings</string>
     <string name="done">Done</string>
     <string name="no_certificate_selected">No certificate selected</string>
