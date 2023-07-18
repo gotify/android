@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.github.gotify.R
 import com.github.gotify.SSLSettings
@@ -35,17 +36,33 @@ import java.security.cert.X509Certificate
 import okhttp3.HttpUrl
 
 internal class LoginActivity : AppCompatActivity() {
-    companion object {
-        // return value from startActivityForResult when choosing a certificate
-        private const val FILE_SELECT_CODE = 1
-    }
-
     private lateinit var binding: ActivityLoginBinding
     private lateinit var settings: Settings
 
     private var disableSslValidation = false
     private var caCertContents: String? = null
     private lateinit var advancedDialog: AdvancedDialog
+
+    private val certificateDialogResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            try {
+                require(result.resultCode == RESULT_OK) { "result was ${result.resultCode}" }
+                requireNotNull(result.data) { "file path was null" }
+
+                val uri = result.data!!.data ?: throw IllegalArgumentException("file path was null")
+                val fileStream = contentResolver.openInputStream(uri)
+                    ?: throw IllegalArgumentException("file path was invalid")
+
+                val content = Utils.readFileFromStream(fileStream)
+                val name = getNameOfCertContent(content)
+
+                // temporarily set the contents (don't store to settings until they decide to login)
+                caCertContents = content
+                advancedDialog.showRemoveCACertificate(name)
+            } catch (e: Exception) {
+                Utils.showSnackBar(this, getString(R.string.select_ca_failed, e.message))
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -152,37 +169,12 @@ internal class LoginActivity : AppCompatActivity() {
         intent.addCategory(Intent.CATEGORY_OPENABLE)
 
         try {
-            startActivityForResult(
-                Intent.createChooser(intent, getString(R.string.select_ca_file)),
-                FILE_SELECT_CODE
+            certificateDialogResultLauncher.launch(
+                Intent.createChooser(intent, getString(R.string.select_ca_file))
             )
         } catch (e: ActivityNotFoundException) {
             // case for user not having a file browser installed
             Utils.showSnackBar(this, getString(R.string.please_install_file_browser))
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        try {
-            if (requestCode == FILE_SELECT_CODE) {
-                require(resultCode == RESULT_OK) { "result was $resultCode" }
-                requireNotNull(data) { "file path was null" }
-
-                val uri = data.data ?: throw IllegalArgumentException("file path was null")
-
-                val fileStream = contentResolver.openInputStream(uri)
-                    ?: throw IllegalArgumentException("file path was invalid")
-
-                val content = Utils.readFileFromStream(fileStream)
-                val name = getNameOfCertContent(content)
-
-                // temporarily set the contents (don't store to settings until they decide to login)
-                caCertContents = content
-                advancedDialog.showRemoveCACertificate(name)
-            }
-        } catch (e: Exception) {
-            Utils.showSnackBar(this, getString(R.string.select_ca_failed, e.message))
         }
     }
 
