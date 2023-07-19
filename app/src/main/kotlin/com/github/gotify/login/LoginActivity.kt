@@ -31,8 +31,8 @@ import com.github.gotify.log.LogsActivity
 import com.github.gotify.log.UncaughtExceptionHandler
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
-import okhttp3.HttpUrl
 import java.security.cert.X509Certificate
+import okhttp3.HttpUrl
 
 internal class LoginActivity : AppCompatActivity() {
     companion object {

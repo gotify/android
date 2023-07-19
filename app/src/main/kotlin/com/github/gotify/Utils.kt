@@ -17,12 +17,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso.LoadedFrom
 import com.squareup.picasso.Target
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import okio.Buffer
-import org.threeten.bp.OffsetDateTime
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
@@ -31,6 +25,12 @@ import java.net.MalformedURLException
 import java.net.URI
 import java.net.URISyntaxException
 import java.net.URL
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okio.Buffer
+import org.threeten.bp.OffsetDateTime
 
 internal object Utils {
     val JSON: Gson = JSON().gson
