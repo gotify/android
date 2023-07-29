@@ -15,6 +15,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -68,6 +69,7 @@ internal class MessagesActivity :
     private var isLoadMore = false
     private var updateAppOnDrawerClose: Long? = null
     private lateinit var listMessageAdapter: ListMessageAdapter
+    private lateinit var onBackPressedCallback: OnBackPressedCallback
 
     private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -108,6 +110,7 @@ internal class MessagesActivity :
                 listAnimation
             )
         }
+        addBackPressCallback()
 
         messagesView.addItemDecoration(dividerItemDecoration)
         messagesView.setHasFixedSize(true)
@@ -126,6 +129,9 @@ internal class MessagesActivity :
         swipeRefreshLayout.setOnRefreshListener { onRefresh() }
         binding.drawerLayout.addDrawerListener(
             object : SimpleDrawerListener() {
+                override fun onDrawerOpened(drawerView: View) {
+                    onBackPressedCallback.isEnabled = true
+                }
                 override fun onDrawerClosed(drawerView: View) {
                     updateAppOnDrawerClose?.let { selectApp ->
                         updateAppOnDrawerClose = null
@@ -135,6 +141,7 @@ internal class MessagesActivity :
                         }
                         invalidateOptionsMenu()
                     }
+                    onBackPressedCallback.isEnabled = false
                 }
             }
         )
@@ -242,12 +249,15 @@ internal class MessagesActivity :
         refreshAll.setOnClickListener { refreshAll() }
     }
 
-    override fun onBackPressed() {
-        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            binding.drawerLayout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
+    private fun addBackPressCallback() {
+        onBackPressedCallback = object : OnBackPressedCallback(false) {
+            override fun handleOnBackPressed() {
+                if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                }
+            }
         }
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

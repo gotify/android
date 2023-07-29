@@ -110,6 +110,7 @@ internal class SettingsActivity : AppCompatActivity(), OnSharedPreferenceChangeL
         private fun showListPreferenceDialog(preference: ListPreference) {
             val dialogFragment = MaterialListPreference()
             dialogFragment.arguments = Bundle(1).apply { putString("key", preference.key) }
+            @Suppress("DEPRECATION") // https://issuetracker.google.com/issues/181793702#comment3
             dialogFragment.setTargetFragment(this, 0)
             dialogFragment.show(
                 parentFragmentManager,

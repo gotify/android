@@ -9,6 +9,7 @@ internal class MessagesModelFactory(
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass == MessagesModel::class.java) {
+            @Suppress("UNCHECKED_CAST")
             return modelClass.cast(MessagesModel(modelParameterActivity)) as T
         }
         throw IllegalArgumentException(

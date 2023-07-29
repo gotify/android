@@ -1,7 +1,6 @@
 package com.github.gotify.service
 
 import android.app.AlarmManager
-import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -24,7 +23,6 @@ internal class WebSocketConnection(
     private val baseUrl: String,
     settings: SSLSettings,
     private val token: String?,
-    private val connectivityManager: ConnectivityManager,
     private val alarmManager: AlarmManager
 ) {
     companion object {
@@ -200,12 +198,6 @@ internal class WebSocketConnection(
                 }
 
                 errorCount++
-
-                val network = connectivityManager.activeNetworkInfo
-                if (network == null || !network.isConnected) {
-                    Log.i("WebSocket($id): Network not connected")
-                }
-
                 val minutes = (errorCount * 2 - 1).coerceAtMost(20)
 
                 onNetworkFailure.execute(minutes)

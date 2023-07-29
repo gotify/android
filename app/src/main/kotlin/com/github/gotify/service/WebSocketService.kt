@@ -113,7 +113,6 @@ internal class WebSocketService : Service() {
             settings.url,
             settings.sslSettings(),
             settings.token,
-            cm,
             alarmManager
         )
             .onOpen { onOpen() }
