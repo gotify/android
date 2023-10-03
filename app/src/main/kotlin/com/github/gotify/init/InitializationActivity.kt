@@ -85,6 +85,7 @@ internal class InitializationActivity : AppCompatActivity() {
         if (manager?.canScheduleExactAlarms() == true) {
             tryAuthenticate()
         } else {
+            stopSlashScreen()
             alarmDialog()
         }
     }
@@ -108,8 +109,7 @@ internal class InitializationActivity : AppCompatActivity() {
     }
 
     private fun failed(exception: ApiException) {
-        splashScreenActive = false
-        setContentView(R.layout.splash)
+        stopSlashScreen()
         when (exception.code) {
             0 -> {
                 dialog(getString(R.string.not_available, settings.url))
@@ -195,6 +195,7 @@ internal class InitializationActivity : AppCompatActivity() {
             val quickPermissionsOption = QuickPermissionsOptions(
                 handleRationale = true,
                 handlePermanentlyDenied = true,
+                preRationaleAction = { stopSlashScreen() },
                 rationaleMethod = { req -> processPermissionRationale(req) },
                 permissionsDeniedMethod = { req -> processPermissionRationale(req) },
                 permanentDeniedMethod = { req -> processPermissionsPermanentDenied(req) }
@@ -208,6 +209,11 @@ internal class InitializationActivity : AppCompatActivity() {
             // Android 12 and below
             action()
         }
+    }
+
+    private fun stopSlashScreen() {
+        splashScreenActive = false
+        setContentView(R.layout.splash)
     }
 
     private fun processPermissionRationale(req: QuickPermissionsRequest) {
