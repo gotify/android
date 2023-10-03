@@ -86,6 +86,10 @@
     <string name="setting_key_notification_channels">notification_channels</string>
     <string name="setting_key_exclude_from_recent">exclude_from_recent</string>
     <string name="setting_exclude_from_recent">Exclude from recents</string>
+    <string name="setting_intent_dialog_permission">Intent Action Permission</string>
+    <string name="setting_key_intent_dialog_permission">intent_dialog_permission</string>
+    <string name="setting_summary_intent_dialog_permission">To always show incoming intent URLs, give permission to show this app on top of other apps.</string>
+    <string name="setting_summary_intent_dialog_permission_granted">Permission granted.</string>
     <string name="push_message">Push message</string>
     <string name="appListDescription">App:</string>
     <string name="priorityDescription">Priority:</string>
