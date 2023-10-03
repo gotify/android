@@ -5,7 +5,6 @@ import android.app.AlarmManager
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -195,15 +194,10 @@ internal class InitializationActivity : AppCompatActivity() {
     private fun runWithPostNotificationsPermission(action: () -> Unit) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // Android 13 and above
-            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
-                != PackageManager.PERMISSION_GRANTED
-            ) {
-                splashScreenActive = false
-                setContentView(R.layout.splash)
-            }
             val quickPermissionsOption = QuickPermissionsOptions(
                 handleRationale = true,
                 handlePermanentlyDenied = true,
+                preRationaleAction = { stopSlashScreen() },
                 rationaleMethod = { req -> processPermissionRationale(req) },
                 permissionsDeniedMethod = { req -> processPermissionRationale(req) },
                 permanentDeniedMethod = { req -> processPermissionsPermanentDenied(req) }
@@ -217,6 +211,11 @@ internal class InitializationActivity : AppCompatActivity() {
             // Android 12 and below
             action()
         }
+    }
+
+    private fun stopSlashScreen() {
+        splashScreenActive = false
+        setContentView(R.layout.splash)
     }
 
     private fun processPermissionRationale(req: QuickPermissionsRequest) {
