@@ -85,8 +85,7 @@ internal class InitializationActivity : AppCompatActivity() {
         if (manager?.canScheduleExactAlarms() == true) {
             tryAuthenticate()
         } else {
-            splashScreenActive = false
-            setContentView(R.layout.splash)
+            stopSlashScreen()
             alarmDialog()
         }
     }
@@ -110,8 +109,7 @@ internal class InitializationActivity : AppCompatActivity() {
     }
 
     private fun failed(exception: ApiException) {
-        splashScreenActive = false
-        setContentView(R.layout.splash)
+        stopSlashScreen()
         when (exception.code) {
             0 -> {
                 dialog(getString(R.string.not_available, settings.url))
