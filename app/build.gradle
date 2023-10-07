@@ -75,13 +75,15 @@ dependencies {
     implementation 'androidx.preference:preference-ktx:1.2.0'
 
     implementation 'com.github.cyb3rko:QuickPermissions-Kotlin:1.1.2'
-    implementation 'com.hypertrack:hyperlog:0.0.10'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'io.noties.markwon:core:4.6.2'
     implementation 'io.noties.markwon:image-picasso:4.6.2'
     implementation 'io.noties.markwon:image:4.6.2'
     implementation 'io.noties.markwon:ext-tables:4.6.2'
     implementation 'io.noties.markwon:ext-strikethrough:4.6.2'
+
+    implementation 'org.tinylog:tinylog-api-kotlin:2.6.2'
+    implementation 'org.tinylog:tinylog-impl:2.6.2'
 }
 
 configurations {

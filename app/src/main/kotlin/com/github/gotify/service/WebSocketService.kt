@@ -28,7 +28,7 @@ import com.github.gotify.client.api.ApplicationApi
 import com.github.gotify.client.api.MessageApi
 import com.github.gotify.client.model.Application
 import com.github.gotify.client.model.Message
-import com.github.gotify.log.Log
+import com.github.gotify.log.LoggerHelper
 import com.github.gotify.log.UncaughtExceptionHandler
 import com.github.gotify.messages.Extras
 import com.github.gotify.messages.IntentUrlDialogActivity
@@ -88,7 +88,7 @@ internal class WebSocketService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.init(this)
+        LoggerHelper.init(this)
         if (connection != null) {
             connection!!.close()
         }

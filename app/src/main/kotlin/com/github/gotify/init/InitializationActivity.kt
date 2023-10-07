@@ -24,6 +24,7 @@ import com.github.gotify.api.ClientFactory
 import com.github.gotify.client.model.User
 import com.github.gotify.client.model.VersionInfo
 import com.github.gotify.log.Log
+import com.github.gotify.log.LoggerHelper
 import com.github.gotify.log.UncaughtExceptionHandler
 import com.github.gotify.login.LoginActivity
 import com.github.gotify.messages.MessagesActivity
@@ -47,7 +48,7 @@ internal class InitializationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.init(this)
+        LoggerHelper.init(this)
         val theme = PreferenceManager.getDefaultSharedPreferences(this)
             .getString(getString(R.string.setting_key_theme), getString(R.string.theme_default))!!
         ThemeHelper.setTheme(this, theme)
