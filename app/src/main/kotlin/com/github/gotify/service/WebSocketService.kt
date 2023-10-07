@@ -31,6 +31,7 @@ import com.github.gotify.client.model.Message
 import com.github.gotify.log.Log
 import com.github.gotify.log.UncaughtExceptionHandler
 import com.github.gotify.messages.Extras
+import com.github.gotify.messages.IntentUrlDialogActivity
 import com.github.gotify.messages.MessagesActivity
 import com.github.gotify.picasso.PicassoHandler
 import io.noties.markwon.Markwon
@@ -320,9 +321,10 @@ internal class WebSocketService : Service() {
         )
 
         if (intentUrl != null) {
-            intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(intentUrl)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            intent = Intent(this, IntentUrlDialogActivity::class.java).apply {
+                putExtra(IntentUrlDialogActivity.EXTRA_KEY_URL, intentUrl)
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
             startActivity(intent)
         }
 

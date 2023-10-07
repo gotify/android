@@ -67,6 +67,10 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".messages.IntentUrlDialogActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme.Dialog" />
 
         <service android:name=".service.WebSocketService" />
 

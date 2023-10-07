@@ -5,8 +5,10 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -97,6 +99,14 @@ internal class SettingsActivity : AppCompatActivity(), OnSharedPreferenceChangeL
                     Utils.setExcludeFromRecent(requireContext(), value as Boolean)
                     return@OnPreferenceChangeListener true
                 }
+            findPreference<SwitchPreferenceCompat>(
+                getString(R.string.setting_key_intent_dialog_permission)
+            )?.let {
+                it.setOnPreferenceChangeListener { _, _ ->
+                    openSystemAlertWindowPermissionPage()
+                }
+            }
+            checkSystemAlertWindowPermission()
         }
 
         override fun onDisplayPreferenceDialog(preference: Preference) {
@@ -104,6 +114,35 @@ internal class SettingsActivity : AppCompatActivity(), OnSharedPreferenceChangeL
                 showListPreferenceDialog(preference)
             } else {
                 super.onDisplayPreferenceDialog(preference)
+            }
+        }
+
+        override fun onResume() {
+            super.onResume()
+            checkSystemAlertWindowPermission()
+        }
+
+        private fun openSystemAlertWindowPermissionPage(): Boolean {
+            Intent(
+                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:${requireContext().packageName}")
+            ).apply {
+                startActivity(this)
+            }
+            return true
+        }
+
+        private fun checkSystemAlertWindowPermission() {
+            findPreference<SwitchPreferenceCompat>(
+                getString(R.string.setting_key_intent_dialog_permission)
+            )?.let {
+                val canDrawOverlays = Settings.canDrawOverlays(requireContext())
+                it.isChecked = canDrawOverlays
+                it.summary = if (canDrawOverlays) {
+                    getString(R.string.setting_summary_intent_dialog_permission_granted)
+                } else {
+                    getString(R.string.setting_summary_intent_dialog_permission)
+                }
             }
         }
 

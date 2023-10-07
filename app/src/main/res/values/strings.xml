@@ -86,6 +86,10 @@
     <string name="setting_key_notification_channels">notification_channels</string>
     <string name="setting_key_exclude_from_recent">exclude_from_recent</string>
     <string name="setting_exclude_from_recent">Exclude from recents</string>
+    <string name="setting_intent_dialog_permission">Intent Action Permission</string>
+    <string name="setting_key_intent_dialog_permission">intent_dialog_permission</string>
+    <string name="setting_summary_intent_dialog_permission">To always show incoming intent URLs, give permission to show this app on top of other apps.</string>
+    <string name="setting_summary_intent_dialog_permission_granted">Permission granted.</string>
     <string name="push_message">Push message</string>
     <string name="appListDescription">App:</string>
     <string name="priorityDescription">Priority:</string>
@@ -96,6 +100,10 @@
     <string name="push_missing_app_info">There are no applications available on the server to push a message to.</string>
     <string name="message_copied_to_clipboard">Content copied to clipboard</string>
     <string name="not_loggedin_share">Cannot share to Gotify, because you aren\'t logged in.</string>
+    <string name="action_dialog_missing">Missing URL</string>
+    <string name="action_dialog_message">You have received a message with an intent url:</string>
+    <string name="action_dialog_button_open">Open</string>
+    <string name="action_dialog_button_cancel">Cancel</string>
 
     <string name="websocket_not_connected">Not connected</string>
     <string name="websocket_reconnect">Trying to reconnect</string>
