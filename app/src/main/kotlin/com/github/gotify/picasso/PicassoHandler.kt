@@ -8,13 +8,13 @@ import com.github.gotify.Settings
 import com.github.gotify.Utils
 import com.github.gotify.api.CertUtils
 import com.github.gotify.client.model.Application
-import com.github.gotify.log.Log
 import com.squareup.picasso.OkHttp3Downloader
 import com.squareup.picasso.Picasso
 import java.io.File
 import java.io.IOException
 import okhttp3.Cache
 import okhttp3.OkHttpClient
+import org.tinylog.kotlin.Logger
 
 internal class PicassoHandler(private val context: Context, private val settings: Settings) {
     companion object {
@@ -52,7 +52,7 @@ internal class PicassoHandler(private val context: Context, private val settings
                 Utils.resolveAbsoluteUrl("${settings.url}/", app.image)
             )
         } catch (e: IOException) {
-            Log.e("Could not load image for notification", e)
+            Logger.error(e, "Could not load image for notification")
         }
         return BitmapFactory.decodeResource(context.resources, R.drawable.gotify)
     }

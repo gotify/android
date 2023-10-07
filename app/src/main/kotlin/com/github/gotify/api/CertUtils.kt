@@ -3,7 +3,6 @@ package com.github.gotify.api
 import android.annotation.SuppressLint
 import com.github.gotify.SSLSettings
 import com.github.gotify.Utils
-import com.github.gotify.log.Log
 import java.io.IOException
 import java.security.GeneralSecurityException
 import java.security.KeyStore
@@ -16,15 +15,18 @@ import javax.net.ssl.TrustManager
 import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
 import okhttp3.OkHttpClient
+import org.tinylog.kotlin.Logger
 
 internal object CertUtils {
     @SuppressLint("CustomX509TrustManager")
     private val trustAll = object : X509TrustManager {
         @SuppressLint("TrustAllX509TrustManager")
-        override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {}
+        override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {
+        }
 
         @SuppressLint("TrustAllX509TrustManager")
-        override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {}
+        override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
+        }
 
         override fun getAcceptedIssuers() = arrayOf<X509Certificate>()
     }
@@ -62,7 +64,7 @@ internal object CertUtils {
             }
         } catch (e: Exception) {
             // We shouldn't have issues since the cert is verified on login.
-            Log.e("Failed to apply SSL settings", e)
+            Logger.error(e, "Failed to apply SSL settings")
         }
     }
 

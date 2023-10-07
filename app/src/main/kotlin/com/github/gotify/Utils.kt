@@ -12,7 +12,6 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.github.gotify.client.JSON
-import com.github.gotify.log.Log
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso.LoadedFrom
@@ -31,6 +30,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okio.Buffer
 import org.threeten.bp.OffsetDateTime
+import org.tinylog.kotlin.Logger
 
 internal object Utils {
     val JSON: Gson = JSON().gson
@@ -63,10 +63,10 @@ internal object Utils {
                     URL(URL(baseURL), target).toString()
                 }
             } catch (e: MalformedURLException) {
-                Log.e("Could not resolve absolute url", e)
+                Logger.error(e, "Could not resolve absolute url")
                 target
             } catch (e: URISyntaxException) {
-                Log.e("Could not resolve absolute url", e)
+                Logger.error(e, "Could not resolve absolute url")
                 target
             }
         }
@@ -79,7 +79,7 @@ internal object Utils {
             }
 
             override fun onBitmapFailed(e: Exception, errorDrawable: Drawable) {
-                Log.e("Bitmap failed", e)
+                Logger.error(e, "Bitmap failed")
             }
 
             override fun onPrepareLoad(placeHolderDrawable: Drawable) {}

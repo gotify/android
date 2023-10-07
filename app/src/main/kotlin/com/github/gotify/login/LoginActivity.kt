@@ -27,13 +27,13 @@ import com.github.gotify.client.model.VersionInfo
 import com.github.gotify.databinding.ActivityLoginBinding
 import com.github.gotify.databinding.ClientNameDialogBinding
 import com.github.gotify.init.InitializationActivity
-import com.github.gotify.log.Log
 import com.github.gotify.log.LogsActivity
 import com.github.gotify.log.UncaughtExceptionHandler
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import java.security.cert.X509Certificate
 import okhttp3.HttpUrl
+import org.tinylog.kotlin.Logger
 
 internal class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
@@ -69,7 +69,7 @@ internal class LoginActivity : AppCompatActivity() {
         UncaughtExceptionHandler.registerCurrentThread()
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        Log.i("Entering ${javaClass.simpleName}")
+        Logger.info("Entering ${javaClass.simpleName}")
         settings = Settings(this)
     }
 

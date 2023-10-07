@@ -18,10 +18,10 @@ import com.github.gotify.client.api.MessageApi
 import com.github.gotify.client.model.Application
 import com.github.gotify.client.model.Message
 import com.github.gotify.databinding.ActivityShareBinding
-import com.github.gotify.log.Log
 import com.github.gotify.messages.provider.ApplicationHolder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.tinylog.kotlin.Logger
 
 internal class ShareActivity : AppCompatActivity() {
     private lateinit var binding: ActivityShareBinding
@@ -33,7 +33,7 @@ internal class ShareActivity : AppCompatActivity() {
         binding = ActivityShareBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        Log.i("Entering ${javaClass.simpleName}")
+        Logger.info("Entering ${javaClass.simpleName}")
         setSupportActionBar(binding.appBarDrawer.toolbar)
         val actionBar = supportActionBar
         if (actionBar != null) {
@@ -146,7 +146,7 @@ internal class ShareActivity : AppCompatActivity() {
             Api.execute(messageApi.createMessage(message))
             true
         } catch (apiException: ApiException) {
-            Log.e("Failed sending message", apiException)
+            Logger.error(apiException, "Failed sending message")
             false
         }
     }

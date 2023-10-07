@@ -23,7 +23,6 @@ import com.github.gotify.api.Callback.SuccessCallback
 import com.github.gotify.api.ClientFactory
 import com.github.gotify.client.model.User
 import com.github.gotify.client.model.VersionInfo
-import com.github.gotify.log.Log
 import com.github.gotify.log.LoggerHelper
 import com.github.gotify.log.UncaughtExceptionHandler
 import com.github.gotify.login.LoginActivity
@@ -34,6 +33,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.livinglifetechway.quickpermissionskotlin.runWithPermissions
 import com.livinglifetechway.quickpermissionskotlin.util.QuickPermissionsOptions
 import com.livinglifetechway.quickpermissionskotlin.util.QuickPermissionsRequest
+import org.tinylog.kotlin.Logger
 
 internal class InitializationActivity : AppCompatActivity() {
 
@@ -61,7 +61,7 @@ internal class InitializationActivity : AppCompatActivity() {
         }
         UncaughtExceptionHandler.registerCurrentThread()
         settings = Settings(this)
-        Log.i("Entering ${javaClass.simpleName}")
+        Logger.info("Entering ${javaClass.simpleName}")
 
         installSplashScreen().setKeepOnScreenCondition { splashScreenActive }
 
@@ -116,6 +116,7 @@ internal class InitializationActivity : AppCompatActivity() {
                 dialog(getString(R.string.not_available, settings.url))
                 return
             }
+
             401 -> {
                 dialog(getString(R.string.auth_failed))
                 return
@@ -154,7 +155,7 @@ internal class InitializationActivity : AppCompatActivity() {
     }
 
     private fun authenticated(user: User) {
-        Log.i("Authenticated as ${user.name}")
+        Logger.info("Authenticated as ${user.name}")
 
         settings.setUser(user.name, user.isAdmin)
         requestVersion {
@@ -173,7 +174,7 @@ internal class InitializationActivity : AppCompatActivity() {
     private fun requestVersion(runnable: Runnable) {
         requestVersion(
             callback = Callback.SuccessBody { version: VersionInfo ->
-                Log.i("Server version: ${version.version}@${version.buildDate}")
+                Logger.info("Server version: ${version.version}@${version.buildDate}")
                 settings.serverVersion = version.version
                 runnable.run()
             },
