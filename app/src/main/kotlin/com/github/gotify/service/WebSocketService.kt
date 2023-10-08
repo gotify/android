@@ -5,7 +5,6 @@ import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.net.ConnectivityManager
@@ -80,10 +79,6 @@ internal class WebSocketService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         connection?.close()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            (getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
-                .unregisterNetworkCallback(networkCallback)
-        }
 
         Logger.warn("Destroy ${javaClass.simpleName}")
     }
