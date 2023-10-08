@@ -6,31 +6,31 @@ import com.github.gotify.api.Callback
 import com.github.gotify.client.api.MessageApi
 import com.github.gotify.client.model.Message
 import com.github.gotify.client.model.PagedMessages
-import com.github.gotify.log.Log
+import org.tinylog.kotlin.Logger
 
 internal class MessageRequester(private val messageApi: MessageApi) {
     fun loadMore(state: MessageState): PagedMessages? {
         return try {
-            Log.i("Loading more messages for ${state.appId}")
+            Logger.info("Loading more messages for ${state.appId}")
             if (MessageState.ALL_MESSAGES == state.appId) {
                 Api.execute(messageApi.getMessages(LIMIT, state.nextSince))
             } else {
                 Api.execute(messageApi.getAppMessages(state.appId, LIMIT, state.nextSince))
             }
         } catch (apiException: ApiException) {
-            Log.e("failed requesting messages", apiException)
+            Logger.error(apiException, "failed requesting messages")
             null
         }
     }
 
     fun asyncRemoveMessage(message: Message) {
-        Log.i("Removing message with id ${message.id}")
+        Logger.info("Removing message with id ${message.id}")
         messageApi.deleteMessage(message.id).enqueue(Callback.call())
     }
 
     fun deleteAll(appId: Long): Boolean {
         return try {
-            Log.i("Deleting all messages for $appId")
+            Logger.info("Deleting all messages for $appId")
             if (MessageState.ALL_MESSAGES == appId) {
                 Api.execute(messageApi.deleteMessages())
             } else {
@@ -38,7 +38,7 @@ internal class MessageRequester(private val messageApi: MessageApi) {
             }
             true
         } catch (e: ApiException) {
-            Log.e("Could not delete messages", e)
+            Logger.error(e, "Could not delete messages")
             false
         }
     }

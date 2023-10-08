@@ -8,7 +8,6 @@ import com.github.gotify.SSLSettings
 import com.github.gotify.Utils
 import com.github.gotify.api.CertUtils
 import com.github.gotify.client.model.Message
-import com.github.gotify.log.Log
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
@@ -18,6 +17,7 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
+import org.tinylog.kotlin.Logger
 
 internal class WebSocketConnection(
     private val baseUrl: String,
@@ -105,7 +105,7 @@ internal class WebSocketConnection(
         close()
         state = State.Connecting
         val nextId = ID.incrementAndGet()
-        Log.i("WebSocket($nextId): starting...")
+        Logger.info("WebSocket($nextId): starting...")
 
         webSocket = client.newWebSocket(request(), Listener(nextId))
         return this
@@ -116,7 +116,7 @@ internal class WebSocketConnection(
         if (webSocket != null) {
             webSocket?.close(1000, "")
             closed()
-            Log.i("WebSocket(${ID.get()}): closing existing connection.")
+            Logger.info("WebSocket(${ID.get()}): closing existing connection.")
         }
     }
 
@@ -134,7 +134,7 @@ internal class WebSocketConnection(
         state = State.Scheduled
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            Log.i("WebSocket: scheduling a restart in $seconds second(s) (via alarm manager)")
+            Logger.info("WebSocket: scheduling a restart in $seconds second(s) (via alarm manager)")
             val future = Calendar.getInstance()
             future.add(Calendar.SECOND, seconds.toInt())
             alarmManager.setExact(
@@ -145,7 +145,7 @@ internal class WebSocketConnection(
                 null
             )
         } else {
-            Log.i("WebSocket: scheduling a restart in $seconds second(s)")
+            Logger.info("WebSocket: scheduling a restart in $seconds second(s)")
             reconnectHandler.removeCallbacks(reconnectCallback)
             reconnectHandler.postDelayed(reconnectCallback, TimeUnit.SECONDS.toMillis(seconds))
         }
@@ -155,7 +155,7 @@ internal class WebSocketConnection(
         override fun onOpen(webSocket: WebSocket, response: Response) {
             syncExec(id) {
                 state = State.Connected
-                Log.i("WebSocket($id): opened")
+                Logger.info("WebSocket($id): opened")
                 onOpen.run()
 
                 if (errorCount > 0) {
@@ -168,7 +168,7 @@ internal class WebSocketConnection(
 
         override fun onMessage(webSocket: WebSocket, text: String) {
             syncExec(id) {
-                Log.i("WebSocket($id): received message $text")
+                Logger.info("WebSocket($id): received message $text")
                 val message = Utils.JSON.fromJson(text, Message::class.java)
                 onMessageCallback(message)
             }
@@ -178,7 +178,7 @@ internal class WebSocketConnection(
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
             syncExec(id) {
                 if (state == State.Connected) {
-                    Log.w("WebSocket($id): closed")
+                    Logger.warn("WebSocket($id): closed")
                     onClose.run()
                 }
                 closed()
@@ -189,7 +189,7 @@ internal class WebSocketConnection(
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             val code = if (response != null) "StatusCode: ${response.code()}" else ""
             val message = if (response != null) response.message() else ""
-            Log.e("WebSocket($id): failure $code Message: $message", t)
+            Logger.error(t) { "WebSocket($id): failure $code Message: $message" }
             syncExec(id) {
                 closed()
                 if (response != null && response.code() >= 400 && response.code() <= 499) {

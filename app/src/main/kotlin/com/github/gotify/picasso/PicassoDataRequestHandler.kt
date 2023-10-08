@@ -2,10 +2,10 @@ package com.github.gotify.picasso
 
 import android.graphics.BitmapFactory
 import android.util.Base64
-import com.github.gotify.log.Log
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Request
 import com.squareup.picasso.RequestHandler
+import org.tinylog.kotlin.Logger
 
 /**
  * Adapted from https://github.com/square/picasso/issues/1395#issuecomment-220929377 By
@@ -30,7 +30,7 @@ internal class PicassoDataRequestHandler : RequestHandler() {
         if (bitmap == null) {
             val show = if (uri.length > 50) uri.take(50) + "..." else uri
             val malformed = RuntimeException("Malformed data uri: $show")
-            Log.e("Could not load image", malformed)
+            Logger.error(malformed, "Could not load image")
             throw malformed
         }
 

@@ -45,7 +45,6 @@ import com.github.gotify.client.model.Client
 import com.github.gotify.client.model.Message
 import com.github.gotify.databinding.ActivityMessagesBinding
 import com.github.gotify.init.InitializationActivity
-import com.github.gotify.log.Log
 import com.github.gotify.log.LogsActivity
 import com.github.gotify.login.LoginActivity
 import com.github.gotify.messages.provider.MessageState
@@ -60,6 +59,7 @@ import com.google.android.material.snackbar.Snackbar
 import java.io.IOException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.tinylog.kotlin.Logger
 
 internal class MessagesActivity :
     AppCompatActivity(),
@@ -89,7 +89,7 @@ internal class MessagesActivity :
         binding = ActivityMessagesBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel = ViewModelProvider(this, MessagesModelFactory(this))[MessagesModel::class.java]
-        Log.i("Entering " + javaClass.simpleName)
+        Logger.info("Entering " + javaClass.simpleName)
         initDrawer()
 
         val layoutManager = LinearLayoutManager(this)
@@ -132,6 +132,7 @@ internal class MessagesActivity :
                 override fun onDrawerOpened(drawerView: View) {
                     onBackPressedCallback.isEnabled = true
                 }
+
                 override fun onDrawerClosed(drawerView: View) {
                     updateAppOnDrawerClose?.let { selectApp ->
                         updateAppOnDrawerClose = null
@@ -175,7 +176,7 @@ internal class MessagesActivity :
         try {
             viewModel.picassoHandler.evict()
         } catch (e: IOException) {
-            Log.e("Problem evicting Picasso cache", e)
+            Logger.error(e, "Problem evicting Picasso cache")
         }
         startActivity(Intent(this, InitializationActivity::class.java))
         finish()
@@ -625,13 +626,13 @@ internal class MessagesActivity :
                 }
             }
             if (currentClient != null) {
-                Log.i("Delete client with id " + currentClient.id)
+                Logger.info("Delete client with id " + currentClient.id)
                 Api.execute(api.deleteClient(currentClient.id))
             } else {
-                Log.e("Could not delete client, client does not exist.")
+                Logger.error("Could not delete client, client does not exist.")
             }
         } catch (e: ApiException) {
-            Log.e("Could not delete client", e)
+            Logger.error(e, "Could not delete client")
         }
 
         viewModel.settings.clear()

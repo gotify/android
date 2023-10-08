@@ -5,7 +5,7 @@ import com.github.gotify.api.ApiException
 import com.github.gotify.api.Callback
 import com.github.gotify.client.api.MessageApi
 import com.github.gotify.client.model.Message
-import com.github.gotify.log.Log
+import org.tinylog.kotlin.Logger
 
 internal class MissedMessageUtil(private val api: MessageApi) {
     fun lastReceivedMessage(acceptID: (Long) -> Unit) {
@@ -41,7 +41,7 @@ internal class MissedMessageUtil(private val api: MessageApi) {
                 since = pagedMessages.paging.since
             }
         } catch (e: ApiException) {
-            Log.e("cannot retrieve missing messages", e)
+            Logger.error(e, "cannot retrieve missing messages")
         }
         return result.reversed()
     }

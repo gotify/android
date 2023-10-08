@@ -10,7 +10,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.preference.PreferenceManager
 import com.github.gotify.client.model.Application
-import com.github.gotify.log.Log
+import org.tinylog.kotlin.Logger
 
 internal object NotificationSupport {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -93,7 +93,7 @@ internal object NotificationSupport {
             notificationManager.createNotificationChannel(messagesImportanceDefault)
             notificationManager.createNotificationChannel(messagesImportanceHigh)
         } catch (e: Exception) {
-            Log.e("Could not create channel", e)
+            Logger.error(e, "Could not create channel")
         }
     }
 
@@ -168,7 +168,7 @@ internal object NotificationSupport {
             notificationManager.createNotificationChannel(messagesImportanceDefault)
             notificationManager.createNotificationChannel(messagesImportanceHigh)
         } catch (e: Exception) {
-            Log.e("Could not create channel", e)
+            Logger.error(e, "Could not create channel")
         }
     }
 

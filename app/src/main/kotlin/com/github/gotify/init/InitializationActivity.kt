@@ -2,8 +2,6 @@ package com.github.gotify.init
 
 import android.Manifest
 import android.app.AlarmManager
-import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -13,8 +11,6 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.preference.PreferenceManager
-import com.github.gotify.NotificationSupport
 import com.github.gotify.R
 import com.github.gotify.Settings
 import com.github.gotify.api.ApiException
@@ -23,16 +19,14 @@ import com.github.gotify.api.Callback.SuccessCallback
 import com.github.gotify.api.ClientFactory
 import com.github.gotify.client.model.User
 import com.github.gotify.client.model.VersionInfo
-import com.github.gotify.log.Log
-import com.github.gotify.log.UncaughtExceptionHandler
 import com.github.gotify.login.LoginActivity
 import com.github.gotify.messages.MessagesActivity
 import com.github.gotify.service.WebSocketService
-import com.github.gotify.settings.ThemeHelper
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.livinglifetechway.quickpermissionskotlin.runWithPermissions
 import com.livinglifetechway.quickpermissionskotlin.util.QuickPermissionsOptions
 import com.livinglifetechway.quickpermissionskotlin.util.QuickPermissionsRequest
+import org.tinylog.kotlin.Logger
 
 internal class InitializationActivity : AppCompatActivity() {
 
@@ -47,20 +41,8 @@ internal class InitializationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.init(this)
-        val theme = PreferenceManager.getDefaultSharedPreferences(this)
-            .getString(getString(R.string.setting_key_theme), getString(R.string.theme_default))!!
-        ThemeHelper.setTheme(this, theme)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationSupport.createForegroundChannel(
-                this,
-                (this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
-            )
-        }
-        UncaughtExceptionHandler.registerCurrentThread()
         settings = Settings(this)
-        Log.i("Entering ${javaClass.simpleName}")
+        Logger.info("Entering ${javaClass.simpleName}")
 
         installSplashScreen().setKeepOnScreenCondition { splashScreenActive }
 
@@ -115,6 +97,7 @@ internal class InitializationActivity : AppCompatActivity() {
                 dialog(getString(R.string.not_available, settings.url))
                 return
             }
+
             401 -> {
                 dialog(getString(R.string.auth_failed))
                 return
@@ -153,7 +136,7 @@ internal class InitializationActivity : AppCompatActivity() {
     }
 
     private fun authenticated(user: User) {
-        Log.i("Authenticated as ${user.name}")
+        Logger.info("Authenticated as ${user.name}")
 
         settings.setUser(user.name, user.isAdmin)
         requestVersion {
@@ -172,7 +155,7 @@ internal class InitializationActivity : AppCompatActivity() {
     private fun requestVersion(runnable: Runnable) {
         requestVersion(
             callback = Callback.SuccessBody { version: VersionInfo ->
-                Log.i("Server version: ${version.version}@${version.buildDate}")
+                Logger.info("Server version: ${version.version}@${version.buildDate}")
                 settings.serverVersion = version.version
                 runnable.run()
             },

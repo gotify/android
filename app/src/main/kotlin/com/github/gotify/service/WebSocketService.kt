@@ -28,7 +28,7 @@ import com.github.gotify.client.api.ApplicationApi
 import com.github.gotify.client.api.MessageApi
 import com.github.gotify.client.model.Application
 import com.github.gotify.client.model.Message
-import com.github.gotify.log.Log
+import com.github.gotify.log.LoggerHelper
 import com.github.gotify.log.UncaughtExceptionHandler
 import com.github.gotify.messages.Extras
 import com.github.gotify.messages.IntentUrlDialogActivity
@@ -37,6 +37,7 @@ import com.github.gotify.picasso.PicassoHandler
 import io.noties.markwon.Markwon
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
+import org.tinylog.kotlin.Logger
 
 internal class WebSocketService : Service() {
     companion object {
@@ -50,7 +51,7 @@ internal class WebSocketService : Service() {
         object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
                 super.onAvailable(network)
-                Log.i("WebSocket: Network available, reconnect if needed.")
+                Logger.info("WebSocket: Network available, reconnect if needed.")
                 connection?.start()
             }
         }
@@ -71,7 +72,7 @@ internal class WebSocketService : Service() {
             settings.token
         )
         missingMessageUtil = MissedMessageUtil(client.createService(MessageApi::class.java))
-        Log.i("Create ${javaClass.simpleName}")
+        Logger.info("Create ${javaClass.simpleName}")
         picassoHandler = PicassoHandler(this, settings)
         markwon = MarkwonFactory.createForNotification(this, picassoHandler.get())
     }
@@ -84,15 +85,15 @@ internal class WebSocketService : Service() {
                 .unregisterNetworkCallback(networkCallback)
         }
 
-        Log.w("Destroy ${javaClass.simpleName}")
+        Logger.warn("Destroy ${javaClass.simpleName}")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.init(this)
-        if (connection != null) {
-            connection!!.close()
-        }
-        Log.i("Starting ${javaClass.simpleName}")
+        LoggerHelper.init(this)
+        UncaughtExceptionHandler.registerCurrentThread()
+
+        connection?.close()
+        Logger.info("Starting ${javaClass.simpleName}")
         super.onStartCommand(intent, flags, startId)
         Thread { startPushService() }.start()
 
@@ -168,7 +169,7 @@ internal class WebSocketService : Service() {
                                 getString(R.string.websocket_closed_logout)
                             )
                         } else {
-                            Log.i(
+                            Logger.info(
                                 "WebSocket closed but the user still authenticated, " +
                                     "trying to reconnect"
                             )
@@ -406,7 +407,7 @@ internal class WebSocketService : Service() {
                         .bigPicture(picassoHandler.getImageFromUrl(notificationImageUrl))
                 )
             } catch (e: Exception) {
-                Log.e("Error loading bigImageUrl", e)
+                Logger.error(e, "Error loading bigImageUrl")
             }
         }
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager

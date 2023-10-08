@@ -1,7 +1,9 @@
 package com.github.gotify.api
 
 import android.app.Activity
-import com.github.gotify.log.Log
+import com.github.gotify.api.Callback.ErrorCallback
+import com.github.gotify.api.Callback.SuccessCallback
+import org.tinylog.kotlin.Logger
 import retrofit2.Call
 import retrofit2.Response
 
@@ -65,7 +67,7 @@ internal class Callback<T> private constructor(
         private fun <T> errorCallback(): Callback<T> {
             return Callback(
                 onSuccess = {},
-                onError = { exception -> Log.e("Error while api call", exception) }
+                onError = { exception -> Logger.error(exception, "Error while api call") }
             )
         }
 

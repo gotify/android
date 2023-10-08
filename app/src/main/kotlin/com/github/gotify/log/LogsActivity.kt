@@ -15,6 +15,7 @@ import com.github.gotify.Utils.launchCoroutine
 import com.github.gotify.databinding.ActivityLogsBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.tinylog.kotlin.Logger
 
 internal class LogsActivity : AppCompatActivity() {
 
@@ -25,7 +26,7 @@ internal class LogsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLogsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        Log.i("Entering ${javaClass.simpleName}")
+        Logger.info("Entering ${javaClass.simpleName}")
         updateLogs()
         setSupportActionBar(binding.appBarDrawer.toolbar)
         val actionBar = supportActionBar
@@ -37,7 +38,7 @@ internal class LogsActivity : AppCompatActivity() {
 
     private fun updateLogs() {
         launchCoroutine {
-            val log = Log.get()
+            val log = LoggerHelper.read(this)
             withContext(Dispatchers.Main) {
                 val content = binding.logContent
                 if (content.selectionStart == content.selectionEnd) {
@@ -62,11 +63,13 @@ internal class LogsActivity : AppCompatActivity() {
                 finish()
                 true
             }
+
             R.id.action_delete_logs -> {
-                Log.clear()
+                LoggerHelper.clear(this)
                 binding.logContent.text = null
                 true
             }
+
             R.id.action_copy_logs -> {
                 val content = binding.logContent
                 val clipboardManager =
@@ -76,6 +79,7 @@ internal class LogsActivity : AppCompatActivity() {
                 Utils.showSnackBar(this, getString(R.string.logs_copied))
                 true
             }
+
             else -> false
         }
     }
