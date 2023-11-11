@@ -87,7 +87,7 @@ dependencies {
 }
 
 configurations {
-    all {
+    configureEach {
         exclude group: 'org.json', module: 'json'
         exclude group: 'androidx.lifecycle', module: 'lifecycle-viewmodel-ktx'
     }

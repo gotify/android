@@ -26,12 +26,12 @@ ext {
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
         maven { url "https://jitpack.io/" }
     }
 }
 
-task clean(type: Delete) {
+tasks.register('clean', Delete) {
     delete rootProject.buildDir
 }
 
@@ -45,7 +45,8 @@ static def download(String url, String filename ) {
         }
     }
 }
-task downloadSpec {
+
+tasks.register('downloadSpec') {
     inputs.property 'version', gotifyVersion
     doFirst {
         buildDir.mkdirs()
