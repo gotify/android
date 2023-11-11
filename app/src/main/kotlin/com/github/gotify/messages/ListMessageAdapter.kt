@@ -14,6 +14,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.github.gotify.MarkwonFactory
@@ -34,9 +36,8 @@ internal class ListMessageAdapter(
     private val context: Context,
     private val settings: Settings,
     private val picasso: Picasso,
-    var items: List<MessageWithImage>,
     private val delete: Delete
-) : RecyclerView.Adapter<ListMessageAdapter.ViewHolder>() {
+) : ListAdapter<MessageWithImage, ListMessageAdapter.ViewHolder>(DiffCallback) {
     private val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     private val markwon: Markwon = MarkwonFactory.createForMessage(context, picasso)
 
@@ -70,7 +71,7 @@ internal class ListMessageAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val message = items[position]
+        val message = currentList[position]
         if (Extras.useMarkdown(message.message)) {
             holder.message.autoLinkMask = 0
             markwon.setMarkdown(holder.message, message.message.message)
@@ -92,14 +93,12 @@ internal class ListMessageAdapter(
         holder.date.setOnClickListener { holder.switchTimeFormat() }
 
         holder.delete.setOnClickListener {
-            delete.delete(holder.adapterPosition, message.message, false)
+            delete.delete(message.message)
         }
     }
 
-    override fun getItemCount() = items.size
-
     override fun getItemId(position: Int): Long {
-        val currentItem = items[position]
+        val currentItem = currentList[position]
         return currentItem.message.id
     }
 
@@ -184,7 +183,23 @@ internal class ListMessageAdapter(
         }
     }
 
+    object DiffCallback : DiffUtil.ItemCallback<MessageWithImage>() {
+        override fun areItemsTheSame(
+            oldItem: MessageWithImage,
+            newItem: MessageWithImage
+        ): Boolean {
+            return oldItem.message.id == newItem.message.id
+        }
+
+        override fun areContentsTheSame(
+            oldItem: MessageWithImage,
+            newItem: MessageWithImage
+        ): Boolean {
+            return oldItem == newItem
+        }
+    }
+
     fun interface Delete {
-        fun delete(position: Int, message: Message, listAnimation: Boolean)
+        fun delete(message: Message)
     }
 }
