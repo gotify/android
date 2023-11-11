@@ -18,11 +18,7 @@ internal object Extras {
         return "text/markdown" == display["contentType"]
     }
 
-    fun <T> getNestedValue(
-        clazz: Class<T>,
-        extras: Map<String, Any>?,
-        vararg keys: String
-    ): T? {
+    fun <T> getNestedValue(clazz: Class<T>, extras: Map<String, Any>?, vararg keys: String): T? {
         var value: Any? = extras
 
         keys.forEach { key ->

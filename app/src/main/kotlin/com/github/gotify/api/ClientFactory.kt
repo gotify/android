@@ -30,11 +30,7 @@ internal object ClientFactory {
         return client
     }
 
-    fun clientToken(
-        baseUrl: String,
-        sslSettings: SSLSettings,
-        token: String?
-    ): ApiClient {
+    fun clientToken(baseUrl: String, sslSettings: SSLSettings, token: String?): ApiClient {
         val client = defaultClient(
             arrayOf("clientTokenHeader"),
             "$baseUrl/",

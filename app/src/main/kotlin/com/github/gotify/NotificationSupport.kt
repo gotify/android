@@ -51,10 +51,7 @@ internal object NotificationSupport {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun createGeneralChannels(
-        context: Context,
-        notificationManager: NotificationManager
-    ) {
+    private fun createGeneralChannels(context: Context, notificationManager: NotificationManager) {
         try {
             val messagesImportanceMin = NotificationChannel(
                 Channel.MESSAGES_IMPORTANCE_MIN,
@@ -98,11 +95,7 @@ internal object NotificationSupport {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    fun createChannelIfNonexistent(
-        context: Context,
-        groupId: String,
-        channelId: String
-    ) {
+    fun createChannelIfNonexistent(context: Context, groupId: String, channelId: String) {
         if (!doesNotificationChannelExist(context, channelId)) {
             val notificationManager = (context as Service)
                 .getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
