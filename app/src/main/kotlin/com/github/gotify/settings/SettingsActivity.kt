@@ -52,7 +52,8 @@ internal class SettingsActivity : AppCompatActivity(), OnSharedPreferenceChangeL
         return false
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        if (sharedPreferences == null) return
         when (key) {
             getString(R.string.setting_key_theme) -> {
                 ThemeHelper.setTheme(
