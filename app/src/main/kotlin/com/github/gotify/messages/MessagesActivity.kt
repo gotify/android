@@ -101,14 +101,9 @@ internal class MessagesActivity :
         listMessageAdapter = ListMessageAdapter(
             this,
             viewModel.settings,
-            viewModel.picassoHandler.get(),
-            emptyList()
-        ) { position, message, listAnimation ->
-            scheduleDeletion(
-                position,
-                message,
-                listAnimation
-            )
+            viewModel.picassoHandler.get()
+        ) { message ->
+            scheduleDeletion(message)
         }
         addBackPressCallback()
 
@@ -329,7 +324,6 @@ internal class MessagesActivity :
                 }
             }
         }
-        listMessageAdapter.notifyDataSetChanged()
         selectAppInMenu(binding.navView.menu.findItem(selectedIndex))
         super.onResume()
     }
@@ -348,20 +342,11 @@ internal class MessagesActivity :
         }
     }
 
-    private fun scheduleDeletion(
-        position: Int,
-        message: Message,
-        listAnimation: Boolean
-    ) {
+    private fun scheduleDeletion(message: Message) {
         val adapter = binding.messagesView.adapter as ListMessageAdapter
         val messages = viewModel.messages
         messages.deleteLocal(message)
-        adapter.items = messages[viewModel.appId]
-        if (listAnimation) {
-            adapter.notifyItemRemoved(position)
-        } else {
-            adapter.notifyDataSetChanged()
-        }
+        adapter.updateList(messages[viewModel.appId])
         showDeletionSnackbar()
     }
 
@@ -371,13 +356,7 @@ internal class MessagesActivity :
         if (deletion != null) {
             val adapter = binding.messagesView.adapter as ListMessageAdapter
             val appId = viewModel.appId
-            adapter.items = messages[appId]
-            val insertPosition = if (appId == MessageState.ALL_MESSAGES) {
-                deletion.allPosition
-            } else {
-                deletion.appPosition
-            }
-            adapter.notifyItemInserted(insertPosition)
+            adapter.updateList(messages[appId])
         }
     }
 
@@ -432,8 +411,8 @@ internal class MessagesActivity :
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
             val position = viewHolder.adapterPosition
-            val message = adapter.items[position]
-            scheduleDeletion(position, message.message, true)
+            val message = adapter.currentList[position]
+            scheduleDeletion(message.message)
         }
 
         override fun onChildDraw(
@@ -649,8 +628,16 @@ internal class MessagesActivity :
             binding.flipper.displayedChild = 0
         }
         val adapter = binding.messagesView.adapter as ListMessageAdapter
-        adapter.items = messageWithImages
-        adapter.notifyDataSetChanged()
+        adapter.updateList(messageWithImages)
+    }
+
+    private fun ListMessageAdapter.updateList(list: List<MessageWithImage>) {
+        this.submitList(if (this.currentList == list) list.toList() else list) {
+            val topChild = binding.messagesView.getChildAt(0)
+            if (topChild != null && topChild.top == 0) {
+                binding.messagesView.scrollToPosition(0)
+            }
+        }
     }
 
     companion object {
