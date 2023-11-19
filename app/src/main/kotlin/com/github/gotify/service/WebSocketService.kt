@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.Network
@@ -285,7 +286,15 @@ internal class WebSocketService : Service() {
 
         notificationBuilder.setContentIntent(pendingIntent)
         notificationBuilder.color = ContextCompat.getColor(applicationContext, R.color.colorPrimary)
-        startForeground(NotificationSupport.ID.FOREGROUND, notificationBuilder.build())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            startForeground(
+                NotificationSupport.ID.FOREGROUND,
+                notificationBuilder.build(),
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
+            )
+        } else {
+            startForeground(NotificationSupport.ID.FOREGROUND, notificationBuilder.build())
+        }
     }
 
     private fun showNotification(
