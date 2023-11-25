@@ -90,6 +90,7 @@
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:inputType="textUri"
+                android:importantForAutofill="no"
                 android:hint="@string/gotify_url" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -114,6 +115,8 @@
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:inputType="textPersonName"
+                android:importantForAutofill="yes"
+                android:autofillHints="username"
                 android:hint="@string/username" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -138,6 +141,8 @@
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:inputType="textPassword"
+                android:importantForAutofill="yes"
+                android:autofillHints="password"
                 android:hint="@string/password" />
 
         </com.google.android.material.textfield.TextInputLayout>
