@@ -104,7 +104,6 @@
     <string name="action_dialog_message">You have received a message with an intent url:</string>
     <string name="action_dialog_button_open">Open</string>
     <string name="action_dialog_button_cancel">Cancel</string>
-    <string name="foreground_service_description">This is the main feature of this application. The foreground notification displays the connectivity status to the configurable remote server and the service notifies the user when a new message has been published on the remote server.</string>
 
     <string name="websocket_not_connected">Not connected</string>
     <string name="websocket_reconnect">Trying to reconnect</string>
