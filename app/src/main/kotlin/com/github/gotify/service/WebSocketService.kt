@@ -16,6 +16,7 @@ import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.github.gotify.BuildConfig
 import com.github.gotify.MarkwonFactory
 import com.github.gotify.MissedMessageUtil
 import com.github.gotify.NotificationSupport
@@ -41,7 +42,8 @@ import org.tinylog.kotlin.Logger
 
 internal class WebSocketService : Service() {
     companion object {
-        val NEW_MESSAGE_BROADCAST = "${WebSocketService::class.java.name}.NEW_MESSAGE"
+        private val castAddition = if (BuildConfig.DEBUG) ".DEBUG" else ""
+        val NEW_MESSAGE_BROADCAST = "${WebSocketService::class.java.name}.NEW_MESSAGE$castAddition"
         private const val NOT_LOADED = -2L
     }
 
