@@ -14,7 +14,7 @@ Gotify Android connects to [gotify/server](https://github.com/gotify/server) and
 Download the apk or get the app via F-Droid or Google Play.
 
 [<img src="https://play.google.com/intl/en_gb/badges/images/generic/en_badge_web_generic.png" alt="Get it on Google Play" width="150" />][playstore]
-[<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" width="150"/>][fdroid]
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" width="150"/>][fdroid]
 [<img src="download-badge.png" alt="Get it on F-Droid" width="150"/>][release]
 
 Google Play and the Google Play logo are trademarks of Google LLC.
