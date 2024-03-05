@@ -40,7 +40,7 @@ The foreground notification showing the connection status can be manually minimi
 * Open Settings -> Apps -> Gotify
 * Click Notifications
 * Click on `Gotify foreground notification`
-* Select a different "Behavior" or "Importance" (depends on your android version)
+* Toggle the "Minimize" option / Select a different "Behavior" or "Importance" (depends on your Android version)
 * Restart Gotify
 
 ## Message Priorities
