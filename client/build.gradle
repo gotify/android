@@ -4,17 +4,6 @@ apply plugin: 'eclipse'
 group = 'io.swagger'
 version = '1.0.0'
 
-buildscript {
-    repositories {
-        google()
-    }
-}
-
-repositories {
-    jcenter()
-}
-
-
 apply plugin: 'java-library'
 
 sourceCompatibility = JavaVersion.VERSION_1_7
