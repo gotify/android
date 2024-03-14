@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import coil.request.ImageRequest
 import com.github.gotify.BuildConfig
 import com.github.gotify.MissedMessageUtil
 import com.github.gotify.R
@@ -102,7 +103,7 @@ internal class MessagesActivity :
         listMessageAdapter = ListMessageAdapter(
             this,
             viewModel.settings,
-            viewModel.picassoHandler.get()
+            viewModel.coilHandler.get()
         ) { message ->
             scheduleDeletion(message)
         }
@@ -170,9 +171,9 @@ internal class MessagesActivity :
 
     private fun refreshAll() {
         try {
-            viewModel.picassoHandler.evict()
+            viewModel.coilHandler.evict()
         } catch (e: IOException) {
-            Logger.error(e, "Problem evicting Picasso cache")
+            Logger.error(e, "Problem evicting Coil cache")
         }
         startActivity(Intent(this, InitializationActivity::class.java))
         finish()
@@ -201,15 +202,18 @@ internal class MessagesActivity :
             val item = menu.add(R.id.apps, index, APPLICATION_ORDER, app.name)
             item.isCheckable = true
             if (app.id == viewModel.appId) selectedItem = item
-            val t = Utils.toDrawable(resources) { icon -> item.icon = icon }
+            val t = Utils.toDrawable { icon -> item.icon = icon }
             viewModel.targetReferences.add(t)
-            viewModel.picassoHandler
-                .get()
-                .load(Utils.resolveAbsoluteUrl(viewModel.settings.url + "/", app.image))
+            val request = ImageRequest.Builder(this)
+                .data(Utils.resolveAbsoluteUrl(viewModel.settings.url + "/", app.image))
                 .error(R.drawable.ic_alarm)
                 .placeholder(R.drawable.ic_placeholder)
-                .resize(100, 100)
-                .into(t)
+                .size(100, 100)
+                .target(t)
+                .build()
+            viewModel.coilHandler
+                .get()
+                .enqueue(request)
         }
         selectAppInMenu(selectedItem)
     }
