@@ -32,7 +32,7 @@ import com.github.gotify.log.UncaughtExceptionHandler
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import java.security.cert.X509Certificate
-import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.tinylog.kotlin.Logger
 
 internal class LoginActivity : AppCompatActivity() {
@@ -101,13 +101,13 @@ internal class LoginActivity : AppCompatActivity() {
 
     private fun doCheckUrl() {
         val url = binding.gotifyUrlEditext.text.toString().trim().trimEnd('/')
-        val parsedUrl = HttpUrl.parse(url)
+        val parsedUrl = url.toHttpUrlOrNull()
         if (parsedUrl == null) {
             Utils.showSnackBar(this, "Invalid URL (include http:// or https://)")
             return
         }
 
-        if ("http" == parsedUrl.scheme()) {
+        if ("http" == parsedUrl.scheme) {
             showHttpWarning()
         }
 
