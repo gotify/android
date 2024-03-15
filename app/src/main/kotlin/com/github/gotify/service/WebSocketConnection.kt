@@ -11,7 +11,7 @@ import com.github.gotify.client.model.Message
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
-import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -89,7 +89,7 @@ internal class WebSocketConnection(
     }
 
     private fun request(): Request {
-        val url = HttpUrl.parse(baseUrl)!!
+        val url = baseUrl.toHttpUrlOrNull()!!
             .newBuilder()
             .addPathSegment("stream")
             .addQueryParameter("token", token)
@@ -187,12 +187,12 @@ internal class WebSocketConnection(
         }
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-            val code = if (response != null) "StatusCode: ${response.code()}" else ""
-            val message = if (response != null) response.message() else ""
+            val code = if (response != null) "StatusCode: ${response.code}" else ""
+            val message = response?.message ?: ""
             Logger.error(t) { "WebSocket($id): failure $code Message: $message" }
             syncExec(id) {
                 closed()
-                if (response != null && response.code() >= 400 && response.code() <= 499) {
+                if (response != null && response.code >= 400 && response.code <= 499) {
                     onBadRequest.execute(message)
                     return@syncExec
                 }

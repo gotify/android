@@ -10,7 +10,7 @@ import android.text.style.RelativeSizeSpan
 import android.text.style.StyleSpan
 import android.text.style.TypefaceSpan
 import androidx.core.content.ContextCompat
-import com.squareup.picasso.Picasso
+import coil.ImageLoader
 import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
 import io.noties.markwon.MarkwonSpansFactory
@@ -22,7 +22,7 @@ import io.noties.markwon.core.MarkwonTheme
 import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
 import io.noties.markwon.ext.tables.TableAwareMovementMethod
 import io.noties.markwon.ext.tables.TablePlugin
-import io.noties.markwon.image.picasso.PicassoImagesPlugin
+import io.noties.markwon.image.coil.CoilImagesPlugin
 import io.noties.markwon.movement.MovementMethodPlugin
 import org.commonmark.ext.gfm.tables.TableCell
 import org.commonmark.ext.gfm.tables.TablesExtension
@@ -36,11 +36,11 @@ import org.commonmark.node.StrongEmphasis
 import org.commonmark.parser.Parser
 
 internal object MarkwonFactory {
-    fun createForMessage(context: Context, picasso: Picasso): Markwon {
+    fun createForMessage(context: Context, imageLoader: ImageLoader): Markwon {
         return Markwon.builder(context)
             .usePlugin(CorePlugin.create())
             .usePlugin(MovementMethodPlugin.create(TableAwareMovementMethod.create()))
-            .usePlugin(PicassoImagesPlugin.create(picasso))
+            .usePlugin(CoilImagesPlugin.create(context, imageLoader))
             .usePlugin(StrikethroughPlugin.create())
             .usePlugin(TablePlugin.create(context))
             .usePlugin(object : AbstractMarkwonPlugin() {
@@ -52,13 +52,13 @@ internal object MarkwonFactory {
             .build()
     }
 
-    fun createForNotification(context: Context, picasso: Picasso): Markwon {
+    fun createForNotification(context: Context, imageLoader: ImageLoader): Markwon {
         val headingSizes = floatArrayOf(2f, 1.5f, 1.17f, 1f, .83f, .67f)
         val bulletGapWidth = (8 * context.resources.displayMetrics.density + 0.5f).toInt()
 
         return Markwon.builder(context)
             .usePlugin(CorePlugin.create())
-            .usePlugin(PicassoImagesPlugin.create(picasso))
+            .usePlugin(CoilImagesPlugin.create(context, imageLoader))
             .usePlugin(StrikethroughPlugin.create())
             .usePlugin(object : AbstractMarkwonPlugin() {
                 override fun configureSpansFactory(builder: MarkwonSpansFactory.Builder) {
