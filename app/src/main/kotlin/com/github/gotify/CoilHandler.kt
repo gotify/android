@@ -10,10 +10,10 @@ import coil.disk.DiskCache
 import coil.request.ImageRequest
 import com.github.gotify.api.CertUtils
 import com.github.gotify.client.model.Application
+import java.io.IOException
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import org.tinylog.kotlin.Logger
-import java.io.IOException
 
 internal class CoilHandler(private val context: Context, private val settings: Settings) {
     private val imageLoader = makeImageLoader()

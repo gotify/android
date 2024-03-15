@@ -17,6 +17,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.github.gotify.BuildConfig
+import com.github.gotify.CoilHandler
 import com.github.gotify.MarkwonFactory
 import com.github.gotify.MissedMessageUtil
 import com.github.gotify.NotificationSupport
@@ -34,7 +35,6 @@ import com.github.gotify.log.UncaughtExceptionHandler
 import com.github.gotify.messages.Extras
 import com.github.gotify.messages.IntentUrlDialogActivity
 import com.github.gotify.messages.MessagesActivity
-import com.github.gotify.CoilHandler
 import io.noties.markwon.Markwon
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
