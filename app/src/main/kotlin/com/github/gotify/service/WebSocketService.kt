@@ -36,7 +36,6 @@ import com.github.gotify.messages.IntentUrlDialogActivity
 import com.github.gotify.messages.MessagesActivity
 import com.github.gotify.CoilHandler
 import io.noties.markwon.Markwon
-import kotlinx.coroutines.runBlocking
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
 import org.tinylog.kotlin.Logger
@@ -378,15 +377,11 @@ internal class WebSocketService : Service() {
             showNotificationGroup(channelId)
         }
 
-        val largeIcon = runBlocking {
-            coilHandler.getIcon(appIdToApp[appId])
-        }
-
         b.setAutoCancel(true)
             .setDefaults(Notification.DEFAULT_ALL)
             .setWhen(System.currentTimeMillis())
             .setSmallIcon(R.drawable.ic_gotify)
-            .setLargeIcon(largeIcon)
+            .setLargeIcon(coilHandler.getIcon(appIdToApp[appId]))
             .setTicker("${getString(R.string.app_name)} - $title")
             .setGroup(NotificationSupport.Group.MESSAGES)
             .setContentTitle(title)
@@ -413,12 +408,10 @@ internal class WebSocketService : Service() {
 
         if (notificationImageUrl != null) {
             try {
-                runBlocking {
-                    b.setStyle(
-                        NotificationCompat.BigPictureStyle()
-                            .bigPicture(coilHandler.getImageFromUrl(notificationImageUrl))
-                    )
-                }
+                b.setStyle(
+                    NotificationCompat.BigPictureStyle()
+                        .bigPicture(coilHandler.getImageFromUrl(notificationImageUrl))
+                )
             } catch (e: Exception) {
                 Logger.error(e, "Error loading bigImageUrl")
             }

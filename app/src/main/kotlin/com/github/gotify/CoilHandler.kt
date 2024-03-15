@@ -10,6 +10,7 @@ import coil.disk.DiskCache
 import coil.request.ImageRequest
 import com.github.gotify.api.CertUtils
 import com.github.gotify.client.model.Application
+import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import org.tinylog.kotlin.Logger
 import java.io.IOException
@@ -31,14 +32,18 @@ internal class CoilHandler(private val context: Context, private val settings: S
     }
 
     @Throws(IOException::class)
-    suspend fun getImageFromUrl(url: String?): Bitmap {
+    fun getImageFromUrl(url: String?): Bitmap {
         val request = ImageRequest.Builder(context)
             .data(url)
             .build()
-        return (imageLoader.execute(request).drawable as BitmapDrawable).bitmap
+        val imageResult: Bitmap
+        runBlocking {
+            imageResult = (imageLoader.execute(request).drawable as BitmapDrawable).bitmap
+        }
+        return imageResult
     }
 
-    suspend fun getIcon(app: Application?): Bitmap {
+    fun getIcon(app: Application?): Bitmap {
         if (app == null) {
             return BitmapFactory.decodeResource(context.resources, R.drawable.gotify)
         }
