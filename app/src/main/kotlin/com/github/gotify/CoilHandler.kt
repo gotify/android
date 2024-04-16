@@ -56,8 +56,12 @@ internal class CoilHandler(private val context: Context, private val settings: S
     fun get() = imageLoader
 
     @OptIn(ExperimentalCoilApi::class)
-    @Throws(IOException::class)
     fun evict() {
-        imageLoader.diskCache?.directory?.toFile()?.deleteRecursively()
+        try {
+            imageLoader.diskCache?.clear()
+            imageLoader.memoryCache?.clear()
+        } catch (e: IOException) {
+            Logger.error(e, "Problem evicting Coil cache")
+        }
     }
 }

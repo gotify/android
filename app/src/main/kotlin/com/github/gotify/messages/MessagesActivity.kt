@@ -58,7 +58,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.BaseTransientBottomBar.BaseCallback
 import com.google.android.material.snackbar.Snackbar
-import java.io.IOException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.tinylog.kotlin.Logger
@@ -170,19 +169,20 @@ internal class MessagesActivity :
     }
 
     private fun refreshAll() {
-        try {
-            viewModel.coilHandler.evict()
-        } catch (e: IOException) {
-            Logger.error(e, "Problem evicting Coil cache")
-        }
+        viewModel.coilHandler.evict()
         startActivity(Intent(this, InitializationActivity::class.java))
         finish()
     }
 
     private fun onRefresh() {
+        viewModel.coilHandler.evict()
         viewModel.messages.clear()
         launchCoroutine {
-            loadMore(viewModel.appId)
+            loadMore(viewModel.appId).forEachIndexed { index, message ->
+                if (message.image != null) {
+                    listMessageAdapter.notifyItemChanged(index)
+                }
+            }
         }
     }
 
@@ -556,11 +556,12 @@ internal class MessagesActivity :
             )
     }
 
-    private suspend fun loadMore(appId: Long) {
+    private suspend fun loadMore(appId: Long): List<MessageWithImage> {
         val messagesWithImages = viewModel.messages.loadMore(appId)
         withContext(Dispatchers.Main) {
             updateMessagesAndStopLoading(messagesWithImages)
         }
+        return messagesWithImages
     }
 
     private suspend fun updateMessagesForApplication(withLoadingSpinner: Boolean, appId: Long) {
