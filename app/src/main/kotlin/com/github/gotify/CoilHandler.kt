@@ -7,11 +7,11 @@ import android.graphics.drawable.BitmapDrawable
 import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import coil.disk.DiskCache
+import coil.executeBlocking
 import coil.request.ImageRequest
 import com.github.gotify.api.CertUtils
 import com.github.gotify.client.model.Application
 import java.io.IOException
-import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import org.tinylog.kotlin.Logger
 
@@ -36,11 +36,7 @@ internal class CoilHandler(private val context: Context, private val settings: S
         val request = ImageRequest.Builder(context)
             .data(url)
             .build()
-        val imageResult: Bitmap
-        runBlocking {
-            imageResult = (imageLoader.execute(request).drawable as BitmapDrawable).bitmap
-        }
-        return imageResult
+        return (imageLoader.executeBlocking(request).drawable as BitmapDrawable).bitmap
     }
 
     fun getIcon(app: Application?): Bitmap {
