@@ -16,10 +16,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso.LoadedFrom
 import com.squareup.picasso.Target
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStream
-import java.io.InputStreamReader
 import java.net.MalformedURLException
 import java.net.URI
 import java.net.URISyntaxException
@@ -28,7 +24,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okio.Buffer
 import org.threeten.bp.OffsetDateTime
 import org.tinylog.kotlin.Logger
 
@@ -84,25 +79,6 @@ internal object Utils {
 
             override fun onPrepareLoad(placeHolderDrawable: Drawable) {}
         }
-    }
-
-    fun readFileFromStream(inputStream: InputStream): String {
-        val sb = StringBuilder()
-        var currentLine: String?
-        try {
-            BufferedReader(InputStreamReader(inputStream)).use { reader ->
-                while (reader.readLine().also { currentLine = it } != null) {
-                    sb.append(currentLine).append("\n")
-                }
-            }
-        } catch (e: IOException) {
-            throw IllegalArgumentException("failed to read input")
-        }
-        return sb.toString()
-    }
-
-    fun stringToInputStream(str: String?): InputStream? {
-        return if (str == null) null else Buffer().writeUtf8(str).inputStream()
     }
 
     fun AppCompatActivity.launchCoroutine(
