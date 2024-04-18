@@ -221,7 +221,7 @@ internal class LoginActivity : AppCompatActivity() {
 
     private fun getNameOfCertContent(file: File): String? {
         val ca = CertUtils.parseCertificate(FileInputStream(file))
-        return (ca as X509Certificate).subjectDN.name
+        return (ca as X509Certificate).subjectX500Principal.name
     }
 
     private fun onValidUrl(url: String): SuccessCallback<VersionInfo> {
