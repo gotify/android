@@ -15,6 +15,9 @@ internal class AdvancedDialog(
     private var onCheckedChangeListener: CompoundButton.OnCheckedChangeListener? = null
     private lateinit var onClickSelectCaCertificate: Runnable
     private lateinit var onClickRemoveCaCertificate: Runnable
+    private lateinit var onClickSelectClientCertificate: Runnable
+    private lateinit var onClickRemoveClientCertificate: Runnable
+    private lateinit var onClose: (password: String) -> Unit
 
     fun onDisableSSLChanged(
         onCheckedChangeListener: CompoundButton.OnCheckedChangeListener?
@@ -33,35 +36,82 @@ internal class AdvancedDialog(
         return this
     }
 
-    fun show(disableSSL: Boolean, selectedCertificate: String?): AdvancedDialog {
+    fun onClickSelectClientCertificate(onClickSelectClientCertificate: Runnable): AdvancedDialog {
+        this.onClickSelectClientCertificate = onClickSelectClientCertificate
+        return this
+    }
+
+    fun onClickRemoveClientCertificate(onClickRemoveClientCertificate: Runnable): AdvancedDialog {
+        this.onClickRemoveClientCertificate = onClickRemoveClientCertificate
+        return this
+    }
+
+    fun onClose(onClose: (passworrd: String) -> Unit): AdvancedDialog {
+        this.onClose = onClose
+        return this
+    }
+
+    fun show(
+        disableSSL: Boolean,
+        caCertPath: String? = null,
+        caCertCN: String?,
+        clientCertPath: String? = null,
+        clientCertPassword: String?
+    ): AdvancedDialog {
         binding = AdvancedSettingsDialogBinding.inflate(layoutInflater)
         binding.disableSSL.isChecked = disableSSL
         binding.disableSSL.setOnCheckedChangeListener(onCheckedChangeListener)
-        if (selectedCertificate == null) {
-            showSelectCACertificate()
+        if (caCertPath == null) {
+            showSelectCaCertificate()
         } else {
-            showRemoveCACertificate(selectedCertificate)
+            showRemoveCaCertificate(caCertCN!!)
+        }
+        if (clientCertPath == null) {
+            showSelectClientCertificate()
+        } else {
+            showRemoveClientCertificate()
+        }
+        if (!clientCertPassword.isNullOrEmpty()) {
+            binding.clientCertPasswordEdittext.setText(clientCertPassword)
         }
         MaterialAlertDialogBuilder(context)
             .setView(binding.root)
             .setTitle(R.string.advanced_settings)
             .setPositiveButton(context.getString(R.string.done), null)
+            .setOnDismissListener {
+                onClose(binding.clientCertPasswordEdittext.text.toString())
+            }
             .show()
         return this
     }
 
-    private fun showSelectCACertificate() {
+    private fun showSelectCaCertificate() {
         binding.toggleCaCert.setText(R.string.select_ca_certificate)
         binding.toggleCaCert.setOnClickListener { onClickSelectCaCertificate.run() }
-        binding.selecetedCaCert.setText(R.string.no_certificate_selected)
+        binding.selectedCaCert.setText(R.string.no_certificate_selected)
     }
 
-    fun showRemoveCACertificate(certificate: String) {
+    fun showRemoveCaCertificate(certificateCN: String) {
         binding.toggleCaCert.setText(R.string.remove_ca_certificate)
         binding.toggleCaCert.setOnClickListener {
-            showSelectCACertificate()
+            showSelectCaCertificate()
             onClickRemoveCaCertificate.run()
         }
-        binding.selecetedCaCert.text = certificate
+        binding.selectedCaCert.text = certificateCN
+    }
+
+    private fun showSelectClientCertificate() {
+        binding.toggleClientCert.setText(R.string.select_client_certificate)
+        binding.toggleClientCert.setOnClickListener { onClickSelectClientCertificate.run() }
+        binding.selectedClientCert.setText(R.string.no_certificate_selected)
+    }
+
+    fun showRemoveClientCertificate() {
+        binding.toggleClientCert.setText(R.string.remove_client_certificate)
+        binding.toggleClientCert.setOnClickListener {
+            showSelectClientCertificate()
+            onClickRemoveClientCertificate.run()
+        }
+        binding.selectedClientCert.setText(R.string.certificate_found)
     }
 }
