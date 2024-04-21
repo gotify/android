@@ -18,6 +18,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import coil.ImageLoader
+import coil.load
 import com.github.gotify.MarkwonFactory
 import com.github.gotify.R
 import com.github.gotify.Settings
@@ -26,7 +28,6 @@ import com.github.gotify.client.model.Message
 import com.github.gotify.databinding.MessageItemBinding
 import com.github.gotify.databinding.MessageItemCompactBinding
 import com.github.gotify.messages.provider.MessageWithImage
-import com.squareup.picasso.Picasso
 import io.noties.markwon.Markwon
 import java.text.DateFormat
 import java.util.Date
@@ -35,11 +36,11 @@ import org.threeten.bp.OffsetDateTime
 internal class ListMessageAdapter(
     private val context: Context,
     private val settings: Settings,
-    private val picasso: Picasso,
+    private val imageLoader: ImageLoader,
     private val delete: Delete
 ) : ListAdapter<MessageWithImage, ListMessageAdapter.ViewHolder>(DiffCallback) {
     private val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-    private val markwon: Markwon = MarkwonFactory.createForMessage(context, picasso)
+    private val markwon: Markwon = MarkwonFactory.createForMessage(context, imageLoader)
 
     private val timeFormatRelative =
         context.resources.getString(R.string.time_format_value_relative)
@@ -81,10 +82,11 @@ internal class ListMessageAdapter(
         }
         holder.title.text = message.message.title
         if (message.image != null) {
-            picasso.load(Utils.resolveAbsoluteUrl("${settings.url}/", message.image))
-                .error(R.drawable.ic_alarm)
-                .placeholder(R.drawable.ic_placeholder)
-                .into(holder.image)
+            val url = Utils.resolveAbsoluteUrl("${settings.url}/", message.image)
+            holder.image.load(url, imageLoader) {
+                error(R.drawable.ic_alarm)
+                placeholder(R.drawable.ic_placeholder)
+            }
         }
 
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
