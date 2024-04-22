@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
+import coil.decode.SvgDecoder
 import coil.disk.DiskCache
 import coil.executeBlocking
 import coil.request.ImageRequest
@@ -27,6 +28,9 @@ internal class CoilHandler(private val context: Context, private val settings: S
                 DiskCache.Builder()
                     .directory(context.cacheDir.resolve("coil-cache"))
                     .build()
+            }
+            .components {
+                add(SvgDecoder.Factory())
             }
             .build()
     }
