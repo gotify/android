@@ -6,6 +6,7 @@ import com.github.gotify.client.model.User
 
 internal class Settings(context: Context) {
     private val sharedPreferences: SharedPreferences
+    val filesDir: String
     var url: String
         get() = sharedPreferences.getString("url", "")!!
         set(value) = sharedPreferences.edit().putString("url", value).apply()
@@ -26,6 +27,9 @@ internal class Settings(context: Context) {
     var serverVersion: String
         get() = sharedPreferences.getString("version", "UNKNOWN")!!
         set(value) = sharedPreferences.edit().putString("version", value).apply()
+    var legacyCert: String?
+        get() = sharedPreferences.getString("cert", null)
+        set(value) = sharedPreferences.edit().putString("cert", value).apply()
     var caCertPath: String?
         get() = sharedPreferences.getString("caCertPath", null)
         set(value) = sharedPreferences.edit().putString("caCertPath", value).apply()
@@ -44,6 +48,7 @@ internal class Settings(context: Context) {
 
     init {
         sharedPreferences = context.getSharedPreferences("gotify", Context.MODE_PRIVATE)
+        filesDir = context.filesDir.absolutePath
     }
 
     fun tokenExists(): Boolean = !token.isNullOrEmpty()
@@ -52,6 +57,7 @@ internal class Settings(context: Context) {
         url = ""
         token = null
         validateSSL = true
+        legacyCert = null
         caCertPath = null
         caCertCN = null
         clientCertPath = null

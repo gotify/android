@@ -540,7 +540,7 @@ internal class MessagesActivity :
 
     private fun deleteApp(appId: Long) {
         val settings = viewModel.settings
-        val client = ClientFactory.clientToken(settings.url, settings.sslSettings(), settings.token)
+        val client = ClientFactory.clientToken(settings)
         client.createService(ApplicationApi::class.java)
             .deleteApp(appId)
             .enqueue(
@@ -597,8 +597,7 @@ internal class MessagesActivity :
 
     private fun deleteClientAndNavigateToLogin() {
         val settings = viewModel.settings
-        val api = ClientFactory.clientToken(settings.url, settings.sslSettings(), settings.token)
-            .createService(ClientApi::class.java)
+        val api = ClientFactory.clientToken(settings).createService(ClientApi::class.java)
         stopService(Intent(this@MessagesActivity, WebSocketService::class.java))
         try {
             val clients = Api.execute(api.clients)

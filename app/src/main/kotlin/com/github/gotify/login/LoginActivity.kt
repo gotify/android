@@ -144,7 +144,7 @@ internal class LoginActivity : AppCompatActivity() {
         binding.checkurl.visibility = View.GONE
 
         try {
-            ClientFactory.versionApi(url, tempSslSettings())
+            ClientFactory.versionApi(settings, tempSslSettings(), url)
                 .version
                 .enqueue(Callback.callInUI(this, onValidUrl(url), onInvalidUrl(url)))
         } catch (e: Exception) {
@@ -252,7 +252,7 @@ internal class LoginActivity : AppCompatActivity() {
         binding.login.visibility = View.GONE
         binding.loginProgress.visibility = View.VISIBLE
 
-        val client = ClientFactory.basicAuth(settings.url, tempSslSettings(), username, password)
+        val client = ClientFactory.basicAuth(settings, tempSslSettings(), username, password)
         client.createService(UserApi::class.java)
             .currentUser()
             .enqueue(

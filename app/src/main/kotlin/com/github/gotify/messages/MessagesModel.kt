@@ -14,7 +14,7 @@ import com.squareup.picasso.Target
 internal class MessagesModel(parentView: Activity) : ViewModel() {
     val settings = Settings(parentView)
     val picassoHandler = PicassoHandler(parentView, settings)
-    val client = ClientFactory.clientToken(settings.url, settings.sslSettings(), settings.token)
+    val client = ClientFactory.clientToken(settings)
     val appsHolder = ApplicationHolder(parentView, client)
     val messages = MessageFacade(client.createService(MessageApi::class.java), appsHolder)
 

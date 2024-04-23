@@ -68,11 +68,7 @@ internal class WebSocketService : Service() {
     override fun onCreate() {
         super.onCreate()
         settings = Settings(this)
-        val client = ClientFactory.clientToken(
-            settings.url,
-            settings.sslSettings(),
-            settings.token
-        )
+        val client = ClientFactory.clientToken(settings)
         missingMessageUtil = MissedMessageUtil(client.createService(MessageApi::class.java))
         Logger.info("Create ${javaClass.simpleName}")
         picassoHandler = PicassoHandler(this, settings)
@@ -129,7 +125,7 @@ internal class WebSocketService : Service() {
     }
 
     private fun fetchApps() {
-        ClientFactory.clientToken(settings.url, settings.sslSettings(), settings.token)
+        ClientFactory.clientToken(settings)
             .createService(ApplicationApi::class.java)
             .apps
             .enqueue(
