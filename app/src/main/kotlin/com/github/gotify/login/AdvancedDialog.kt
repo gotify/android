@@ -2,7 +2,10 @@ package com.github.gotify.login
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.widget.Button
 import android.widget.CompoundButton
+import androidx.appcompat.app.AlertDialog
+import androidx.core.widget.doOnTextChanged
 import com.github.gotify.R
 import com.github.gotify.databinding.AdvancedSettingsDialogBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -11,6 +14,8 @@ internal class AdvancedDialog(
     private val context: Context,
     private val layoutInflater: LayoutInflater
 ) {
+    private lateinit var dialog: AlertDialog
+    private lateinit var dialogDoneButton: Button
     private lateinit var binding: AdvancedSettingsDialogBinding
     private var onCheckedChangeListener: CompoundButton.OnCheckedChangeListener? = null
     private lateinit var onClickSelectCaCertificate: Runnable
@@ -66,22 +71,27 @@ internal class AdvancedDialog(
         } else {
             showRemoveCaCertificate(caCertCN!!)
         }
+        if (!clientCertPassword.isNullOrEmpty()) {
+            binding.clientCertPasswordEdittext.setText(clientCertPassword)
+        }
         if (clientCertPath == null) {
             showSelectClientCertificate()
         } else {
             showRemoveClientCertificate()
         }
-        if (!clientCertPassword.isNullOrEmpty()) {
-            binding.clientCertPasswordEdittext.setText(clientCertPassword)
+        binding.clientCertPasswordEdittext.doOnTextChanged { _, _, _, _ ->
+            showPasswordMissing(binding.clientCertPasswordEdittext.text.toString().isEmpty())
         }
-        MaterialAlertDialogBuilder(context)
+        dialog = MaterialAlertDialogBuilder(context)
             .setView(binding.root)
             .setTitle(R.string.advanced_settings)
             .setPositiveButton(context.getString(R.string.done), null)
             .setOnDismissListener {
                 onClose(binding.clientCertPasswordEdittext.text.toString())
             }
-            .show()
+            .create()
+        dialog.show()
+        dialogDoneButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
         return this
     }
 
@@ -104,6 +114,7 @@ internal class AdvancedDialog(
         binding.toggleClientCert.setText(R.string.select_client_certificate)
         binding.toggleClientCert.setOnClickListener { onClickSelectClientCertificate.run() }
         binding.selectedClientCert.setText(R.string.no_certificate_selected)
+        showPasswordMissing(false)
     }
 
     fun showRemoveClientCertificate() {
@@ -113,5 +124,18 @@ internal class AdvancedDialog(
             onClickRemoveClientCertificate.run()
         }
         binding.selectedClientCert.setText(R.string.certificate_found)
+        showPasswordMissing(binding.clientCertPasswordEdittext.text.toString().isEmpty())
+    }
+
+    private fun showPasswordMissing(toggled: Boolean) {
+        if (::dialogDoneButton.isInitialized) {
+            dialogDoneButton.isEnabled = !toggled
+        }
+        val error = if (toggled) {
+            context.getString(R.string.client_cert_password_missing)
+        } else {
+            null
+        }
+        binding.clientCertPassword.error = error
     }
 }

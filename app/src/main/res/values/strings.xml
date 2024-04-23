@@ -44,6 +44,7 @@
     <string name="select_ca_file">Select a CA Certificate File</string>
     <string name="select_client_file">Select a Client Certificate File</string>
     <string name="client_cert_password">Certificate Password</string>
+    <string name="client_cert_password_missing">Password required</string>
     <string name="please_install_file_browser">Please install a file browser</string>
     <string name="select_ca_failed">Failed to read CA cert: %s</string>
     <string name="select_client_failed">Failed to read client cert: %s</string>
