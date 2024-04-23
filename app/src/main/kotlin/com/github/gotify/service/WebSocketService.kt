@@ -17,6 +17,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.github.gotify.BuildConfig
+import com.github.gotify.CoilHandler
 import com.github.gotify.MarkwonFactory
 import com.github.gotify.MissedMessageUtil
 import com.github.gotify.NotificationSupport
@@ -34,7 +35,6 @@ import com.github.gotify.log.UncaughtExceptionHandler
 import com.github.gotify.messages.Extras
 import com.github.gotify.messages.IntentUrlDialogActivity
 import com.github.gotify.messages.MessagesActivity
-import com.github.gotify.picasso.PicassoHandler
 import io.noties.markwon.Markwon
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
@@ -62,7 +62,7 @@ internal class WebSocketService : Service() {
     private val lastReceivedMessage = AtomicLong(NOT_LOADED)
     private lateinit var missingMessageUtil: MissedMessageUtil
 
-    private lateinit var picassoHandler: PicassoHandler
+    private lateinit var coilHandler: CoilHandler
     private lateinit var markwon: Markwon
 
     override fun onCreate() {
@@ -71,8 +71,8 @@ internal class WebSocketService : Service() {
         val client = ClientFactory.clientToken(settings)
         missingMessageUtil = MissedMessageUtil(client.createService(MessageApi::class.java))
         Logger.info("Create ${javaClass.simpleName}")
-        picassoHandler = PicassoHandler(this, settings)
-        markwon = MarkwonFactory.createForNotification(this, picassoHandler.get())
+        coilHandler = CoilHandler(this, settings)
+        markwon = MarkwonFactory.createForNotification(this, coilHandler.get())
     }
 
     override fun onDestroy() {
@@ -377,7 +377,7 @@ internal class WebSocketService : Service() {
             .setDefaults(Notification.DEFAULT_ALL)
             .setWhen(System.currentTimeMillis())
             .setSmallIcon(R.drawable.ic_gotify)
-            .setLargeIcon(picassoHandler.getIcon(appIdToApp[appId]))
+            .setLargeIcon(coilHandler.getIcon(appIdToApp[appId]))
             .setTicker("${getString(R.string.app_name)} - $title")
             .setGroup(NotificationSupport.Group.MESSAGES)
             .setContentTitle(title)
@@ -406,7 +406,7 @@ internal class WebSocketService : Service() {
             try {
                 b.setStyle(
                     NotificationCompat.BigPictureStyle()
-                        .bigPicture(picassoHandler.getImageFromUrl(notificationImageUrl))
+                        .bigPicture(coilHandler.getImageFromUrl(notificationImageUrl))
                 )
             } catch (e: Exception) {
                 Logger.error(e, "Error loading bigImageUrl")

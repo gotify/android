@@ -66,6 +66,7 @@ if (project.hasProperty('sign')) {
 }
 
 dependencies {
+    def markwon_version = "4.6.2"
     implementation project(':client')
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.core:core-splashscreen:1.0.1'
@@ -76,12 +77,12 @@ dependencies {
     implementation 'androidx.preference:preference-ktx:1.2.1'
 
     implementation 'com.github.cyb3rko:QuickPermissions-Kotlin:1.1.3'
-    implementation 'com.squareup.picasso:picasso:2.71828'
-    implementation 'io.noties.markwon:core:4.6.2'
-    implementation 'io.noties.markwon:image-picasso:4.6.2'
-    implementation 'io.noties.markwon:image:4.6.2'
-    implementation 'io.noties.markwon:ext-tables:4.6.2'
-    implementation 'io.noties.markwon:ext-strikethrough:4.6.2'
+    implementation 'io.coil-kt:coil:2.6.0'
+    implementation "io.noties.markwon:core:$markwon_version"
+    implementation "io.noties.markwon:image-coil:$markwon_version"
+    implementation "io.noties.markwon:image:$markwon_version"
+    implementation "io.noties.markwon:ext-tables:$markwon_version"
+    implementation "io.noties.markwon:ext-strikethrough:$markwon_version"
 
     implementation 'org.tinylog:tinylog-api-kotlin:2.6.2'
     implementation 'org.tinylog:tinylog-impl:2.6.2'

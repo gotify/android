@@ -38,7 +38,7 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.security.cert.X509Certificate
-import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.tinylog.kotlin.Logger
 
 internal class LoginActivity : AppCompatActivity() {
@@ -130,13 +130,13 @@ internal class LoginActivity : AppCompatActivity() {
 
     private fun doCheckUrl() {
         val url = binding.gotifyUrlEditext.text.toString().trim().trimEnd('/')
-        val parsedUrl = HttpUrl.parse(url)
+        val parsedUrl = url.toHttpUrlOrNull()
         if (parsedUrl == null) {
             Utils.showSnackBar(this, "Invalid URL (include http:// or https://)")
             return
         }
 
-        if ("http" == parsedUrl.scheme()) {
+        if ("http" == parsedUrl.scheme) {
             showHttpWarning()
         }
 

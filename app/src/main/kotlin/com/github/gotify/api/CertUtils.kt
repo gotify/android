@@ -76,17 +76,14 @@ internal object CertUtils {
             if (customManagers || !settings.validateSSL) {
                 val context = SSLContext.getInstance("TLS")
                 context.init(keyManagers, trustManagers, SecureRandom())
-                if (trustManagers != null) {
-                    // Use custom trust manager
-                    builder.sslSocketFactory(
-                        context.socketFactory,
-                        trustManagers[0] as X509TrustManager
-                    )
-                } else {
+                if (trustManagers == null) {
                     // Fall back to system trust managers
-                    @Suppress("DEPRECATION")
-                    builder.sslSocketFactory(context.socketFactory)
+                    trustManagers = defaultSystemTrustManager()
                 }
+                builder.sslSocketFactory(
+                    context.socketFactory,
+                    trustManagers[0] as X509TrustManager
+                )
             }
         } catch (e: Exception) {
             // We shouldn't have issues since the cert is verified on login.
@@ -123,5 +120,13 @@ internal object CertUtils {
             KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
         keyManagerFactory.init(keyStore, certPassword.toCharArray())
         return keyManagerFactory.keyManagers
+    }
+
+    private fun defaultSystemTrustManager(): Array<TrustManager> {
+        val trustManagerFactory = TrustManagerFactory.getInstance(
+            TrustManagerFactory.getDefaultAlgorithm()
+        )
+        trustManagerFactory.init(null as KeyStore?)
+        return trustManagerFactory.trustManagers
     }
 }

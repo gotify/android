@@ -3,19 +3,15 @@ package com.github.gotify
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
-import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.text.format.DateUtils
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import coil.target.Target
 import com.github.gotify.client.JSON
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
-import com.squareup.picasso.Picasso.LoadedFrom
-import com.squareup.picasso.Target
 import java.net.MalformedURLException
 import java.net.URI
 import java.net.URISyntaxException
@@ -67,17 +63,15 @@ internal object Utils {
         }
     }
 
-    fun toDrawable(resources: Resources?, drawableReceiver: DrawableReceiver): Target {
+    fun toDrawable(drawableReceiver: DrawableReceiver): Target {
         return object : Target {
-            override fun onBitmapLoaded(bitmap: Bitmap, from: LoadedFrom) {
-                drawableReceiver.loaded(BitmapDrawable(resources, bitmap))
+            override fun onSuccess(result: Drawable) {
+                drawableReceiver.loaded(result)
             }
 
-            override fun onBitmapFailed(e: Exception, errorDrawable: Drawable) {
-                Logger.error(e, "Bitmap failed")
+            override fun onError(error: Drawable?) {
+                Logger.error("Bitmap failed")
             }
-
-            override fun onPrepareLoad(placeHolderDrawable: Drawable) {}
         }
     }
 

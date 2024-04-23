@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import coil.request.ImageRequest
 import com.github.gotify.BuildConfig
 import com.github.gotify.MissedMessageUtil
 import com.github.gotify.R
@@ -57,7 +58,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.BaseTransientBottomBar.BaseCallback
 import com.google.android.material.snackbar.Snackbar
-import java.io.IOException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.tinylog.kotlin.Logger
@@ -102,7 +102,7 @@ internal class MessagesActivity :
         listMessageAdapter = ListMessageAdapter(
             this,
             viewModel.settings,
-            viewModel.picassoHandler.get()
+            viewModel.coilHandler.get()
         ) { message ->
             scheduleDeletion(message)
         }
@@ -169,19 +169,20 @@ internal class MessagesActivity :
     }
 
     private fun refreshAll() {
-        try {
-            viewModel.picassoHandler.evict()
-        } catch (e: IOException) {
-            Logger.error(e, "Problem evicting Picasso cache")
-        }
+        viewModel.coilHandler.evict()
         startActivity(Intent(this, InitializationActivity::class.java))
         finish()
     }
 
     private fun onRefresh() {
+        viewModel.coilHandler.evict()
         viewModel.messages.clear()
         launchCoroutine {
-            loadMore(viewModel.appId)
+            loadMore(viewModel.appId).forEachIndexed { index, message ->
+                if (message.image != null) {
+                    listMessageAdapter.notifyItemChanged(index)
+                }
+            }
         }
     }
 
@@ -201,15 +202,18 @@ internal class MessagesActivity :
             val item = menu.add(R.id.apps, index, APPLICATION_ORDER, app.name)
             item.isCheckable = true
             if (app.id == viewModel.appId) selectedItem = item
-            val t = Utils.toDrawable(resources) { icon -> item.icon = icon }
+            val t = Utils.toDrawable { icon -> item.icon = icon }
             viewModel.targetReferences.add(t)
-            viewModel.picassoHandler
-                .get()
-                .load(Utils.resolveAbsoluteUrl(viewModel.settings.url + "/", app.image))
+            val request = ImageRequest.Builder(this)
+                .data(Utils.resolveAbsoluteUrl(viewModel.settings.url + "/", app.image))
                 .error(R.drawable.ic_alarm)
                 .placeholder(R.drawable.ic_placeholder)
-                .resize(100, 100)
-                .into(t)
+                .size(100, 100)
+                .target(t)
+                .build()
+            viewModel.coilHandler
+                .get()
+                .enqueue(request)
         }
         selectAppInMenu(selectedItem)
     }
@@ -552,11 +556,12 @@ internal class MessagesActivity :
             )
     }
 
-    private suspend fun loadMore(appId: Long) {
+    private suspend fun loadMore(appId: Long): List<MessageWithImage> {
         val messagesWithImages = viewModel.messages.loadMore(appId)
         withContext(Dispatchers.Main) {
             updateMessagesAndStopLoading(messagesWithImages)
         }
+        return messagesWithImages
     }
 
     private suspend fun updateMessagesForApplication(withLoadingSpinner: Boolean, appId: Long) {
