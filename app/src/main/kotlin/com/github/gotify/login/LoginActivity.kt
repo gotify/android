@@ -65,7 +65,7 @@ internal class LoginActivity : AppCompatActivity() {
                 copyStreamToFile(fileStream, destinationFile)
 
                 // temporarily store it (don't store to settings until they decide to login)
-                caCertCN = getNameOfCertContent(destinationFile)!!
+                caCertCN = getNameOfCertContent(destinationFile) ?: "unknown"
                 caCertPath = destinationFile.absolutePath
                 advancedDialog.showRemoveCaCertificate(caCertCN!!)
             } catch (e: Exception) {
@@ -220,7 +220,7 @@ internal class LoginActivity : AppCompatActivity() {
     }
 
     private fun getNameOfCertContent(file: File): String? {
-        val ca = CertUtils.parseCertificate(FileInputStream(file))
+        val ca = FileInputStream(file).use { CertUtils.parseCertificate(it) }
         return (ca as X509Certificate).subjectX500Principal.name
     }
 

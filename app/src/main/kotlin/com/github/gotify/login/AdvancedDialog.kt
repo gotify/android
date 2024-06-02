@@ -14,7 +14,6 @@ internal class AdvancedDialog(
     private val context: Context,
     private val layoutInflater: LayoutInflater
 ) {
-    private lateinit var dialog: AlertDialog
     private lateinit var dialogDoneButton: Button
     private lateinit var binding: AdvancedSettingsDialogBinding
     private var onCheckedChangeListener: CompoundButton.OnCheckedChangeListener? = null
@@ -82,7 +81,7 @@ internal class AdvancedDialog(
         binding.clientCertPasswordEdittext.doOnTextChanged { _, _, _, _ ->
             showPasswordMissing(binding.clientCertPasswordEdittext.text.toString().isEmpty())
         }
-        dialog = MaterialAlertDialogBuilder(context)
+        val dialog = MaterialAlertDialogBuilder(context)
             .setView(binding.root)
             .setTitle(R.string.advanced_settings)
             .setPositiveButton(context.getString(R.string.done), null)

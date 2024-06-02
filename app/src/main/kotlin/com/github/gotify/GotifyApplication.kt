@@ -45,7 +45,6 @@ class GotifyApplication : Application() {
                 Logger.info("Migration of legacy CA cert succeeded")
             } catch (e: IOException) {
                 Logger.error(e, "Migration of legacy CA cert failed")
-                if (legacyCert != null) settings.legacyCert = legacyCert
             }
         }
         super.onCreate()
