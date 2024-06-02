@@ -29,10 +29,10 @@ internal class Settings(context: Context) {
         set(value) = sharedPreferences.edit().putString("version", value).apply()
     var legacyCert: String?
         get() = sharedPreferences.getString("cert", null)
-        set(value) = sharedPreferences.edit().putString("cert", value).apply()
+        set(value) = sharedPreferences.edit().putString("cert", value).commit().toUnit()
     var caCertPath: String?
         get() = sharedPreferences.getString("caCertPath", null)
-        set(value) = sharedPreferences.edit().putString("caCertPath", value).apply()
+        set(value) = sharedPreferences.edit().putString("caCertPath", value).commit().toUnit()
     var caCertCN: String?
         get() = sharedPreferences.getString("caCertCN", null)
         set(value) = sharedPreferences.edit().putString("caCertCN", value).apply()
@@ -76,4 +76,7 @@ internal class Settings(context: Context) {
             clientCertPassword
         )
     }
+
+    @Suppress("UnusedReceiverParameter")
+    private fun Any?.toUnit() = Unit
 }
