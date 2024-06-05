@@ -33,9 +33,8 @@ class GotifyApplication : Application() {
         val settings = Settings(this)
         if (settings.legacyCert != null) {
             Logger.info("Migrating legacy CA cert to new location")
-            var legacyCert: String? = null
             try {
-                legacyCert = settings.legacyCert
+                val legacyCert = settings.legacyCert
                 settings.legacyCert = null
                 val caCertFile = File(settings.filesDir, CertUtils.CA_CERT_NAME)
                 FileOutputStream(caCertFile).use {

@@ -49,40 +49,33 @@ internal object CertUtils {
     fun applySslSettings(builder: OkHttpClient.Builder, settings: SSLSettings) {
         // Modified from ApiClient.applySslSettings in the client package.
         try {
-            var customManagers = false
-            var trustManagers: Array<TrustManager>? = null
-            var keyManagers: Array<KeyManager>? = null
-            if (settings.caCertPath != null) {
-                val tempTrustManagers = certToTrustManager(settings.caCertPath)
-                if (tempTrustManagers.isNotEmpty()) {
-                    trustManagers = tempTrustManagers
-                    customManagers = true
-                }
-            }
-            if (settings.clientCertPath != null) {
-                val tempKeyManagers = certToKeyManager(
-                    settings.clientCertPath,
-                    settings.clientCertPassword
-                )
-                if (tempKeyManagers.isNotEmpty()) {
-                    keyManagers = tempKeyManagers
-                    customManagers = true
-                }
-            }
-            if (!settings.validateSSL) {
-                trustManagers = arrayOf(trustAll)
+            val trustManagers = mutableSetOf<TrustManager>()
+            val keyManagers = mutableSetOf<KeyManager>()
+            if (settings.validateSSL) {
+                // Custom SSL validation
+                settings.caCertPath?.let { trustManagers.addAll(certToTrustManager(it)) }
+            } else {
+                // Disable SSL validation
+                trustManagers.add(trustAll)
                 builder.hostnameVerifier { _, _ -> true }
             }
-            if (customManagers || !settings.validateSSL) {
-                val context = SSLContext.getInstance("TLS")
-                context.init(keyManagers, trustManagers, SecureRandom())
-                if (trustManagers == null) {
+            settings.clientCertPath?.let {
+                keyManagers.addAll(certToKeyManager(it, settings.clientCertPassword))
+            }
+            if (trustManagers.isNotEmpty() || keyManagers.isNotEmpty()) {
+                if (trustManagers.isEmpty()) {
                     // Fall back to system trust managers
-                    trustManagers = defaultSystemTrustManager()
+                    trustManagers.addAll(defaultSystemTrustManager())
                 }
+                val context = SSLContext.getInstance("TLS")
+                context.init(
+                    keyManagers.toTypedArray(),
+                    trustManagers.toTypedArray(),
+                    SecureRandom()
+                )
                 builder.sslSocketFactory(
                     context.socketFactory,
-                    trustManagers[0] as X509TrustManager
+                    trustManagers.elementAt(0) as X509TrustManager
                 )
             }
         } catch (e: Exception) {
@@ -114,8 +107,9 @@ internal object CertUtils {
         require(certPassword != null) { "empty client certificate password" }
 
         val keyStore = KeyStore.getInstance("PKCS12")
-        val inputStream = FileInputStream(File(certPath))
-        keyStore.load(inputStream, certPassword.toCharArray())
+        FileInputStream(File(certPath)).use {
+            keyStore.load(it, certPassword.toCharArray())
+        }
         val keyManagerFactory =
             KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
         keyManagerFactory.init(keyStore, certPassword.toCharArray())
