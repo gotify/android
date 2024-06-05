@@ -181,6 +181,7 @@ internal class LoginActivity : AppCompatActivity() {
             .onClickRemoveCaCertificate {
                 invalidateUrl()
                 caCertPath = null
+                clientCertPassword = null
             }
             .onClickSelectClientCertificate {
                 invalidateUrl()

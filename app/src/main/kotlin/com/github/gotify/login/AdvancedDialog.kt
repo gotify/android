@@ -79,7 +79,11 @@ internal class AdvancedDialog(
             showRemoveClientCertificate()
         }
         binding.clientCertPasswordEdittext.doOnTextChanged { _, _, _, _ ->
-            showPasswordMissing(binding.clientCertPasswordEdittext.text.toString().isEmpty())
+            if (binding.selectedClientCert.text.toString() ==
+                context.getString(R.string.certificate_found)
+            ) {
+                showPasswordMissing(binding.clientCertPasswordEdittext.text.toString().isEmpty())
+            }
         }
         val dialog = MaterialAlertDialogBuilder(context)
             .setView(binding.root)
@@ -114,6 +118,7 @@ internal class AdvancedDialog(
         binding.toggleClientCert.setOnClickListener { onClickSelectClientCertificate.run() }
         binding.selectedClientCert.setText(R.string.no_certificate_selected)
         showPasswordMissing(false)
+        binding.clientCertPasswordEdittext.text = null
     }
 
     fun showRemoveClientCertificate() {
