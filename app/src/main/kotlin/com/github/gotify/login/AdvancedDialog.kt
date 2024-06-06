@@ -65,18 +65,8 @@ internal class AdvancedDialog(
         binding = AdvancedSettingsDialogBinding.inflate(layoutInflater)
         binding.disableSSL.isChecked = disableSSL
         binding.disableSSL.setOnCheckedChangeListener(onCheckedChangeListener)
-        if (caCertPath == null) {
-            showSelectCaCertificate()
-        } else {
-            showRemoveCaCertificate(caCertCN!!)
-        }
         if (!clientCertPassword.isNullOrEmpty()) {
             binding.clientCertPasswordEdittext.setText(clientCertPassword)
-        }
-        if (clientCertPath == null) {
-            showSelectClientCertificate()
-        } else {
-            showRemoveClientCertificate()
         }
         binding.clientCertPasswordEdittext.doOnTextChanged { _, _, _, _ ->
             if (binding.selectedClientCert.text.toString() ==
@@ -95,6 +85,16 @@ internal class AdvancedDialog(
             .create()
         dialog.show()
         dialogDoneButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        if (caCertPath == null) {
+            showSelectCaCertificate()
+        } else {
+            showRemoveCaCertificate(caCertCN!!)
+        }
+        if (clientCertPath == null) {
+            showSelectClientCertificate()
+        } else {
+            showRemoveClientCertificate()
+        }
         return this
     }
 
@@ -132,9 +132,7 @@ internal class AdvancedDialog(
     }
 
     private fun showPasswordMissing(toggled: Boolean) {
-        if (::dialogDoneButton.isInitialized) {
-            dialogDoneButton.isEnabled = !toggled
-        }
+        dialogDoneButton.isEnabled = !toggled
         val error = if (toggled) {
             context.getString(R.string.client_cert_password_missing)
         } else {
