@@ -87,8 +87,9 @@ internal object CertUtils {
     @Throws(GeneralSecurityException::class)
     private fun certToTrustManager(certPath: String): Array<TrustManager> {
         val certificateFactory = CertificateFactory.getInstance("X.509")
-        val inputStream = FileInputStream(File(certPath))
-        val certificates = certificateFactory.generateCertificates(inputStream)
+        val certificates = FileInputStream(File(certPath)).use(
+            certificateFactory::generateCertificates
+        )
         require(certificates.isNotEmpty()) { "expected non-empty set of trusted certificates" }
 
         val caKeyStore = KeyStore.getInstance(KeyStore.getDefaultType()).apply { load(null) }
