@@ -6,6 +6,7 @@ import com.github.gotify.client.model.User
 
 internal class Settings(context: Context) {
     private val sharedPreferences: SharedPreferences
+    val filesDir: String
     var url: String
         get() = sharedPreferences.getString("url", "")!!
         set(value) = sharedPreferences.edit().putString("url", value).apply()
@@ -26,15 +27,25 @@ internal class Settings(context: Context) {
     var serverVersion: String
         get() = sharedPreferences.getString("version", "UNKNOWN")!!
         set(value) = sharedPreferences.edit().putString("version", value).apply()
-    var cert: String?
+    var legacyCert: String?
         get() = sharedPreferences.getString("cert", null)
-        set(value) = sharedPreferences.edit().putString("cert", value).apply()
+        set(value) = sharedPreferences.edit().putString("cert", value).commit().toUnit()
+    var caCertPath: String?
+        get() = sharedPreferences.getString("caCertPath", null)
+        set(value) = sharedPreferences.edit().putString("caCertPath", value).commit().toUnit()
     var validateSSL: Boolean
         get() = sharedPreferences.getBoolean("validateSSL", true)
         set(value) = sharedPreferences.edit().putBoolean("validateSSL", value).apply()
+    var clientCertPath: String?
+        get() = sharedPreferences.getString("clientCertPath", null)
+        set(value) = sharedPreferences.edit().putString("clientCertPath", value).apply()
+    var clientCertPassword: String?
+        get() = sharedPreferences.getString("clientCertPass", null)
+        set(value) = sharedPreferences.edit().putString("clientCertPass", value).apply()
 
     init {
         sharedPreferences = context.getSharedPreferences("gotify", Context.MODE_PRIVATE)
+        filesDir = context.filesDir.absolutePath
     }
 
     fun tokenExists(): Boolean = !token.isNullOrEmpty()
@@ -43,7 +54,10 @@ internal class Settings(context: Context) {
         url = ""
         token = null
         validateSSL = true
-        cert = null
+        legacyCert = null
+        caCertPath = null
+        clientCertPath = null
+        clientCertPassword = null
     }
 
     fun setUser(name: String?, admin: Boolean) {
@@ -51,6 +65,14 @@ internal class Settings(context: Context) {
     }
 
     fun sslSettings(): SSLSettings {
-        return SSLSettings(validateSSL, cert)
+        return SSLSettings(
+            validateSSL,
+            caCertPath,
+            clientCertPath,
+            clientCertPassword
+        )
     }
+
+    @Suppress("UnusedReceiverParameter")
+    private fun Any?.toUnit() = Unit
 }

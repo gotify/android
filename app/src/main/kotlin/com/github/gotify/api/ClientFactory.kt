@@ -9,55 +9,55 @@ import com.github.gotify.client.auth.ApiKeyAuth
 import com.github.gotify.client.auth.HttpBasicAuth
 
 internal object ClientFactory {
-    private fun unauthorized(baseUrl: String, sslSettings: SSLSettings): ApiClient {
-        return defaultClient(arrayOf(), "$baseUrl/", sslSettings)
+    private fun unauthorized(
+        settings: Settings,
+        sslSettings: SSLSettings,
+        baseUrl: String
+    ): ApiClient {
+        return defaultClient(arrayOf(), settings, sslSettings, baseUrl)
     }
 
     fun basicAuth(
-        baseUrl: String,
+        settings: Settings,
         sslSettings: SSLSettings,
         username: String,
         password: String
     ): ApiClient {
-        val client = defaultClient(
-            arrayOf("basicAuth"),
-            "$baseUrl/",
-            sslSettings
-        )
+        val client = defaultClient(arrayOf("basicAuth"), settings, sslSettings)
         val auth = client.apiAuthorizations["basicAuth"] as HttpBasicAuth
         auth.username = username
         auth.password = password
         return client
     }
 
-    fun clientToken(baseUrl: String, sslSettings: SSLSettings, token: String?): ApiClient {
-        val client = defaultClient(
-            arrayOf("clientTokenHeader"),
-            "$baseUrl/",
-            sslSettings
-        )
+    fun clientToken(settings: Settings, token: String? = settings.token): ApiClient {
+        val client = defaultClient(arrayOf("clientTokenHeader"), settings)
         val tokenAuth = client.apiAuthorizations["clientTokenHeader"] as ApiKeyAuth
         tokenAuth.apiKey = token
         return client
     }
 
-    fun versionApi(baseUrl: String, sslSettings: SSLSettings): VersionApi {
-        return unauthorized(baseUrl, sslSettings).createService(VersionApi::class.java)
+    fun versionApi(
+        settings: Settings,
+        sslSettings: SSLSettings = settings.sslSettings(),
+        baseUrl: String = settings.url
+    ): VersionApi {
+        return unauthorized(settings, sslSettings, baseUrl).createService(VersionApi::class.java)
     }
 
     fun userApiWithToken(settings: Settings): UserApi {
-        return clientToken(settings.url, settings.sslSettings(), settings.token)
-            .createService(UserApi::class.java)
+        return clientToken(settings).createService(UserApi::class.java)
     }
 
     private fun defaultClient(
         authentications: Array<String>,
-        baseUrl: String,
-        sslSettings: SSLSettings
+        settings: Settings,
+        sslSettings: SSLSettings = settings.sslSettings(),
+        baseUrl: String = settings.url
     ): ApiClient {
         val client = ApiClient(authentications)
         CertUtils.applySslSettings(client.okBuilder, sslSettings)
-        client.adapterBuilder.baseUrl(baseUrl)
+        client.adapterBuilder.baseUrl("$baseUrl/")
         return client
     }
 }

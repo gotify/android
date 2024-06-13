@@ -61,11 +61,7 @@ internal class ShareActivity : AppCompatActivity() {
             return
         }
 
-        val client = ClientFactory.clientToken(
-            settings.url,
-            settings.sslSettings(),
-            settings.token
-        )
+        val client = ClientFactory.clientToken(settings)
         appsHolder = ApplicationHolder(this, client)
         appsHolder.onUpdate {
             val apps = appsHolder.get()
@@ -136,11 +132,7 @@ internal class ShareActivity : AppCompatActivity() {
     }
 
     private fun executeMessageCall(appIndex: Int, message: Message): Boolean {
-        val pushClient = ClientFactory.clientToken(
-            settings.url,
-            settings.sslSettings(),
-            appsHolder.get()[appIndex].token
-        )
+        val pushClient = ClientFactory.clientToken(settings, appsHolder.get()[appIndex].token)
         return try {
             val messageApi = pushClient.createService(MessageApi::class.java)
             Api.execute(messageApi.createMessage(message))

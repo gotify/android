@@ -8,7 +8,9 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import com.github.gotify.R
 import com.github.gotify.SSLSettings
@@ -31,6 +33,10 @@ import com.github.gotify.log.LogsActivity
 import com.github.gotify.log.UncaughtExceptionHandler
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.InputStream
 import java.security.cert.X509Certificate
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.tinylog.kotlin.Logger
@@ -40,10 +46,13 @@ internal class LoginActivity : AppCompatActivity() {
     private lateinit var settings: Settings
 
     private var disableSslValidation = false
-    private var caCertContents: String? = null
+    private var caCertCN: String? = null
+    private var caCertPath: String? = null
+    private var clientCertPath: String? = null
+    private var clientCertPassword: String? = null
     private lateinit var advancedDialog: AdvancedDialog
 
-    private val certificateDialogResultLauncher =
+    private val caDialogResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             try {
                 require(result.resultCode == RESULT_OK) { "result was ${result.resultCode}" }
@@ -52,15 +61,35 @@ internal class LoginActivity : AppCompatActivity() {
                 val uri = result.data!!.data ?: throw IllegalArgumentException("file path was null")
                 val fileStream = contentResolver.openInputStream(uri)
                     ?: throw IllegalArgumentException("file path was invalid")
+                val destinationFile = File(filesDir, CertUtils.CA_CERT_NAME)
+                copyStreamToFile(fileStream, destinationFile)
 
-                val content = Utils.readFileFromStream(fileStream)
-                val name = getNameOfCertContent(content)
-
-                // temporarily set the contents (don't store to settings until they decide to login)
-                caCertContents = content
-                advancedDialog.showRemoveCACertificate(name)
+                // temporarily store it (don't store to settings until they decide to login)
+                caCertCN = getNameOfCertContent(destinationFile) ?: "unknown"
+                caCertPath = destinationFile.absolutePath
+                advancedDialog.showRemoveCaCertificate(caCertCN!!)
             } catch (e: Exception) {
                 Utils.showSnackBar(this, getString(R.string.select_ca_failed, e.message))
+            }
+        }
+
+    private val clientCertDialogResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            try {
+                require(result.resultCode == RESULT_OK) { "result was ${result.resultCode}" }
+                requireNotNull(result.data) { "file path was null" }
+
+                val uri = result.data!!.data ?: throw IllegalArgumentException("file path was null")
+                val fileStream = contentResolver.openInputStream(uri)
+                    ?: throw IllegalArgumentException("file path was invalid")
+                val destinationFile = File(filesDir, CertUtils.CLIENT_CERT_NAME)
+                copyStreamToFile(fileStream, destinationFile)
+
+                // temporarily store it (don't store to settings until they decide to login)
+                clientCertPath = destinationFile.absolutePath
+                advancedDialog.showRemoveClientCertificate()
+            } catch (e: Exception) {
+                Utils.showSnackBar(this, getString(R.string.select_client_failed, e.message))
             }
         }
 
@@ -115,7 +144,7 @@ internal class LoginActivity : AppCompatActivity() {
         binding.checkurl.visibility = View.GONE
 
         try {
-            ClientFactory.versionApi(url, tempSslSettings())
+            ClientFactory.versionApi(settings, tempSslSettings(), url)
                 .version
                 .enqueue(Callback.callInUI(this, onValidUrl(url), onInvalidUrl(url)))
         } catch (e: Exception) {
@@ -140,12 +169,6 @@ internal class LoginActivity : AppCompatActivity() {
     }
 
     private fun toggleShowAdvanced() {
-        val selectedCertName = if (caCertContents != null) {
-            getNameOfCertContent(caCertContents!!)
-        } else {
-            null
-        }
-
         advancedDialog = AdvancedDialog(this, layoutInflater)
             .onDisableSSLChanged { _, disable ->
                 invalidateUrl()
@@ -153,34 +176,53 @@ internal class LoginActivity : AppCompatActivity() {
             }
             .onClickSelectCaCertificate {
                 invalidateUrl()
-                doSelectCACertificate()
+                doSelectCertificate(caDialogResultLauncher, R.string.select_ca_file)
             }
             .onClickRemoveCaCertificate {
                 invalidateUrl()
-                caCertContents = null
+                caCertPath = null
+                clientCertPassword = null
             }
-            .show(disableSslValidation, selectedCertName)
+            .onClickSelectClientCertificate {
+                invalidateUrl()
+                doSelectCertificate(clientCertDialogResultLauncher, R.string.select_client_file)
+            }
+            .onClickRemoveClientCertificate {
+                invalidateUrl()
+                clientCertPath = null
+            }
+            .onClose { newPassword ->
+                clientCertPassword = newPassword
+            }
+            .show(
+                disableSslValidation,
+                caCertPath,
+                caCertCN,
+                clientCertPath,
+                clientCertPassword
+            )
     }
 
-    private fun doSelectCACertificate() {
+    private fun doSelectCertificate(
+        resultLauncher: ActivityResultLauncher<Intent>,
+        @StringRes descriptionId: Int
+    ) {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
         // we don't really care what kind of file it is as long as we can parse it
         intent.type = "*/*"
         intent.addCategory(Intent.CATEGORY_OPENABLE)
 
         try {
-            certificateDialogResultLauncher.launch(
-                Intent.createChooser(intent, getString(R.string.select_ca_file))
-            )
+            resultLauncher.launch(Intent.createChooser(intent, getString(descriptionId)))
         } catch (e: ActivityNotFoundException) {
             // case for user not having a file browser installed
             Utils.showSnackBar(this, getString(R.string.please_install_file_browser))
         }
     }
 
-    private fun getNameOfCertContent(content: String): String {
-        val ca = CertUtils.parseCertificate(content)
-        return (ca as X509Certificate).subjectDN.name
+    private fun getNameOfCertContent(file: File): String? {
+        val ca = FileInputStream(file).use { CertUtils.parseCertificate(it) }
+        return (ca as X509Certificate).subjectX500Principal.name
     }
 
     private fun onValidUrl(url: String): SuccessCallback<VersionInfo> {
@@ -211,7 +253,7 @@ internal class LoginActivity : AppCompatActivity() {
         binding.login.visibility = View.GONE
         binding.loginProgress.visibility = View.VISIBLE
 
-        val client = ClientFactory.basicAuth(settings.url, tempSslSettings(), username, password)
+        val client = ClientFactory.basicAuth(settings, tempSslSettings(), username, password)
         client.createService(UserApi::class.java)
             .currentUser()
             .enqueue(
@@ -265,7 +307,9 @@ internal class LoginActivity : AppCompatActivity() {
     private fun onCreatedClient(client: Client) {
         settings.token = client.token
         settings.validateSSL = !disableSslValidation
-        settings.cert = caCertContents
+        settings.caCertPath = caCertPath
+        settings.clientCertPath = clientCertPath
+        settings.clientCertPassword = clientCertPassword
 
         Utils.showSnackBar(this, getString(R.string.created_client))
         startActivity(Intent(this, InitializationActivity::class.java))
@@ -288,6 +332,17 @@ internal class LoginActivity : AppCompatActivity() {
     }
 
     private fun tempSslSettings(): SSLSettings {
-        return SSLSettings(!disableSslValidation, caCertContents)
+        return SSLSettings(
+            !disableSslValidation,
+            caCertPath,
+            clientCertPath,
+            clientCertPassword
+        )
+    }
+
+    private fun copyStreamToFile(inputStream: InputStream, file: File) {
+        FileOutputStream(file).use {
+            inputStream.copyTo(it)
+        }
     }
 }

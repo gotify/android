@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="20dp">
 
@@ -18,8 +20,47 @@
         android:text="@string/select_ca_certificate" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/seleceted_ca_cert"
+        android:id="@+id/selected_ca_cert"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/no_certificate_selected" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/toggle_client_cert"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:textColor="@android:color/white"
+        android:text="@string/select_client_certificate" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/selected_client_cert"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/no_certificate_selected" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/client_cert_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:maxWidth="280dp"
+        android:ems="10">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/client_cert_password_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:inputType="textPassword"
+            android:importantForAutofill="no"
+            android:hint="@string/client_cert_password" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
 </LinearLayout>
