@@ -33,9 +33,6 @@ internal class Settings(context: Context) {
     var caCertPath: String?
         get() = sharedPreferences.getString("caCertPath", null)
         set(value) = sharedPreferences.edit().putString("caCertPath", value).commit().toUnit()
-    var caCertCN: String?
-        get() = sharedPreferences.getString("caCertCN", null)
-        set(value) = sharedPreferences.edit().putString("caCertCN", value).apply()
     var validateSSL: Boolean
         get() = sharedPreferences.getBoolean("validateSSL", true)
         set(value) = sharedPreferences.edit().putBoolean("validateSSL", value).apply()
@@ -59,7 +56,6 @@ internal class Settings(context: Context) {
         validateSSL = true
         legacyCert = null
         caCertPath = null
-        caCertCN = null
         clientCertPath = null
         clientCertPassword = null
     }

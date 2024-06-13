@@ -307,7 +307,6 @@ internal class LoginActivity : AppCompatActivity() {
     private fun onCreatedClient(client: Client) {
         settings.token = client.token
         settings.validateSSL = !disableSslValidation
-        settings.caCertCN = caCertCN
         settings.caCertPath = caCertPath
         settings.clientCertPath = clientCertPath
         settings.clientCertPassword = clientCertPassword
