@@ -17,7 +17,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.github.gotify.BuildConfig
-import com.github.gotify.CoilHandler
+import com.github.gotify.CoilInstance
 import com.github.gotify.MarkwonFactory
 import com.github.gotify.MissedMessageUtil
 import com.github.gotify.NotificationSupport
@@ -62,7 +62,6 @@ internal class WebSocketService : Service() {
     private val lastReceivedMessage = AtomicLong(NOT_LOADED)
     private lateinit var missingMessageUtil: MissedMessageUtil
 
-    private lateinit var coilHandler: CoilHandler
     private lateinit var markwon: Markwon
 
     override fun onCreate() {
@@ -71,8 +70,7 @@ internal class WebSocketService : Service() {
         val client = ClientFactory.clientToken(settings)
         missingMessageUtil = MissedMessageUtil(client.createService(MessageApi::class.java))
         Logger.info("Create ${javaClass.simpleName}")
-        coilHandler = CoilHandler(this, settings)
-        markwon = MarkwonFactory.createForNotification(this, coilHandler.get())
+        markwon = MarkwonFactory.createForNotification(this, CoilInstance.get(this))
     }
 
     override fun onDestroy() {
@@ -377,7 +375,7 @@ internal class WebSocketService : Service() {
             .setDefaults(Notification.DEFAULT_ALL)
             .setWhen(System.currentTimeMillis())
             .setSmallIcon(R.drawable.ic_gotify)
-            .setLargeIcon(coilHandler.getIcon(appIdToApp[appId]))
+            .setLargeIcon(CoilInstance.getIcon(this, appIdToApp[appId]))
             .setTicker("${getString(R.string.app_name)} - $title")
             .setGroup(NotificationSupport.Group.MESSAGES)
             .setContentTitle(title)
@@ -406,7 +404,7 @@ internal class WebSocketService : Service() {
             try {
                 b.setStyle(
                     NotificationCompat.BigPictureStyle()
-                        .bigPicture(coilHandler.getImageFromUrl(notificationImageUrl))
+                        .bigPicture(CoilInstance.getImageFromUrl(this, notificationImageUrl))
                 )
             } catch (e: Exception) {
                 Logger.error(e, "Error loading bigImageUrl")
