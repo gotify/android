@@ -13,7 +13,12 @@ import coil.request.ImageRequest
 import com.github.gotify.api.CertUtils
 import com.github.gotify.client.model.Application
 import java.io.IOException
+import okhttp3.Authenticator
+import okhttp3.Credentials
 import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.Route
 import org.tinylog.kotlin.Logger
 
 object CoilInstance {
@@ -69,7 +74,9 @@ object CoilInstance {
         context: Context,
         sslSettings: SSLSettings
     ): Pair<SSLSettings, ImageLoader> {
-        val builder = OkHttpClient.Builder()
+        val builder = OkHttpClient
+            .Builder()
+            .authenticator(BasicAuthAuthenticator())
         CertUtils.applySslSettings(builder, sslSettings)
         val loader = ImageLoader.Builder(context)
             .okHttpClient(builder.build())
@@ -83,5 +90,24 @@ object CoilInstance {
             }
             .build()
         return sslSettings to loader
+    }
+}
+
+private class BasicAuthAuthenticator : Authenticator {
+    override fun authenticate(route: Route?, response: Response): Request? {
+        // If there's no username, skip the authenticator
+        if (response.request.url.username.isEmpty()) return null
+
+        val basicAuthString = "${response.request.url.username}:${response.request.url.password}@"
+        val url = response.request.url.toString().replace(basicAuthString, "")
+        return response
+            .request
+            .newBuilder()
+            .header(
+                "Authorization",
+                Credentials.basic(response.request.url.username, response.request.url.password)
+            )
+            .url(url)
+            .build()
     }
 }
