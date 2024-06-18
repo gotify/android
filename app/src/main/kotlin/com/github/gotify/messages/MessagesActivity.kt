@@ -31,6 +31,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.request.ImageRequest
 import com.github.gotify.BuildConfig
+import com.github.gotify.CoilInstance
 import com.github.gotify.MissedMessageUtil
 import com.github.gotify.R
 import com.github.gotify.Utils
@@ -102,7 +103,7 @@ internal class MessagesActivity :
         listMessageAdapter = ListMessageAdapter(
             this,
             viewModel.settings,
-            viewModel.coilHandler.get()
+            CoilInstance.get(this)
         ) { message ->
             scheduleDeletion(message)
         }
@@ -169,13 +170,13 @@ internal class MessagesActivity :
     }
 
     private fun refreshAll() {
-        viewModel.coilHandler.evict()
+        CoilInstance.evict(this)
         startActivity(Intent(this, InitializationActivity::class.java))
         finish()
     }
 
     private fun onRefresh() {
-        viewModel.coilHandler.evict()
+        CoilInstance.evict(this)
         viewModel.messages.clear()
         launchCoroutine {
             loadMore(viewModel.appId).forEachIndexed { index, message ->
@@ -211,9 +212,7 @@ internal class MessagesActivity :
                 .size(100, 100)
                 .target(t)
                 .build()
-            viewModel.coilHandler
-                .get()
-                .enqueue(request)
+            CoilInstance.get(this).enqueue(request)
         }
         selectAppInMenu(selectedItem)
     }
