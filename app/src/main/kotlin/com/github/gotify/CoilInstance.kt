@@ -13,12 +13,10 @@ import coil.request.ImageRequest
 import com.github.gotify.api.CertUtils
 import com.github.gotify.client.model.Application
 import java.io.IOException
-import okhttp3.Authenticator
 import okhttp3.Credentials
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.Response
-import okhttp3.Route
 import org.tinylog.kotlin.Logger
 
 object CoilInstance {
@@ -76,7 +74,7 @@ object CoilInstance {
     ): Pair<SSLSettings, ImageLoader> {
         val builder = OkHttpClient
             .Builder()
-            .authenticator(BasicAuthAuthenticator())
+            .addInterceptor(BasicAuthInterceptor())
         CertUtils.applySslSettings(builder, sslSettings)
         val loader = ImageLoader.Builder(context)
             .okHttpClient(builder.build())
@@ -93,21 +91,23 @@ object CoilInstance {
     }
 }
 
-private class BasicAuthAuthenticator : Authenticator {
-    override fun authenticate(route: Route?, response: Response): Request? {
-        // If there's no username, skip the authenticator
-        if (response.request.url.username.isEmpty()) return null
+private class BasicAuthInterceptor : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        var request = chain.request()
 
-        val basicAuthString = "${response.request.url.username}:${response.request.url.password}@"
-        val url = response.request.url.toString().replace(basicAuthString, "")
-        return response
-            .request
-            .newBuilder()
-            .header(
-                "Authorization",
-                Credentials.basic(response.request.url.username, response.request.url.password)
-            )
-            .url(url)
-            .build()
+        // If there's no username, skip the authentication
+        if (request.url.username.isNotEmpty()) {
+            val basicAuthString = "${request.url.username}:${request.url.password}@"
+            val url = request.url.toString().replace(basicAuthString, "")
+            request = request
+                .newBuilder()
+                .header(
+                    "Authorization",
+                    Credentials.basic(request.url.username, request.url.password)
+                )
+                .url(url)
+                .build()
+        }
+        return chain.proceed(request)
     }
 }
