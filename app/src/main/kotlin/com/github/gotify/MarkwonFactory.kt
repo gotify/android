@@ -11,6 +11,8 @@ import android.text.style.StyleSpan
 import android.text.style.TypefaceSpan
 import androidx.core.content.ContextCompat
 import coil.ImageLoader
+import coil.request.Disposable
+import coil.request.ImageRequest
 import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
 import io.noties.markwon.MarkwonSpansFactory
@@ -22,6 +24,7 @@ import io.noties.markwon.core.MarkwonTheme
 import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
 import io.noties.markwon.ext.tables.TableAwareMovementMethod
 import io.noties.markwon.ext.tables.TablePlugin
+import io.noties.markwon.image.AsyncDrawable
 import io.noties.markwon.image.coil.CoilImagesPlugin
 import io.noties.markwon.movement.MovementMethodPlugin
 import org.commonmark.ext.gfm.tables.TableCell
@@ -34,13 +37,37 @@ import org.commonmark.node.Link
 import org.commonmark.node.ListItem
 import org.commonmark.node.StrongEmphasis
 import org.commonmark.parser.Parser
+import org.tinylog.kotlin.Logger
 
 internal object MarkwonFactory {
     fun createForMessage(context: Context, imageLoader: ImageLoader): Markwon {
         return Markwon.builder(context)
             .usePlugin(CorePlugin.create())
             .usePlugin(MovementMethodPlugin.create(TableAwareMovementMethod.create()))
-            .usePlugin(CoilImagesPlugin.create(context, imageLoader))
+            .usePlugin(
+                CoilImagesPlugin.create(
+                    object : CoilImagesPlugin.CoilStore {
+                        override fun load(drawable: AsyncDrawable): ImageRequest {
+                            return ImageRequest.Builder(context)
+                                .data(drawable.destination)
+                                .placeholder(R.drawable.ic_placeholder)
+                                .listener(onError = { _, err ->
+                                    Logger.error(err.throwable) {
+                                        "Could not load markdown image: ${Utils.redactPassword(
+                                            drawable.destination
+                                        )}"
+                                    }
+                                })
+                                .build()
+                        }
+
+                        override fun cancel(disposable: Disposable) {
+                            disposable.dispose()
+                        }
+                    },
+                    imageLoader
+                )
+            )
             .usePlugin(StrikethroughPlugin.create())
             .usePlugin(TablePlugin.create(context))
             .usePlugin(object : AbstractMarkwonPlugin() {
