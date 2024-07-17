@@ -3,16 +3,23 @@ package com.github.gotify
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
+import android.util.Base64
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.graphics.drawable.toBitmap
 import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
+import coil.decode.DataSource
 import coil.decode.SvgDecoder
 import coil.disk.DiskCache
 import coil.executeBlocking
+import coil.fetch.DrawableResult
+import coil.fetch.Fetcher
 import coil.request.ErrorResult
 import coil.request.ImageRequest
+import coil.request.Options
 import coil.request.SuccessResult
 import com.github.gotify.api.CertUtils
 import com.github.gotify.client.model.Application
@@ -96,6 +103,7 @@ object CoilInstance {
             }
             .components {
                 add(SvgDecoder.Factory())
+                add(DataDecoderFactory())
             }
             .build()
         return sslSettings to loader
@@ -117,5 +125,33 @@ private class BasicAuthInterceptor : Interceptor {
                 .build()
         }
         return chain.proceed(request)
+    }
+}
+
+class DataDecoderFactory : Fetcher.Factory<Uri> {
+    override fun create(data: Uri, options: Options, imageLoader: ImageLoader): Fetcher? {
+        if (!data.scheme.equals("data", ignoreCase = true)) {
+            return null
+        }
+
+        val uri = data.toString()
+        val imageDataBytes = data.toString().substring(uri.indexOf(",") + 1)
+        val bytes = Base64.decode(imageDataBytes.toByteArray(), Base64.DEFAULT)
+        val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+
+        if (bitmap == null) {
+            val show = if (uri.length > 50) uri.take(50) + "..." else uri
+            val malformed = RuntimeException("Malformed data uri: $show")
+            Logger.error(malformed) { "Could not load image" }
+            return null
+        }
+
+        return Fetcher {
+            DrawableResult(
+                drawable = BitmapDrawable(options.context.resources, bitmap),
+                isSampled = false,
+                dataSource = DataSource.MEMORY
+            )
+        }
     }
 }
