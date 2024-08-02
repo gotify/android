@@ -64,7 +64,6 @@
     <string name="missed_messages">Missed messages</string>
     <string name="grouped_notification_text">New Messages</string>
     <string name="websocket_listening">Connected</string>
-    <string name="websocket_could_not_connect">Could not connect</string>
     <string name="websocket_init">Initializing</string>
     <string name="versions">gotify/android v%1$s; gotify/server v%2$s</string>
     <string name="advanced_settings">Advanced Settings</string>
@@ -112,7 +111,7 @@
     <string name="action_dialog_button_open">Open</string>
     <string name="action_dialog_button_cancel">Cancel</string>
 
-    <string name="websocket_not_connected">Not connected</string>
+    <string name="websocket_error">Error %s (see logs)</string>
     <string name="websocket_reconnect">Trying to reconnect</string>
     <plurals name="websocket_retry_interval">
         <item quantity="one">in %d minute</item>
