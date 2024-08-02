@@ -38,8 +38,7 @@ internal class WebSocketConnection(
     private lateinit var onMessageCallback: (Message) -> Unit
     private lateinit var onClose: Runnable
     private lateinit var onOpen: Runnable
-    private lateinit var onBadRequest: BadRequestRunnable
-    private lateinit var onNetworkFailure: OnNetworkFailureRunnable
+    private lateinit var onFailure: OnNetworkFailureRunnable
     private lateinit var onReconnected: Runnable
     private var state: State? = null
 
@@ -71,14 +70,8 @@ internal class WebSocketConnection(
     }
 
     @Synchronized
-    fun onBadRequest(onBadRequest: BadRequestRunnable): WebSocketConnection {
-        this.onBadRequest = onBadRequest
-        return this
-    }
-
-    @Synchronized
-    fun onNetworkFailure(onNetworkFailure: OnNetworkFailureRunnable): WebSocketConnection {
-        this.onNetworkFailure = onNetworkFailure
+    fun onFailure(onFailure: OnNetworkFailureRunnable): WebSocketConnection {
+        this.onFailure = onFailure
         return this
     }
 
@@ -192,15 +185,11 @@ internal class WebSocketConnection(
             Logger.error(t) { "WebSocket($id): failure $code Message: $message" }
             syncExec(id) {
                 closed()
-                if (response != null && response.code >= 400 && response.code <= 499) {
-                    onBadRequest.execute(message)
-                    return@syncExec
-                }
 
                 errorCount++
                 val minutes = (errorCount * 2 - 1).coerceAtMost(20)
 
-                onNetworkFailure.execute(minutes)
+                onFailure.execute(response?.message ?: "unreachable", minutes)
                 scheduleReconnect(TimeUnit.MINUTES.toSeconds(minutes.toLong()))
             }
             super.onFailure(webSocket, t, response)
@@ -214,12 +203,8 @@ internal class WebSocketConnection(
         }
     }
 
-    internal fun interface BadRequestRunnable {
-        fun execute(message: String)
-    }
-
     internal fun interface OnNetworkFailureRunnable {
-        fun execute(minutes: Int)
+        fun execute(status: String, minutes: Int)
     }
 
     internal enum class State {

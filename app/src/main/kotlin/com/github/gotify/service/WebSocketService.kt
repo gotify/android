@@ -111,8 +111,7 @@ internal class WebSocketService : Service() {
         )
             .onOpen { onOpen() }
             .onClose { onClose() }
-            .onBadRequest { message -> onBadRequest(message) }
-            .onNetworkFailure { minutes -> onNetworkFailure(minutes) }
+            .onFailure { status, minutes -> onFailure(status, minutes) }
             .onMessage { message -> onMessage(message) }
             .onReconnected { notifyMissedNotifications() }
             .start()
@@ -179,16 +178,12 @@ internal class WebSocketService : Service() {
         connection!!.scheduleReconnect(15)
     }
 
-    private fun onBadRequest(message: String) {
-        showForegroundNotification(getString(R.string.websocket_could_not_connect), message)
-    }
-
-    private fun onNetworkFailure(minutes: Int) {
-        val status = getString(R.string.websocket_not_connected)
+    private fun onFailure(status: String, minutes: Int) {
+        val title = getString(R.string.websocket_error, status)
         val intervalUnit = resources
             .getQuantityString(R.plurals.websocket_retry_interval, minutes, minutes)
         showForegroundNotification(
-            status,
+            title,
             "${getString(R.string.websocket_reconnect)} $intervalUnit"
         )
     }
