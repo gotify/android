@@ -332,6 +332,8 @@ internal class MessagesActivity :
                 }
             }
         }
+        // Force re-render of all items to update relative date-times on app resume.
+        listMessageAdapter.notifyDataSetChanged()
         selectAppInMenu(binding.navView.menu.findItem(selectedIndex))
         super.onResume()
     }
