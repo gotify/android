@@ -9,11 +9,13 @@ import android.text.style.QuoteSpan
 import android.text.style.RelativeSizeSpan
 import android.text.style.StyleSpan
 import android.text.style.TypefaceSpan
+import android.view.View
 import androidx.core.content.ContextCompat
 import coil.ImageLoader
 import coil.request.Disposable
 import coil.request.ImageRequest
 import io.noties.markwon.AbstractMarkwonPlugin
+import io.noties.markwon.LinkResolver
 import io.noties.markwon.Markwon
 import io.noties.markwon.MarkwonSpansFactory
 import io.noties.markwon.MarkwonVisitor
@@ -21,10 +23,12 @@ import io.noties.markwon.RenderProps
 import io.noties.markwon.core.CorePlugin
 import io.noties.markwon.core.CoreProps
 import io.noties.markwon.core.MarkwonTheme
+import io.noties.markwon.core.spans.LinkSpan
 import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
 import io.noties.markwon.ext.tables.TableAwareMovementMethod
 import io.noties.markwon.ext.tables.TablePlugin
 import io.noties.markwon.image.AsyncDrawable
+import io.noties.markwon.image.ImageProps
 import io.noties.markwon.image.coil.CoilImagesPlugin
 import io.noties.markwon.movement.MovementMethodPlugin
 import org.commonmark.ext.gfm.tables.TableCell
@@ -33,6 +37,7 @@ import org.commonmark.node.BlockQuote
 import org.commonmark.node.Code
 import org.commonmark.node.Emphasis
 import org.commonmark.node.Heading
+import org.commonmark.node.Image
 import org.commonmark.node.Link
 import org.commonmark.node.ListItem
 import org.commonmark.node.StrongEmphasis
@@ -68,6 +73,19 @@ internal object MarkwonFactory {
                     imageLoader
                 )
             )
+            .usePlugin(object : AbstractMarkwonPlugin() {
+                override fun configureSpansFactory(builder: MarkwonSpansFactory.Builder) {
+                    builder.appendFactory(Image::class.java) { configuration, props ->
+                        val url = ImageProps.DESTINATION.require(props)
+
+                        LinkSpan(
+                            configuration.theme(),
+                            url,
+                            ImageLinkResolver(configuration.linkResolver())
+                        )
+                    }
+                }
+            })
             .usePlugin(StrikethroughPlugin.create())
             .usePlugin(TablePlugin.create(context))
             .usePlugin(object : AbstractMarkwonPlugin() {
@@ -122,5 +140,11 @@ internal object MarkwonFactory {
                 }
             })
             .build()
+    }
+
+    class ImageLinkResolver(val original: LinkResolver) : LinkResolver {
+        override fun resolve(view: View, link: String) {
+            original.resolve(view, link)
+        }
     }
 }
