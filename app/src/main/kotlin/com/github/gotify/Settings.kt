@@ -4,19 +4,17 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.github.gotify.client.model.User
 
-internal class Settings(context: Context) {
-    private val sharedPreferences: SharedPreferences
-    val filesDir: String
+internal class Settings(private val sharedPreferences: SharedPreferences) {
     var url: String
-        get() = sharedPreferences.getString("url", "")!!
-        set(value) = sharedPreferences.edit().putString("url", value).apply()
+        get() = sharedPreferences.getString(KEY_URL, "")!!
+        set(value) = sharedPreferences.edit().putString(KEY_URL, value).apply()
     var token: String?
-        get() = sharedPreferences.getString("token", null)
-        set(value) = sharedPreferences.edit().putString("token", value).apply()
+        get() = sharedPreferences.getString(KEY_TOKEN, null)
+        set(value) = sharedPreferences.edit().putString(KEY_TOKEN, value).apply()
     var user: User? = null
         get() {
-            val username = sharedPreferences.getString("username", null)
-            val admin = sharedPreferences.getBoolean("admin", false)
+            val username = sharedPreferences.getString(KEY_USERNAME, null)
+            val admin = sharedPreferences.getBoolean(KEY_ADMIN, false)
             return if (username != null) {
                 User().name(username).admin(admin)
             } else {
@@ -25,28 +23,26 @@ internal class Settings(context: Context) {
         }
         private set
     var serverVersion: String
-        get() = sharedPreferences.getString("version", "UNKNOWN")!!
-        set(value) = sharedPreferences.edit().putString("version", value).apply()
+        get() = sharedPreferences.getString(KEY_VERSION, "UNKNOWN")!!
+        set(value) = sharedPreferences.edit().putString(KEY_VERSION, value).apply()
     var legacyCert: String?
-        get() = sharedPreferences.getString("cert", null)
-        set(value) = sharedPreferences.edit().putString("cert", value).commit().toUnit()
+        get() = sharedPreferences.getString(KEY_CERTIFICATE, null)
+        set(value) = sharedPreferences.edit().putString(KEY_CERTIFICATE, value).commit().toUnit()
     var caCertPath: String?
-        get() = sharedPreferences.getString("caCertPath", null)
-        set(value) = sharedPreferences.edit().putString("caCertPath", value).commit().toUnit()
+        get() = sharedPreferences.getString(KEY_CA_CERTIFICATE_PATH, null)
+        set(value) = sharedPreferences.edit().putString(
+            KEY_CA_CERTIFICATE_PATH,
+            value
+        ).commit().toUnit()
     var validateSSL: Boolean
-        get() = sharedPreferences.getBoolean("validateSSL", true)
-        set(value) = sharedPreferences.edit().putBoolean("validateSSL", value).apply()
+        get() = sharedPreferences.getBoolean(KEY_VALIDATE_SSL, true)
+        set(value) = sharedPreferences.edit().putBoolean(KEY_VALIDATE_SSL, value).apply()
     var clientCertPath: String?
-        get() = sharedPreferences.getString("clientCertPath", null)
-        set(value) = sharedPreferences.edit().putString("clientCertPath", value).apply()
+        get() = sharedPreferences.getString(KEY_CLIENT_CERTIFICATE_PATH, null)
+        set(value) = sharedPreferences.edit().putString(KEY_CLIENT_CERTIFICATE_PATH, value).apply()
     var clientCertPassword: String?
-        get() = sharedPreferences.getString("clientCertPass", null)
-        set(value) = sharedPreferences.edit().putString("clientCertPass", value).apply()
-
-    init {
-        sharedPreferences = context.getSharedPreferences("gotify", Context.MODE_PRIVATE)
-        filesDir = context.filesDir.absolutePath
-    }
+        get() = sharedPreferences.getString(KEY_CLIENT_CERTIFICATE_PASS, null)
+        set(value) = sharedPreferences.edit().putString(KEY_CLIENT_CERTIFICATE_PASS, value).apply()
 
     fun tokenExists(): Boolean = !token.isNullOrEmpty()
 
@@ -61,7 +57,7 @@ internal class Settings(context: Context) {
     }
 
     fun setUser(name: String?, admin: Boolean) {
-        sharedPreferences.edit().putString("username", name).putBoolean("admin", admin).apply()
+        sharedPreferences.edit().putString(KEY_USERNAME, name).putBoolean(KEY_ADMIN, admin).apply()
     }
 
     fun sslSettings(): SSLSettings {
@@ -75,4 +71,21 @@ internal class Settings(context: Context) {
 
     @Suppress("UnusedReceiverParameter")
     private fun Any?.toUnit() = Unit
+
+    companion object {
+        private const val KEY_URL = "url"
+        private const val KEY_TOKEN = "token"
+        private const val KEY_USERNAME = "username"
+        private const val KEY_ADMIN = "admin"
+        private const val KEY_VERSION = "version"
+        private const val KEY_CERTIFICATE = "cert"
+        private const val KEY_CA_CERTIFICATE_PATH = "caCertPath"
+        private const val KEY_VALIDATE_SSL = "validateSSL"
+        private const val KEY_CLIENT_CERTIFICATE_PATH = "clientCertPath"
+        private const val KEY_CLIENT_CERTIFICATE_PASS = "clientCertPass"
+
+        operator fun invoke(context: Context): Settings = Settings(
+            sharedPreferences = context.getSharedPreferences("gotify", Context.MODE_PRIVATE)
+        )
+    }
 }

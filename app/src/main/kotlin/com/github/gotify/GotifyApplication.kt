@@ -36,7 +36,7 @@ class GotifyApplication : Application() {
             try {
                 val legacyCert = settings.legacyCert
                 settings.legacyCert = null
-                val caCertFile = File(settings.filesDir, CertUtils.CA_CERT_NAME)
+                val caCertFile = File(filesDir.absolutePath, CertUtils.CA_CERT_NAME)
                 FileOutputStream(caCertFile).use {
                     it.write(legacyCert?.encodeToByteArray())
                 }

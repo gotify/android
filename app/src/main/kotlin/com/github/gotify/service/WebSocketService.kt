@@ -47,7 +47,7 @@ internal class WebSocketService : Service() {
         private const val NOT_LOADED = -2L
     }
 
-    private lateinit var settings: Settings
+    private val settings: Settings by lazy { Settings(this) }
     private var connection: WebSocketConnection? = null
     private val networkCallback: ConnectivityManager.NetworkCallback =
         object : ConnectivityManager.NetworkCallback() {
@@ -66,7 +66,6 @@ internal class WebSocketService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        settings = Settings(this)
         val client = ClientFactory.clientToken(settings)
         missingMessageUtil = MissedMessageUtil(client.createService(MessageApi::class.java))
         Logger.info("Create ${javaClass.simpleName}")
