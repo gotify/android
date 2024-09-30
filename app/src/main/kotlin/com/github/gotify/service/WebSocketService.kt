@@ -22,6 +22,7 @@ import com.github.gotify.MarkwonFactory
 import com.github.gotify.MissedMessageUtil
 import com.github.gotify.NotificationSupport
 import com.github.gotify.R
+import com.github.gotify.Repository
 import com.github.gotify.Settings
 import com.github.gotify.Utils
 import com.github.gotify.api.Callback
@@ -36,8 +37,11 @@ import com.github.gotify.messages.Extras
 import com.github.gotify.messages.IntentUrlDialogActivity
 import com.github.gotify.messages.MessagesActivity
 import io.noties.markwon.Markwon
+import java.lang.ref.WeakReference
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 import org.tinylog.kotlin.Logger
 
 internal class WebSocketService : Service() {
@@ -45,6 +49,8 @@ internal class WebSocketService : Service() {
         private val castAddition = if (BuildConfig.DEBUG) ".DEBUG" else ""
         val NEW_MESSAGE_BROADCAST = "${WebSocketService::class.java.name}.NEW_MESSAGE$castAddition"
         private const val NOT_LOADED = -2L
+
+        var repository: Repository? by weakReference()
     }
 
     private val settings: Settings by lazy { Settings(this) }
@@ -243,6 +249,7 @@ internal class WebSocketService : Service() {
     }
 
     private fun broadcast(message: Message) {
+        repository?.storeMessage(message)
         val intent = Intent()
         intent.action = NEW_MESSAGE_BROADCAST
         intent.putExtra("message", Utils.JSON.toJson(message))
@@ -440,3 +447,12 @@ internal class WebSocketService : Service() {
         notificationManager.notify(-5, builder.build())
     }
 }
+
+private fun <T> weakReference(tIn: T? = null): ReadWriteProperty<Any?, T?> =
+    object : ReadWriteProperty<Any?, T?> {
+        var t = WeakReference<T?>(tIn)
+        override fun getValue(thisRef: Any?, property: KProperty<*>): T? = t.get()
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: T?) {
+            t = WeakReference(value)
+        }
+    }
