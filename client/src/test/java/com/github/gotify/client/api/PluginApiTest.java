@@ -6,10 +6,12 @@ import com.github.gotify.client.model.PluginConf;
 import org.junit.Before;
 import org.junit.Test;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * API tests for PluginApi
@@ -23,6 +25,7 @@ public class PluginApiTest {
         api = new ApiClient().createService(PluginApi.class);
     }
 
+
     /**
      * Disable a plugin.
      *
@@ -35,6 +38,7 @@ public class PluginApiTest {
 
         // TODO: test validations
     }
+
     /**
      * Enable a plugin.
      *
@@ -47,6 +51,7 @@ public class PluginApiTest {
 
         // TODO: test validations
     }
+
     /**
      * Get YAML configuration for Configurer plugin.
      *
@@ -59,6 +64,7 @@ public class PluginApiTest {
 
         // TODO: test validations
     }
+
     /**
      * Get display info for a Displayer plugin.
      *
@@ -71,6 +77,7 @@ public class PluginApiTest {
 
         // TODO: test validations
     }
+
     /**
      * Return all plugins.
      *
@@ -82,6 +89,7 @@ public class PluginApiTest {
 
         // TODO: test validations
     }
+
     /**
      * Update YAML configuration for Configurer plugin.
      *

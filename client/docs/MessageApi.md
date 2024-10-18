@@ -1,6 +1,6 @@
 # MessageApi
 
-All URIs are relative to *http://localhost*
+All URIs are relative to *http://localhost/*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -11,7 +11,6 @@ Method | HTTP request | Description
 [**getAppMessages**](MessageApi.md#getAppMessages) | **GET** application/{id}/message | Return all messages from a specific application.
 [**getMessages**](MessageApi.md#getMessages) | **GET** message | Return all messages.
 [**streamMessages**](MessageApi.md#streamMessages) | **GET** stream | Websocket, return newly created messages.
-
 
 <a name="createMessage"></a>
 # **createMessage**
@@ -31,6 +30,12 @@ __NOTE__: This API ONLY accepts an application token as authentication.
 //import com.github.gotify.client.api.MessageApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
+
+// Configure API key authorization: appTokenAuthorizationHeader
+ApiKeyAuth appTokenAuthorizationHeader = (ApiKeyAuth) defaultClient.getAuthentication("appTokenAuthorizationHeader");
+appTokenAuthorizationHeader.setApiKey("YOUR API KEY");
+// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+//appTokenAuthorizationHeader.setApiKeyPrefix("Token");
 
 // Configure API key authorization: appTokenHeader
 ApiKeyAuth appTokenHeader = (ApiKeyAuth) defaultClient.getAuthentication("appTokenHeader");
@@ -67,7 +72,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[appTokenHeader](../README.md#appTokenHeader), [appTokenQuery](../README.md#appTokenQuery)
+[appTokenAuthorizationHeader](../README.md#appTokenAuthorizationHeader)[appTokenHeader](../README.md#appTokenHeader)[appTokenQuery](../README.md#appTokenQuery)
 
 ### HTTP request headers
 
@@ -90,11 +95,16 @@ Delete all messages from a specific application.
 //import com.github.gotify.client.api.MessageApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
-
 // Configure HTTP basic authorization: basicAuth
 HttpBasicAuth basicAuth = (HttpBasicAuth) defaultClient.getAuthentication("basicAuth");
 basicAuth.setUsername("YOUR USERNAME");
 basicAuth.setPassword("YOUR PASSWORD");
+
+// Configure API key authorization: clientTokenAuthorizationHeader
+ApiKeyAuth clientTokenAuthorizationHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenAuthorizationHeader");
+clientTokenAuthorizationHeader.setApiKey("YOUR API KEY");
+// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+//clientTokenAuthorizationHeader.setApiKeyPrefix("Token");
 
 // Configure API key authorization: clientTokenHeader
 ApiKeyAuth clientTokenHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenHeader");
@@ -131,11 +141,11 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[basicAuth](../README.md#basicAuth), [clientTokenHeader](../README.md#clientTokenHeader), [clientTokenQuery](../README.md#clientTokenQuery)
+[basicAuth](../README.md#basicAuth)[clientTokenAuthorizationHeader](../README.md#clientTokenAuthorizationHeader)[clientTokenHeader](../README.md#clientTokenHeader)[clientTokenQuery](../README.md#clientTokenQuery)
 
 ### HTTP request headers
 
- - **Content-Type**: application/json
+ - **Content-Type**: Not defined
  - **Accept**: application/json
 
 <a name="deleteMessage"></a>
@@ -154,11 +164,16 @@ Deletes a message with an id.
 //import com.github.gotify.client.api.MessageApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
-
 // Configure HTTP basic authorization: basicAuth
 HttpBasicAuth basicAuth = (HttpBasicAuth) defaultClient.getAuthentication("basicAuth");
 basicAuth.setUsername("YOUR USERNAME");
 basicAuth.setPassword("YOUR PASSWORD");
+
+// Configure API key authorization: clientTokenAuthorizationHeader
+ApiKeyAuth clientTokenAuthorizationHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenAuthorizationHeader");
+clientTokenAuthorizationHeader.setApiKey("YOUR API KEY");
+// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+//clientTokenAuthorizationHeader.setApiKeyPrefix("Token");
 
 // Configure API key authorization: clientTokenHeader
 ApiKeyAuth clientTokenHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenHeader");
@@ -195,11 +210,11 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[basicAuth](../README.md#basicAuth), [clientTokenHeader](../README.md#clientTokenHeader), [clientTokenQuery](../README.md#clientTokenQuery)
+[basicAuth](../README.md#basicAuth)[clientTokenAuthorizationHeader](../README.md#clientTokenAuthorizationHeader)[clientTokenHeader](../README.md#clientTokenHeader)[clientTokenQuery](../README.md#clientTokenQuery)
 
 ### HTTP request headers
 
- - **Content-Type**: application/json
+ - **Content-Type**: Not defined
  - **Accept**: application/json
 
 <a name="deleteMessages"></a>
@@ -218,11 +233,16 @@ Delete all messages.
 //import com.github.gotify.client.api.MessageApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
-
 // Configure HTTP basic authorization: basicAuth
 HttpBasicAuth basicAuth = (HttpBasicAuth) defaultClient.getAuthentication("basicAuth");
 basicAuth.setUsername("YOUR USERNAME");
 basicAuth.setPassword("YOUR PASSWORD");
+
+// Configure API key authorization: clientTokenAuthorizationHeader
+ApiKeyAuth clientTokenAuthorizationHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenAuthorizationHeader");
+clientTokenAuthorizationHeader.setApiKey("YOUR API KEY");
+// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+//clientTokenAuthorizationHeader.setApiKeyPrefix("Token");
 
 // Configure API key authorization: clientTokenHeader
 ApiKeyAuth clientTokenHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenHeader");
@@ -255,11 +275,11 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[basicAuth](../README.md#basicAuth), [clientTokenHeader](../README.md#clientTokenHeader), [clientTokenQuery](../README.md#clientTokenQuery)
+[basicAuth](../README.md#basicAuth)[clientTokenAuthorizationHeader](../README.md#clientTokenAuthorizationHeader)[clientTokenHeader](../README.md#clientTokenHeader)[clientTokenQuery](../README.md#clientTokenQuery)
 
 ### HTTP request headers
 
- - **Content-Type**: application/json
+ - **Content-Type**: Not defined
  - **Accept**: application/json
 
 <a name="getAppMessages"></a>
@@ -278,11 +298,16 @@ Return all messages from a specific application.
 //import com.github.gotify.client.api.MessageApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
-
 // Configure HTTP basic authorization: basicAuth
 HttpBasicAuth basicAuth = (HttpBasicAuth) defaultClient.getAuthentication("basicAuth");
 basicAuth.setUsername("YOUR USERNAME");
 basicAuth.setPassword("YOUR PASSWORD");
+
+// Configure API key authorization: clientTokenAuthorizationHeader
+ApiKeyAuth clientTokenAuthorizationHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenAuthorizationHeader");
+clientTokenAuthorizationHeader.setApiKey("YOUR API KEY");
+// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+//clientTokenAuthorizationHeader.setApiKeyPrefix("Token");
 
 // Configure API key authorization: clientTokenHeader
 ApiKeyAuth clientTokenHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenHeader");
@@ -314,8 +339,8 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **id** | **Long**| the application id |
- **limit** | **Integer**| the maximal amount of messages to return | [optional] [default to 100]
- **since** | **Long**| return all messages with an ID less than this value | [optional]
+ **limit** | **Integer**| the maximal amount of messages to return | [optional] [default to 100] [enum: 1, 200]
+ **since** | **Long**| return all messages with an ID less than this value | [optional] [enum: 0]
 
 ### Return type
 
@@ -323,11 +348,11 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[basicAuth](../README.md#basicAuth), [clientTokenHeader](../README.md#clientTokenHeader), [clientTokenQuery](../README.md#clientTokenQuery)
+[basicAuth](../README.md#basicAuth)[clientTokenAuthorizationHeader](../README.md#clientTokenAuthorizationHeader)[clientTokenHeader](../README.md#clientTokenHeader)[clientTokenQuery](../README.md#clientTokenQuery)
 
 ### HTTP request headers
 
- - **Content-Type**: application/json
+ - **Content-Type**: Not defined
  - **Accept**: application/json
 
 <a name="getMessages"></a>
@@ -346,11 +371,16 @@ Return all messages.
 //import com.github.gotify.client.api.MessageApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
-
 // Configure HTTP basic authorization: basicAuth
 HttpBasicAuth basicAuth = (HttpBasicAuth) defaultClient.getAuthentication("basicAuth");
 basicAuth.setUsername("YOUR USERNAME");
 basicAuth.setPassword("YOUR PASSWORD");
+
+// Configure API key authorization: clientTokenAuthorizationHeader
+ApiKeyAuth clientTokenAuthorizationHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenAuthorizationHeader");
+clientTokenAuthorizationHeader.setApiKey("YOUR API KEY");
+// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+//clientTokenAuthorizationHeader.setApiKeyPrefix("Token");
 
 // Configure API key authorization: clientTokenHeader
 ApiKeyAuth clientTokenHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenHeader");
@@ -380,8 +410,8 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **limit** | **Integer**| the maximal amount of messages to return | [optional] [default to 100]
- **since** | **Long**| return all messages with an ID less than this value | [optional]
+ **limit** | **Integer**| the maximal amount of messages to return | [optional] [default to 100] [enum: 1, 200]
+ **since** | **Long**| return all messages with an ID less than this value | [optional] [enum: 0]
 
 ### Return type
 
@@ -389,11 +419,11 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[basicAuth](../README.md#basicAuth), [clientTokenHeader](../README.md#clientTokenHeader), [clientTokenQuery](../README.md#clientTokenQuery)
+[basicAuth](../README.md#basicAuth)[clientTokenAuthorizationHeader](../README.md#clientTokenAuthorizationHeader)[clientTokenHeader](../README.md#clientTokenHeader)[clientTokenQuery](../README.md#clientTokenQuery)
 
 ### HTTP request headers
 
- - **Content-Type**: application/json
+ - **Content-Type**: Not defined
  - **Accept**: application/json
 
 <a name="streamMessages"></a>
@@ -412,11 +442,16 @@ Websocket, return newly created messages.
 //import com.github.gotify.client.api.MessageApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
-
 // Configure HTTP basic authorization: basicAuth
 HttpBasicAuth basicAuth = (HttpBasicAuth) defaultClient.getAuthentication("basicAuth");
 basicAuth.setUsername("YOUR USERNAME");
 basicAuth.setPassword("YOUR PASSWORD");
+
+// Configure API key authorization: clientTokenAuthorizationHeader
+ApiKeyAuth clientTokenAuthorizationHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenAuthorizationHeader");
+clientTokenAuthorizationHeader.setApiKey("YOUR API KEY");
+// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+//clientTokenAuthorizationHeader.setApiKeyPrefix("Token");
 
 // Configure API key authorization: clientTokenHeader
 ApiKeyAuth clientTokenHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenHeader");
@@ -449,10 +484,10 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[basicAuth](../README.md#basicAuth), [clientTokenHeader](../README.md#clientTokenHeader), [clientTokenQuery](../README.md#clientTokenQuery)
+[basicAuth](../README.md#basicAuth)[clientTokenAuthorizationHeader](../README.md#clientTokenAuthorizationHeader)[clientTokenHeader](../README.md#clientTokenHeader)[clientTokenQuery](../README.md#clientTokenQuery)
 
 ### HTTP request headers
 
- - **Content-Type**: application/json
+ - **Content-Type**: Not defined
  - **Accept**: application/json
 

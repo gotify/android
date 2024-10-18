@@ -21,39 +21,23 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.IOException;
-import org.threeten.bp.OffsetDateTime;
 /**
- * The Application holds information about an app which can send notifications.
+ * Params allowed to create or update Applications.
  */
-@Schema(description = "The Application holds information about an app which can send notifications.")
+@Schema(description = "Params allowed to create or update Applications.")
 
 
-public class Application {
+public class ApplicationParams {
   @SerializedName("defaultPriority")
   private Long defaultPriority = null;
 
   @SerializedName("description")
   private String description = null;
 
-  @SerializedName("id")
-  private Long id = null;
-
-  @SerializedName("image")
-  private String image = null;
-
-  @SerializedName("internal")
-  private Boolean internal = null;
-
-  @SerializedName("lastUsed")
-  private OffsetDateTime lastUsed = null;
-
   @SerializedName("name")
   private String name = null;
 
-  @SerializedName("token")
-  private String token = null;
-
-  public Application defaultPriority(Long defaultPriority) {
+  public ApplicationParams defaultPriority(Long defaultPriority) {
     this.defaultPriority = defaultPriority;
     return this;
   }
@@ -62,7 +46,7 @@ public class Application {
    * The default priority of messages sent by this application. Defaults to 0.
    * @return defaultPriority
   **/
-  @Schema(example = "4", description = "The default priority of messages sent by this application. Defaults to 0.")
+  @Schema(example = "5", description = "The default priority of messages sent by this application. Defaults to 0.")
   public Long getDefaultPriority() {
     return defaultPriority;
   }
@@ -71,7 +55,7 @@ public class Application {
     this.defaultPriority = defaultPriority;
   }
 
-  public Application description(String description) {
+  public ApplicationParams description(String description) {
     this.description = description;
     return this;
   }
@@ -80,7 +64,7 @@ public class Application {
    * The description of the application.
    * @return description
   **/
-  @Schema(example = "Backup server for the interwebs", required = true, description = "The description of the application.")
+  @Schema(example = "Backup server for the interwebs", description = "The description of the application.")
   public String getDescription() {
     return description;
   }
@@ -89,43 +73,7 @@ public class Application {
     this.description = description;
   }
 
-   /**
-   * The application id.
-   * @return id
-  **/
-  @Schema(example = "5", required = true, description = "The application id.")
-  public Long getId() {
-    return id;
-  }
-
-   /**
-   * The image of the application.
-   * @return image
-  **/
-  @Schema(example = "image/image.jpeg", required = true, description = "The image of the application.")
-  public String getImage() {
-    return image;
-  }
-
-   /**
-   * Whether the application is an internal application. Internal applications should not be deleted.
-   * @return internal
-  **/
-  @Schema(example = "false", required = true, description = "Whether the application is an internal application. Internal applications should not be deleted.")
-  public Boolean isInternal() {
-    return internal;
-  }
-
-   /**
-   * The last time the application token was used.
-   * @return lastUsed
-  **/
-  @Schema(example = "2019-01-01T00:00Z", description = "The last time the application token was used.")
-  public OffsetDateTime getLastUsed() {
-    return lastUsed;
-  }
-
-  public Application name(String name) {
+  public ApplicationParams name(String name) {
     this.name = name;
     return this;
   }
@@ -143,15 +91,6 @@ public class Application {
     this.name = name;
   }
 
-   /**
-   * The application token. Can be used as &#x60;appToken&#x60;. See Authentication.
-   * @return token
-  **/
-  @Schema(example = "AWH0wZ5r0Mbac.r", required = true, description = "The application token. Can be used as `appToken`. See Authentication.")
-  public String getToken() {
-    return token;
-  }
-
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -161,36 +100,26 @@ public class Application {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Application application = (Application) o;
-    return Objects.equals(this.defaultPriority, application.defaultPriority) &&
-        Objects.equals(this.description, application.description) &&
-        Objects.equals(this.id, application.id) &&
-        Objects.equals(this.image, application.image) &&
-        Objects.equals(this.internal, application.internal) &&
-        Objects.equals(this.lastUsed, application.lastUsed) &&
-        Objects.equals(this.name, application.name) &&
-        Objects.equals(this.token, application.token);
+    ApplicationParams applicationParams = (ApplicationParams) o;
+    return Objects.equals(this.defaultPriority, applicationParams.defaultPriority) &&
+        Objects.equals(this.description, applicationParams.description) &&
+        Objects.equals(this.name, applicationParams.name);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(defaultPriority, description, id, image, internal, lastUsed, name, token);
+    return Objects.hash(defaultPriority, description, name);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Application {\n");
+    sb.append("class ApplicationParams {\n");
     
     sb.append("    defaultPriority: ").append(toIndentedString(defaultPriority)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
-    sb.append("    image: ").append(toIndentedString(image)).append("\n");
-    sb.append("    internal: ").append(toIndentedString(internal)).append("\n");
-    sb.append("    lastUsed: ").append(toIndentedString(lastUsed)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
-    sb.append("    token: ").append(toIndentedString(token)).append("\n");
     sb.append("}");
     return sb.toString();
   }

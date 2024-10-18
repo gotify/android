@@ -9,6 +9,7 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 
 import com.github.gotify.client.model.Client;
+import com.github.gotify.client.model.ClientParams;
 import com.github.gotify.client.model.Error;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public interface ClientApi {
   })
   @POST("client")
   Call<Client> createClient(
-    @retrofit2.http.Body Client body
+    @retrofit2.http.Body ClientParams body
   );
 
   /**
@@ -37,9 +38,6 @@ public interface ClientApi {
    * @param id the client id (required)
    * @return Call&lt;Void&gt;
    */
-  @Headers({
-    "Content-Type:application/json"
-  })
   @DELETE("client/{id}")
   Call<Void> deleteClient(
     @retrofit2.http.Path("id") Long id
@@ -50,9 +48,6 @@ public interface ClientApi {
    * 
    * @return Call&lt;List&lt;Client&gt;&gt;
    */
-  @Headers({
-    "Content-Type:application/json"
-  })
   @GET("client")
   Call<List<Client>> getClients();
     
@@ -69,7 +64,7 @@ public interface ClientApi {
   })
   @PUT("client/{id}")
   Call<Client> updateClient(
-    @retrofit2.http.Body Client body, @retrofit2.http.Path("id") Long id
+    @retrofit2.http.Body ClientParams body, @retrofit2.http.Path("id") Long id
   );
 
 }

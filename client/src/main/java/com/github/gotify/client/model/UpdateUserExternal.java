@@ -22,73 +22,73 @@ import com.google.gson.stream.JsonWriter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.IOException;
 /**
- * VersionInfo Model
+ * Used for updating a user.
  */
-@Schema(description = "VersionInfo Model")
+@Schema(description = "Used for updating a user.")
 
 
-public class VersionInfo {
-  @SerializedName("buildDate")
-  private String buildDate = null;
+public class UpdateUserExternal {
+  @SerializedName("admin")
+  private Boolean admin = null;
 
-  @SerializedName("commit")
-  private String commit = null;
+  @SerializedName("name")
+  private String name = null;
 
-  @SerializedName("version")
-  private String version = null;
+  @SerializedName("pass")
+  private String pass = null;
 
-  public VersionInfo buildDate(String buildDate) {
-    this.buildDate = buildDate;
+  public UpdateUserExternal admin(Boolean admin) {
+    this.admin = admin;
     return this;
   }
 
    /**
-   * The date on which this binary was built.
-   * @return buildDate
+   * If the user is an administrator.
+   * @return admin
   **/
-  @Schema(example = "2018-02-27T19:36:10.5045044+01:00", required = true, description = "The date on which this binary was built.")
-  public String getBuildDate() {
-    return buildDate;
+  @Schema(example = "true", required = true, description = "If the user is an administrator.")
+  public Boolean isAdmin() {
+    return admin;
   }
 
-  public void setBuildDate(String buildDate) {
-    this.buildDate = buildDate;
+  public void setAdmin(Boolean admin) {
+    this.admin = admin;
   }
 
-  public VersionInfo commit(String commit) {
-    this.commit = commit;
+  public UpdateUserExternal name(String name) {
+    this.name = name;
     return this;
   }
 
    /**
-   * The git commit hash on which this binary was built.
-   * @return commit
+   * The user name. For login.
+   * @return name
   **/
-  @Schema(example = "ae9512b6b6feea56a110d59a3353ea3b9c293864", required = true, description = "The git commit hash on which this binary was built.")
-  public String getCommit() {
-    return commit;
+  @Schema(example = "unicorn", required = true, description = "The user name. For login.")
+  public String getName() {
+    return name;
   }
 
-  public void setCommit(String commit) {
-    this.commit = commit;
+  public void setName(String name) {
+    this.name = name;
   }
 
-  public VersionInfo version(String version) {
-    this.version = version;
+  public UpdateUserExternal pass(String pass) {
+    this.pass = pass;
     return this;
   }
 
    /**
-   * The current version.
-   * @return version
+   * The user password. For login. Empty for using old password
+   * @return pass
   **/
-  @Schema(example = "5.2.6", required = true, description = "The current version.")
-  public String getVersion() {
-    return version;
+  @Schema(example = "nrocinu", description = "The user password. For login. Empty for using old password")
+  public String getPass() {
+    return pass;
   }
 
-  public void setVersion(String version) {
-    this.version = version;
+  public void setPass(String pass) {
+    this.pass = pass;
   }
 
 
@@ -100,26 +100,26 @@ public class VersionInfo {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    VersionInfo versionInfo = (VersionInfo) o;
-    return Objects.equals(this.buildDate, versionInfo.buildDate) &&
-        Objects.equals(this.commit, versionInfo.commit) &&
-        Objects.equals(this.version, versionInfo.version);
+    UpdateUserExternal updateUserExternal = (UpdateUserExternal) o;
+    return Objects.equals(this.admin, updateUserExternal.admin) &&
+        Objects.equals(this.name, updateUserExternal.name) &&
+        Objects.equals(this.pass, updateUserExternal.pass);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(buildDate, commit, version);
+    return Objects.hash(admin, name, pass);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class VersionInfo {\n");
+    sb.append("class UpdateUserExternal {\n");
     
-    sb.append("    buildDate: ").append(toIndentedString(buildDate)).append("\n");
-    sb.append("    commit: ").append(toIndentedString(commit)).append("\n");
-    sb.append("    version: ").append(toIndentedString(version)).append("\n");
+    sb.append("    admin: ").append(toIndentedString(admin)).append("\n");
+    sb.append("    name: ").append(toIndentedString(name)).append("\n");
+    sb.append("    pass: ").append(toIndentedString(pass)).append("\n");
     sb.append("}");
     return sb.toString();
   }

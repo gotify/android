@@ -1,6 +1,6 @@
-# UserPass
+# IdImageBody
 
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**pass** | **String** | The user password. For login. | 
+**file** | [**File**](File.md) | the application image | 

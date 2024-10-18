@@ -5,10 +5,12 @@ import com.github.gotify.client.model.Health;
 import org.junit.Before;
 import org.junit.Test;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * API tests for HealthApi
@@ -21,6 +23,7 @@ public class HealthApiTest {
     public void setup() {
         api = new ApiClient().createService(HealthApi.class);
     }
+
 
     /**
      * Get health information.

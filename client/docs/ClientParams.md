@@ -1,6 +1,6 @@
-# UserPass
+# ClientParams
 
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**pass** | **String** | The user password. For login. | 
+**name** | **String** | The client name | 

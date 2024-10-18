@@ -1,32 +1,59 @@
-apply plugin: 'idea'
-apply plugin: 'eclipse'
-
-group = 'io.swagger'
-version = '1.0.0'
-
-apply plugin: 'java-library'
-
-sourceCompatibility = JavaVersion.VERSION_1_7
-targetCompatibility = JavaVersion.VERSION_1_7
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
 
 ext {
     oltu_version = "1.0.2"
-    retrofit_version = "2.5.0"
-    swagger_annotations_version = "1.5.15"
-    junit_version = "4.13"
-    threetenbp_version = "1.4.4"
-    json_fire_version = "1.8.4"
+    retrofit_version = "2.7.1"
+    swagger_annotations_version = "2.0.0"
+    junit_version = "4.12"
+    threetenbp_version = "1.4.1"
+    json_fire_version = "1.8.3"
 }
 
 dependencies {
-    api "com.squareup.retrofit2:retrofit:$retrofit_version"
-    api "com.squareup.retrofit2:converter-scalars:$retrofit_version"
-    api "com.squareup.retrofit2:converter-gson:$retrofit_version"
-    api "io.swagger:swagger-annotations:$swagger_annotations_version"
-    implementation ("org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:$oltu_version") {
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-scalars:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation "io.swagger.core.v3:swagger-annotations:$swagger_annotations_version"
+    implementation ("org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:$oltu_version"){
         exclude group:'org.apache.oltu.oauth2' , module: 'org.apache.oltu.oauth2.common'
+        exclude group: 'org.json', module: 'json'
     }
-    api "io.gsonfire:gson-fire:$json_fire_version"
-    api "org.threeten:threetenbp:$threetenbp_version"
+    implementation "org.json:json:20180130"
+    implementation "io.gsonfire:gson-fire:$json_fire_version"
+    implementation "org.threeten:threetenbp:$threetenbp_version"
+
     testImplementation "junit:junit:$junit_version"
+}
+
+group = 'io.swagger'
+version = '1.0.0'
+description = 'Swagger Java'
+
+java.sourceCompatibility = 11
+java.targetCompatibility = 11
+
+tasks.register('testsJar', Jar) {
+    archiveClassifier = 'tests'
+    from(sourceSets.test.output)
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from(components.java)
+            artifact(testsJar)
+        }
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
 }

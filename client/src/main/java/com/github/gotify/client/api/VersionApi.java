@@ -21,9 +21,6 @@ public interface VersionApi {
    * 
    * @return Call&lt;VersionInfo&gt;
    */
-  @Headers({
-    "Content-Type:application/json"
-  })
   @GET("version")
   Call<VersionInfo> getVersion();
     
