@@ -1,5 +1,7 @@
 {
   "apiPackage": "com.github.gotify.client.api",
   "modelPackage": "com.github.gotify.client.model",
-  "library": "retrofit2"
+  "library": "retrofit2",
+  "java11": true,
+  "hideGenerationTimestamp": true
 }
