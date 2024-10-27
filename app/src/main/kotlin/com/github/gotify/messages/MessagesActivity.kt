@@ -394,9 +394,8 @@ internal class MessagesActivity :
         }
     }
 
-    private inner class SwipeToDeleteCallback(
-        private val adapter: ListMessageAdapter
-    ) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+    private inner class SwipeToDeleteCallback(private val adapter: ListMessageAdapter) :
+        ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
         private var icon: Drawable?
         private val background: ColorDrawable
 
