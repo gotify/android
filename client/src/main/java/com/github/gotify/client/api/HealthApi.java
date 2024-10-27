@@ -21,9 +21,6 @@ public interface HealthApi {
    * 
    * @return Call&lt;Health&gt;
    */
-  @Headers({
-    "Content-Type:application/json"
-  })
   @GET("health")
   Call<Health> getHealth();
     

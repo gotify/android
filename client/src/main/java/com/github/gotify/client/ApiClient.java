@@ -43,13 +43,17 @@ public class ApiClient {
   public ApiClient(String[] authNames) {
     this();
     for(String authName : authNames) {
-      Interceptor auth;
-      if ("appTokenHeader".equals(authName)) {
+      Interceptor auth = null;
+      if ("appTokenAuthorizationHeader".equals(authName)) {
+        auth = new ApiKeyAuth("header", "Authorization");
+      } else if ("appTokenHeader".equals(authName)) {
         auth = new ApiKeyAuth("header", "X-Gotify-Key");
       } else if ("appTokenQuery".equals(authName)) {
         auth = new ApiKeyAuth("query", "token");
       } else if ("basicAuth".equals(authName)) {
         auth = new HttpBasicAuth();
+      } else if ("clientTokenAuthorizationHeader".equals(authName)) {
+        auth = new ApiKeyAuth("header", "Authorization");
       } else if ("clientTokenHeader".equals(authName)) {
         auth = new ApiKeyAuth("header", "X-Gotify-Key");
       } else if ("clientTokenQuery".equals(authName)) {
@@ -112,7 +116,7 @@ public class ApiClient {
     json = new JSON();
     okBuilder = new OkHttpClient.Builder();
 
-    String baseUrl = "http://localhost";
+    String baseUrl = "http://localhost/";
     if (!baseUrl.endsWith("/"))
       baseUrl = baseUrl + "/";
 

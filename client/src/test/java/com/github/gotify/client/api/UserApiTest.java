@@ -1,17 +1,20 @@
 package com.github.gotify.client.api;
 
 import com.github.gotify.client.ApiClient;
+import com.github.gotify.client.model.CreateUserExternal;
 import com.github.gotify.client.model.Error;
+import com.github.gotify.client.model.UpdateUserExternal;
 import com.github.gotify.client.model.User;
 import com.github.gotify.client.model.UserPass;
-import com.github.gotify.client.model.UserWithPass;
 import org.junit.Before;
 import org.junit.Test;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * API tests for UserApi
@@ -25,18 +28,20 @@ public class UserApiTest {
         api = new ApiClient().createService(UserApi.class);
     }
 
+
     /**
      * Create a user.
      *
-     * 
+     * With enabled registration: non admin users can be created without authentication. With disabled registrations: users can only be created by admin users.
      */
     @Test
     public void createUserTest() {
-        UserWithPass body = null;
+        CreateUserExternal body = null;
         // User response = api.createUser(body);
 
         // TODO: test validations
     }
+
     /**
      * Return the current user.
      *
@@ -48,6 +53,7 @@ public class UserApiTest {
 
         // TODO: test validations
     }
+
     /**
      * Deletes a user.
      *
@@ -60,6 +66,7 @@ public class UserApiTest {
 
         // TODO: test validations
     }
+
     /**
      * Get a user.
      *
@@ -72,6 +79,7 @@ public class UserApiTest {
 
         // TODO: test validations
     }
+
     /**
      * Return all users.
      *
@@ -83,6 +91,7 @@ public class UserApiTest {
 
         // TODO: test validations
     }
+
     /**
      * Update the password of the current user.
      *
@@ -95,6 +104,7 @@ public class UserApiTest {
 
         // TODO: test validations
     }
+
     /**
      * Update a user.
      *
@@ -102,9 +112,9 @@ public class UserApiTest {
      */
     @Test
     public void updateUserTest() {
+        UpdateUserExternal body = null;
         Long id = null;
-        UserWithPass body = null;
-        // User response = api.updateUser(id, body);
+        // User response = api.updateUser(body, id);
 
         // TODO: test validations
     }

@@ -25,6 +25,7 @@ import com.github.gotify.client.ApiClient
 import com.github.gotify.client.api.ClientApi
 import com.github.gotify.client.api.UserApi
 import com.github.gotify.client.model.Client
+import com.github.gotify.client.model.ClientParams
 import com.github.gotify.client.model.VersionInfo
 import com.github.gotify.databinding.ActivityLoginBinding
 import com.github.gotify.databinding.ClientNameDialogBinding
@@ -291,7 +292,7 @@ internal class LoginActivity : AppCompatActivity() {
         nameProvider: TextInputEditText
     ): DialogInterface.OnClickListener {
         return DialogInterface.OnClickListener { _, _ ->
-            val newClient = Client().name(nameProvider.text.toString())
+            val newClient = ClientParams().name(nameProvider.text.toString())
             client.createService(ClientApi::class.java)
                 .createClient(newClient)
                 .enqueue(

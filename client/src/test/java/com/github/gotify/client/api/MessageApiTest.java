@@ -7,10 +7,12 @@ import com.github.gotify.client.model.PagedMessages;
 import org.junit.Before;
 import org.junit.Test;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * API tests for MessageApi
@@ -24,6 +26,7 @@ public class MessageApiTest {
         api = new ApiClient().createService(MessageApi.class);
     }
 
+
     /**
      * Create a message.
      *
@@ -36,6 +39,7 @@ public class MessageApiTest {
 
         // TODO: test validations
     }
+
     /**
      * Delete all messages from a specific application.
      *
@@ -48,6 +52,7 @@ public class MessageApiTest {
 
         // TODO: test validations
     }
+
     /**
      * Deletes a message with an id.
      *
@@ -60,6 +65,7 @@ public class MessageApiTest {
 
         // TODO: test validations
     }
+
     /**
      * Delete all messages.
      *
@@ -71,6 +77,7 @@ public class MessageApiTest {
 
         // TODO: test validations
     }
+
     /**
      * Return all messages from a specific application.
      *
@@ -85,6 +92,7 @@ public class MessageApiTest {
 
         // TODO: test validations
     }
+
     /**
      * Return all messages.
      *
@@ -98,6 +106,7 @@ public class MessageApiTest {
 
         // TODO: test validations
     }
+
     /**
      * Websocket, return newly created messages.
      *

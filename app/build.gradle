@@ -89,11 +89,14 @@ dependencies {
 
     implementation "org.tinylog:tinylog-api-kotlin:$tinylog_version"
     implementation "org.tinylog:tinylog-impl:$tinylog_version"
+
+    implementation 'com.google.code.gson:gson:2.11.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.11.0'
+    implementation 'org.threeten:threetenbp:1.7.0'
 }
 
 configurations {
     configureEach {
-        exclude group: 'org.json', module: 'json'
         exclude group: 'androidx.lifecycle', module: 'lifecycle-viewmodel-ktx'
     }
 }

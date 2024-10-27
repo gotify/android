@@ -1,11 +1,10 @@
 # HealthApi
 
-All URIs are relative to *http://localhost*
+All URIs are relative to *http://localhost/*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**getHealth**](HealthApi.md#getHealth) | **GET** health | Get health information.
-
 
 <a name="getHealth"></a>
 # **getHealth**
@@ -43,6 +42,6 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: application/json
+ - **Content-Type**: Not defined
  - **Accept**: application/json
 

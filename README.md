@@ -63,9 +63,10 @@ $ ./gradlew build
 ## Update client
 
 * Run `./gradlew generateSwaggerCode`
-* Discard changes to `client/build.gradle` (newer versions of dependencies)
-* Fix compile error in `client/src/main/java/com/github/gotify/client/auth/OAuthOkHttpClient.java` (caused by an updated dependency)
 * Delete `client/settings.gradle` (client is a gradle sub project and must not have a settings.gradle)
+* Delete `repositories` block from `client/build.gradle`
+* Delete `implementation "com.sun.xml.ws:jaxws-rt:x.x.x“` from `client/build.gradle`
+* Insert missing bracket in `retryingIntercept` method of class `src/main/java/com/github/gotify/client/auth/OAuth`
 * Commit changes
 
 ## Versioning

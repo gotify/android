@@ -8,10 +8,11 @@ import retrofit2.http.*;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 
+import com.github.gotify.client.model.CreateUserExternal;
 import com.github.gotify.client.model.Error;
+import com.github.gotify.client.model.UpdateUserExternal;
 import com.github.gotify.client.model.User;
 import com.github.gotify.client.model.UserPass;
-import com.github.gotify.client.model.UserWithPass;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +22,7 @@ import java.util.Map;
 public interface UserApi {
   /**
    * Create a user.
-   * 
+   * With enabled registration: non admin users can be created without authentication. With disabled registrations: users can only be created by admin users.
    * @param body the user to add (required)
    * @return Call&lt;User&gt;
    */
@@ -30,7 +31,7 @@ public interface UserApi {
   })
   @POST("user")
   Call<User> createUser(
-    @retrofit2.http.Body UserWithPass body
+    @retrofit2.http.Body CreateUserExternal body
   );
 
   /**
@@ -38,9 +39,6 @@ public interface UserApi {
    * 
    * @return Call&lt;User&gt;
    */
-  @Headers({
-    "Content-Type:application/json"
-  })
   @GET("current/user")
   Call<User> currentUser();
     
@@ -51,9 +49,6 @@ public interface UserApi {
    * @param id the user id (required)
    * @return Call&lt;Void&gt;
    */
-  @Headers({
-    "Content-Type:application/json"
-  })
   @DELETE("user/{id}")
   Call<Void> deleteUser(
     @retrofit2.http.Path("id") Long id
@@ -65,9 +60,6 @@ public interface UserApi {
    * @param id the user id (required)
    * @return Call&lt;User&gt;
    */
-  @Headers({
-    "Content-Type:application/json"
-  })
   @GET("user/{id}")
   Call<User> getUser(
     @retrofit2.http.Path("id") Long id
@@ -78,9 +70,6 @@ public interface UserApi {
    * 
    * @return Call&lt;List&lt;User&gt;&gt;
    */
-  @Headers({
-    "Content-Type:application/json"
-  })
   @GET("user")
   Call<List<User>> getUsers();
     
@@ -102,8 +91,8 @@ public interface UserApi {
   /**
    * Update a user.
    * 
-   * @param id the user id (required)
    * @param body the updated user (required)
+   * @param id the user id (required)
    * @return Call&lt;User&gt;
    */
   @Headers({
@@ -111,7 +100,7 @@ public interface UserApi {
   })
   @POST("user/{id}")
   Call<User> updateUser(
-    @retrofit2.http.Path("id") Long id, @retrofit2.http.Body UserWithPass body
+    @retrofit2.http.Body UpdateUserExternal body, @retrofit2.http.Path("id") Long id
   );
 
 }

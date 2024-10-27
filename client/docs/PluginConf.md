@@ -1,4 +1,3 @@
-
 # PluginConf
 
 ## Properties
@@ -13,6 +12,3 @@ Name | Type | Description | Notes
 **name** | **String** | The plugin name. | 
 **token** | **String** | The user name. For login. | 
 **website** | **String** | The website of the plugin. |  [optional]
-
-
-

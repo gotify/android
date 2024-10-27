@@ -1,6 +1,6 @@
 # ClientApi
 
-All URIs are relative to *http://localhost*
+All URIs are relative to *http://localhost/*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -8,7 +8,6 @@ Method | HTTP request | Description
 [**deleteClient**](ClientApi.md#deleteClient) | **DELETE** client/{id} | Delete a client.
 [**getClients**](ClientApi.md#getClients) | **GET** client | Return all clients.
 [**updateClient**](ClientApi.md#updateClient) | **PUT** client/{id} | Update a client.
-
 
 <a name="createClient"></a>
 # **createClient**
@@ -26,11 +25,16 @@ Create a client.
 //import com.github.gotify.client.api.ClientApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
-
 // Configure HTTP basic authorization: basicAuth
 HttpBasicAuth basicAuth = (HttpBasicAuth) defaultClient.getAuthentication("basicAuth");
 basicAuth.setUsername("YOUR USERNAME");
 basicAuth.setPassword("YOUR PASSWORD");
+
+// Configure API key authorization: clientTokenAuthorizationHeader
+ApiKeyAuth clientTokenAuthorizationHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenAuthorizationHeader");
+clientTokenAuthorizationHeader.setApiKey("YOUR API KEY");
+// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+//clientTokenAuthorizationHeader.setApiKeyPrefix("Token");
 
 // Configure API key authorization: clientTokenHeader
 ApiKeyAuth clientTokenHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenHeader");
@@ -45,7 +49,7 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 //clientTokenQuery.setApiKeyPrefix("Token");
 
 ClientApi apiInstance = new ClientApi();
-Client body = new Client(); // Client | the client to add
+ClientParams body = new ClientParams(); // ClientParams | the client to add
 try {
     Client result = apiInstance.createClient(body);
     System.out.println(result);
@@ -59,7 +63,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **body** | [**Client**](Client.md)| the client to add |
+ **body** | [**ClientParams**](ClientParams.md)| the client to add |
 
 ### Return type
 
@@ -67,7 +71,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[basicAuth](../README.md#basicAuth), [clientTokenHeader](../README.md#clientTokenHeader), [clientTokenQuery](../README.md#clientTokenQuery)
+[basicAuth](../README.md#basicAuth)[clientTokenAuthorizationHeader](../README.md#clientTokenAuthorizationHeader)[clientTokenHeader](../README.md#clientTokenHeader)[clientTokenQuery](../README.md#clientTokenQuery)
 
 ### HTTP request headers
 
@@ -90,11 +94,16 @@ Delete a client.
 //import com.github.gotify.client.api.ClientApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
-
 // Configure HTTP basic authorization: basicAuth
 HttpBasicAuth basicAuth = (HttpBasicAuth) defaultClient.getAuthentication("basicAuth");
 basicAuth.setUsername("YOUR USERNAME");
 basicAuth.setPassword("YOUR PASSWORD");
+
+// Configure API key authorization: clientTokenAuthorizationHeader
+ApiKeyAuth clientTokenAuthorizationHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenAuthorizationHeader");
+clientTokenAuthorizationHeader.setApiKey("YOUR API KEY");
+// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+//clientTokenAuthorizationHeader.setApiKeyPrefix("Token");
 
 // Configure API key authorization: clientTokenHeader
 ApiKeyAuth clientTokenHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenHeader");
@@ -131,11 +140,11 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[basicAuth](../README.md#basicAuth), [clientTokenHeader](../README.md#clientTokenHeader), [clientTokenQuery](../README.md#clientTokenQuery)
+[basicAuth](../README.md#basicAuth)[clientTokenAuthorizationHeader](../README.md#clientTokenAuthorizationHeader)[clientTokenHeader](../README.md#clientTokenHeader)[clientTokenQuery](../README.md#clientTokenQuery)
 
 ### HTTP request headers
 
- - **Content-Type**: application/json
+ - **Content-Type**: Not defined
  - **Accept**: application/json
 
 <a name="getClients"></a>
@@ -154,11 +163,16 @@ Return all clients.
 //import com.github.gotify.client.api.ClientApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
-
 // Configure HTTP basic authorization: basicAuth
 HttpBasicAuth basicAuth = (HttpBasicAuth) defaultClient.getAuthentication("basicAuth");
 basicAuth.setUsername("YOUR USERNAME");
 basicAuth.setPassword("YOUR PASSWORD");
+
+// Configure API key authorization: clientTokenAuthorizationHeader
+ApiKeyAuth clientTokenAuthorizationHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenAuthorizationHeader");
+clientTokenAuthorizationHeader.setApiKey("YOUR API KEY");
+// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+//clientTokenAuthorizationHeader.setApiKeyPrefix("Token");
 
 // Configure API key authorization: clientTokenHeader
 ApiKeyAuth clientTokenHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenHeader");
@@ -191,11 +205,11 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[basicAuth](../README.md#basicAuth), [clientTokenHeader](../README.md#clientTokenHeader), [clientTokenQuery](../README.md#clientTokenQuery)
+[basicAuth](../README.md#basicAuth)[clientTokenAuthorizationHeader](../README.md#clientTokenAuthorizationHeader)[clientTokenHeader](../README.md#clientTokenHeader)[clientTokenQuery](../README.md#clientTokenQuery)
 
 ### HTTP request headers
 
- - **Content-Type**: application/json
+ - **Content-Type**: Not defined
  - **Accept**: application/json
 
 <a name="updateClient"></a>
@@ -214,11 +228,16 @@ Update a client.
 //import com.github.gotify.client.api.ClientApi;
 
 ApiClient defaultClient = Configuration.getDefaultApiClient();
-
 // Configure HTTP basic authorization: basicAuth
 HttpBasicAuth basicAuth = (HttpBasicAuth) defaultClient.getAuthentication("basicAuth");
 basicAuth.setUsername("YOUR USERNAME");
 basicAuth.setPassword("YOUR PASSWORD");
+
+// Configure API key authorization: clientTokenAuthorizationHeader
+ApiKeyAuth clientTokenAuthorizationHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenAuthorizationHeader");
+clientTokenAuthorizationHeader.setApiKey("YOUR API KEY");
+// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+//clientTokenAuthorizationHeader.setApiKeyPrefix("Token");
 
 // Configure API key authorization: clientTokenHeader
 ApiKeyAuth clientTokenHeader = (ApiKeyAuth) defaultClient.getAuthentication("clientTokenHeader");
@@ -233,7 +252,7 @@ clientTokenQuery.setApiKey("YOUR API KEY");
 //clientTokenQuery.setApiKeyPrefix("Token");
 
 ClientApi apiInstance = new ClientApi();
-Client body = new Client(); // Client | the client to update
+ClientParams body = new ClientParams(); // ClientParams | the client to update
 Long id = 789L; // Long | the client id
 try {
     Client result = apiInstance.updateClient(body, id);
@@ -248,7 +267,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **body** | [**Client**](Client.md)| the client to update |
+ **body** | [**ClientParams**](ClientParams.md)| the client to update |
  **id** | **Long**| the client id |
 
 ### Return type
@@ -257,7 +276,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[basicAuth](../README.md#basicAuth), [clientTokenHeader](../README.md#clientTokenHeader), [clientTokenQuery](../README.md#clientTokenQuery)
+[basicAuth](../README.md#basicAuth)[clientTokenAuthorizationHeader](../README.md#clientTokenAuthorizationHeader)[clientTokenHeader](../README.md#clientTokenHeader)[clientTokenQuery](../README.md#clientTokenQuery)
 
 ### HTTP request headers
 

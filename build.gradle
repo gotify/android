@@ -1,12 +1,7 @@
 plugins {
     id 'com.android.application' version '8.5.0' apply false
     id 'org.jetbrains.kotlin.android' version '2.0.0' apply false
-    id 'org.hidetake.swagger.generator' version '2.14.0'
-}
-
-ext {
-    gotifyVersion = 'master'
-    specLocation = "$layout.buildDirectory/gotify.spec.json"
+    id 'org.hidetake.swagger.generator' version '2.19.2'
 }
 
 tasks.register('clean', Delete) {
@@ -14,8 +9,8 @@ tasks.register('clean', Delete) {
 }
 
 static def download(String url, String filename ) {
-    new URL( url ).openConnection().with { conn ->
-        new File( filename ).withOutputStream { out ->
+    new URI(url).toURL().openConnection().with { conn ->
+        new File(filename).withOutputStream { out ->
             conn.inputStream.with { inp ->
                 out << inp
                 inp.close()
@@ -25,16 +20,19 @@ static def download(String url, String filename ) {
 }
 
 tasks.register('downloadSpec') {
-    inputs.property 'version', gotifyVersion
+    def gotifyVersion = 'master'
+    def url = "https://raw.githubusercontent.com/gotify/server/$gotifyVersion/docs/spec.json"
+    def buildDir = project.layout.buildDirectory.get()
+    def specLocation = buildDir.file('gotify.spec.json').asFile.absolutePath
     doFirst {
-        layout.buildDirectory.mkdirs()
-        download("https://raw.githubusercontent.com/gotify/server/${gotifyVersion}/docs/spec.json", specLocation)
+        buildDir.asFile.mkdirs()
+        download(url, specLocation)
     }
 }
 
 swaggerSources {
     gotify {
-        inputFile = specLocation as File
+        inputFile = "$projectDir/build/gotify.spec.json" as File
         code {
             configFile = "$projectDir/swagger.config.json" as File
             language = 'java'
@@ -44,7 +42,7 @@ swaggerSources {
 }
 
 dependencies {
-    swaggerCodegen 'io.swagger:swagger-codegen-cli:2.3.1'
+    swaggerCodegen 'io.swagger.codegen.v3:swagger-codegen-cli:3.0.63'
 }
 
 generateSwaggerCode.dependsOn downloadSpec

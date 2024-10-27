@@ -20,75 +20,34 @@ import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.io.File;
 import java.io.IOException;
 /**
- * VersionInfo Model
+ * IdImageBody
  */
-@Schema(description = "VersionInfo Model")
 
 
-public class VersionInfo {
-  @SerializedName("buildDate")
-  private String buildDate = null;
 
-  @SerializedName("commit")
-  private String commit = null;
+public class IdImageBody {
+  @SerializedName("file")
+  private File file = null;
 
-  @SerializedName("version")
-  private String version = null;
-
-  public VersionInfo buildDate(String buildDate) {
-    this.buildDate = buildDate;
+  public IdImageBody file(File file) {
+    this.file = file;
     return this;
   }
 
    /**
-   * The date on which this binary was built.
-   * @return buildDate
+   * the application image
+   * @return file
   **/
-  @Schema(example = "2018-02-27T19:36:10.5045044+01:00", required = true, description = "The date on which this binary was built.")
-  public String getBuildDate() {
-    return buildDate;
+  @Schema(required = true, description = "the application image")
+  public File getFile() {
+    return file;
   }
 
-  public void setBuildDate(String buildDate) {
-    this.buildDate = buildDate;
-  }
-
-  public VersionInfo commit(String commit) {
-    this.commit = commit;
-    return this;
-  }
-
-   /**
-   * The git commit hash on which this binary was built.
-   * @return commit
-  **/
-  @Schema(example = "ae9512b6b6feea56a110d59a3353ea3b9c293864", required = true, description = "The git commit hash on which this binary was built.")
-  public String getCommit() {
-    return commit;
-  }
-
-  public void setCommit(String commit) {
-    this.commit = commit;
-  }
-
-  public VersionInfo version(String version) {
-    this.version = version;
-    return this;
-  }
-
-   /**
-   * The current version.
-   * @return version
-  **/
-  @Schema(example = "5.2.6", required = true, description = "The current version.")
-  public String getVersion() {
-    return version;
-  }
-
-  public void setVersion(String version) {
-    this.version = version;
+  public void setFile(File file) {
+    this.file = file;
   }
 
 
@@ -100,26 +59,22 @@ public class VersionInfo {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    VersionInfo versionInfo = (VersionInfo) o;
-    return Objects.equals(this.buildDate, versionInfo.buildDate) &&
-        Objects.equals(this.commit, versionInfo.commit) &&
-        Objects.equals(this.version, versionInfo.version);
+    IdImageBody idImageBody = (IdImageBody) o;
+    return Objects.equals(this.file, idImageBody.file);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(buildDate, commit, version);
+    return Objects.hash(Objects.hashCode(file));
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class VersionInfo {\n");
+    sb.append("class IdImageBody {\n");
     
-    sb.append("    buildDate: ").append(toIndentedString(buildDate)).append("\n");
-    sb.append("    commit: ").append(toIndentedString(commit)).append("\n");
-    sb.append("    version: ").append(toIndentedString(version)).append("\n");
+    sb.append("    file: ").append(toIndentedString(file)).append("\n");
     sb.append("}");
     return sb.toString();
   }

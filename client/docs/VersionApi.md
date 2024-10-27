@@ -1,11 +1,10 @@
 # VersionApi
 
-All URIs are relative to *http://localhost*
+All URIs are relative to *http://localhost/*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**getVersion**](VersionApi.md#getVersion) | **GET** version | Get version information.
-
 
 <a name="getVersion"></a>
 # **getVersion**
@@ -43,6 +42,6 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: application/json
+ - **Content-Type**: Not defined
  - **Accept**: application/json
 

@@ -38,9 +38,6 @@ public interface MessageApi {
    * @param id the application id (required)
    * @return Call&lt;Void&gt;
    */
-  @Headers({
-    "Content-Type:application/json"
-  })
   @DELETE("application/{id}/message")
   Call<Void> deleteAppMessages(
     @retrofit2.http.Path("id") Long id
@@ -52,9 +49,6 @@ public interface MessageApi {
    * @param id the message id (required)
    * @return Call&lt;Void&gt;
    */
-  @Headers({
-    "Content-Type:application/json"
-  })
   @DELETE("message/{id}")
   Call<Void> deleteMessage(
     @retrofit2.http.Path("id") Long id
@@ -65,9 +59,6 @@ public interface MessageApi {
    * 
    * @return Call&lt;Void&gt;
    */
-  @Headers({
-    "Content-Type:application/json"
-  })
   @DELETE("message")
   Call<Void> deleteMessages();
     
@@ -80,9 +71,6 @@ public interface MessageApi {
    * @param since return all messages with an ID less than this value (optional)
    * @return Call&lt;PagedMessages&gt;
    */
-  @Headers({
-    "Content-Type:application/json"
-  })
   @GET("application/{id}/message")
   Call<PagedMessages> getAppMessages(
     @retrofit2.http.Path("id") Long id, @retrofit2.http.Query("limit") Integer limit, @retrofit2.http.Query("since") Long since
@@ -95,9 +83,6 @@ public interface MessageApi {
    * @param since return all messages with an ID less than this value (optional)
    * @return Call&lt;PagedMessages&gt;
    */
-  @Headers({
-    "Content-Type:application/json"
-  })
   @GET("message")
   Call<PagedMessages> getMessages(
     @retrofit2.http.Query("limit") Integer limit, @retrofit2.http.Query("since") Long since
@@ -108,9 +93,6 @@ public interface MessageApi {
    * 
    * @return Call&lt;Message&gt;
    */
-  @Headers({
-    "Content-Type:application/json"
-  })
   @GET("stream")
   Call<Message> streamMessages();
     
