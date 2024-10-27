@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-    id 'org.jmailen.kotlinter' version "4.3.0"
+    id 'org.jmailen.kotlinter' version "4.4.1"
 }
 
 android {
@@ -66,7 +66,7 @@ if (project.hasProperty('sign')) {
 }
 
 dependencies {
-    def coil_version = "2.6.0"
+    def coil_version = "2.7.0"
     def markwon_version = "4.6.2"
     def tinylog_version = "2.7.0"
     implementation project(':client')
@@ -78,7 +78,7 @@ dependencies {
     implementation 'androidx.vectordrawable:vectordrawable:1.2.0'
     implementation 'androidx.preference:preference-ktx:1.2.1'
 
-    implementation 'com.github.cyb3rko:QuickPermissions-Kotlin:1.1.3'
+    implementation 'com.github.cyb3rko:QuickPermissions-Kotlin:1.1.5'
     implementation "io.coil-kt:coil:$coil_version"
     implementation "io.coil-kt:coil-svg:$coil_version"
     implementation "io.noties.markwon:core:$markwon_version"
