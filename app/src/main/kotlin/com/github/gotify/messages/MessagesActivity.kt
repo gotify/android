@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.GravityCompat
+import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout.SimpleDrawerListener
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -229,12 +230,11 @@ internal class MessagesActivity :
                     binding.drawerLayout.closeDrawer(GravityCompat.START)
                     true
                 }
-                if (applicationState.unreadCount > 0) {
-                    setActionView(R.layout.action_menu_counter)
-                    actionView?.findViewById<TextView>(
-                        R.id.counter
-                    )?.text = applicationState.counterLabel
-                }
+                setActionView(R.layout.action_menu_counter)
+                actionView?.findViewById<TextView>(
+                    R.id.counter
+                )?.text = applicationState.counterLabel
+                actionView?.isVisible = applicationState.unreadCount > 0
                 val request = ImageRequest.Builder(this@MessagesActivity)
                     .data(applicationState.iconUrl)
                     .error(R.drawable.ic_alarm)
