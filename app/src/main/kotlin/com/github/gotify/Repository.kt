@@ -142,12 +142,9 @@ private constructor(
     suspend fun deleteMessage(message: Message): Boolean =
         messageApi.deleteMessage(message.id).awaitResponse().isSuccessful.also {
             if (it) {
-                storeMessages(
-                    messages.value.flatMap {
-                        it.value.filterNot { it.id == message.id }
-                    },
-                    true
-                )
+                messages.value = messages.value.mapValues {
+                    it.value.filterNot { it.id == message.id }
+                }
             }
         }
 
