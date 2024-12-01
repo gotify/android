@@ -5,16 +5,16 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    id("org.jmailen.kotlinter") version "4.3.0"
+    id("org.jmailen.kotlinter") version "4.4.1"
 }
 
 android {
     namespace = "com.github.gotify"
-    compileSdk = 34
+    compileSdk = 35
     defaultConfig {
         applicationId = "com.github.gotify"
         minSdk = 23
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 32
         versionName = "2.8.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -75,7 +75,7 @@ if (project.hasProperty("sign")) {
 }
 
 dependencies {
-    val coilVersion = "2.6.0"
+    val coilVersion = "2.7.0"
     val markwonVersion = "4.6.2"
     val tinylogVersion = "2.7.0"
     implementation(project(":client"))
@@ -87,7 +87,7 @@ dependencies {
     implementation("androidx.vectordrawable:vectordrawable:1.2.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
 
-    implementation("com.github.cyb3rko:QuickPermissions-Kotlin:1.1.3")
+    implementation("com.github.cyb3rko:QuickPermissions-Kotlin:1.1.5")
     implementation("io.coil-kt:coil:$coilVersion")
     implementation("io.coil-kt:coil-svg:$coilVersion")
     implementation("io.noties.markwon:core:$markwonVersion")
