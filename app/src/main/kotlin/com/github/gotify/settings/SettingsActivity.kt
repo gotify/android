@@ -23,7 +23,9 @@ import com.github.gotify.Utils
 import com.github.gotify.databinding.SettingsActivityBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
-internal class SettingsActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
+internal class SettingsActivity :
+    AppCompatActivity(),
+    OnSharedPreferenceChangeListener {
     private lateinit var binding: SettingsActivityBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {

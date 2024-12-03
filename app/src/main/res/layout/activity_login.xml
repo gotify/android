@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:fitsSystemWindows="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -180,7 +181,6 @@
 
         <ImageButton
             android:id="@+id/advanced_settings"
-            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:text="@string/check_url"
@@ -188,6 +188,7 @@
             android:background="@null"
             app:layout_constraintEnd_toEndOf="@+id/gotify_url"
             app:layout_constraintTop_toTopOf="@+id/checkurl"
+            app:layout_constraintBottom_toBottomOf="@id/checkurl"
             app:srcCompat="@drawable/ic_settings" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

@@ -9,7 +9,8 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
     <application
@@ -27,7 +28,6 @@
         <activity
             android:name=".init.InitializationActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/AppTheme.SplashScreen"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -40,7 +40,6 @@
             android:name=".messages.MessagesActivity"
             android:exported="false"
             android:launchMode="singleTask"
-            android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".login.LoginActivity"
