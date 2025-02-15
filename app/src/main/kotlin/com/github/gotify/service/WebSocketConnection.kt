@@ -1,6 +1,7 @@
 package com.github.gotify.service
 
 import android.app.AlarmManager
+import android.app.AlarmManager.OnAlarmListener
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -29,9 +30,10 @@ internal class WebSocketConnection(
         private val ID = AtomicLong(0)
     }
 
+    private var alarmManagerCallback: OnAlarmListener? = null
+    private var handlerCallback: Runnable? = null
     private val client: OkHttpClient
     private val reconnectHandler = Handler(Looper.getMainLooper())
-    private val reconnectCallback = Runnable { start() }
     private var errorCount = 0
 
     private var webSocket: WebSocket? = null
@@ -106,6 +108,13 @@ internal class WebSocketConnection(
 
     @Synchronized
     fun close() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            alarmManagerCallback?.run(alarmManager::cancel)
+            alarmManagerCallback = null
+        } else {
+            handlerCallback?.run(reconnectHandler::removeCallbacks)
+            handlerCallback = null
+        }
         if (webSocket != null) {
             webSocket?.close(1000, "")
             closed()
@@ -119,8 +128,10 @@ internal class WebSocketConnection(
         state = State.Disconnected
     }
 
+    fun scheduleReconnectNow(seconds: Long) = scheduleReconnect(ID.get(), seconds)
+
     @Synchronized
-    fun scheduleReconnect(seconds: Long) {
+    fun scheduleReconnect(id: Long, seconds: Long) {
         if (state == State.Connecting || state == State.Connected) {
             return
         }
@@ -130,17 +141,23 @@ internal class WebSocketConnection(
             Logger.info("WebSocket: scheduling a restart in $seconds second(s) (via alarm manager)")
             val future = Calendar.getInstance()
             future.add(Calendar.SECOND, seconds.toInt())
+
+            alarmManagerCallback?.run(alarmManager::cancel)
+            val cb = OnAlarmListener { syncExec(id) { start() } }
+            alarmManagerCallback = cb
             alarmManager.setExact(
                 AlarmManager.RTC_WAKEUP,
                 future.timeInMillis,
                 "reconnect-tag",
-                { start() },
+                cb,
                 null
             )
         } else {
             Logger.info("WebSocket: scheduling a restart in $seconds second(s)")
-            reconnectHandler.removeCallbacks(reconnectCallback)
-            reconnectHandler.postDelayed(reconnectCallback, TimeUnit.SECONDS.toMillis(seconds))
+            handlerCallback?.run(reconnectHandler::removeCallbacks)
+            val cb = Runnable { syncExec(id) { start() } }
+            handlerCallback = cb
+            reconnectHandler.postDelayed(cb, TimeUnit.SECONDS.toMillis(seconds))
         }
     }
 
@@ -190,7 +207,7 @@ internal class WebSocketConnection(
                 val minutes = (errorCount * 2 - 1).coerceAtMost(20)
 
                 onFailure.execute(response?.message ?: "unreachable", minutes)
-                scheduleReconnect(TimeUnit.MINUTES.toSeconds(minutes.toLong()))
+                scheduleReconnect(id, TimeUnit.MINUTES.toSeconds(minutes.toLong()))
             }
             super.onFailure(webSocket, t, response)
         }
