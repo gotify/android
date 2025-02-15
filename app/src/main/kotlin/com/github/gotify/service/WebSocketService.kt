@@ -172,10 +172,7 @@ internal class WebSocketService : Service() {
     }
 
     private fun doReconnect() {
-        if (connection == null) {
-            return
-        }
-        connection!!.scheduleReconnect(15)
+        connection?.scheduleReconnectNow(15)
     }
 
     private fun onFailure(status: String, minutes: Int) {
