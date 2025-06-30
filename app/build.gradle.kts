@@ -87,7 +87,7 @@ dependencies {
     implementation("androidx.vectordrawable:vectordrawable:1.2.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
 
-    implementation("com.github.cyb3rko:QuickPermissions-Kotlin:1.1.5")
+    implementation("com.github.cyb3rko:QuickPermissions-Kotlin:1.1.6")
     implementation("io.coil-kt:coil:$coilVersion")
     implementation("io.coil-kt:coil-svg:$coilVersion")
     implementation("io.noties.markwon:core:$markwonVersion")
