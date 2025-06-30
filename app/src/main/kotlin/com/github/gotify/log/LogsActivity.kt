@@ -2,7 +2,6 @@ package com.github.gotify.log
 
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -73,7 +72,7 @@ internal class LogsActivity : AppCompatActivity() {
             R.id.action_copy_logs -> {
                 val content = binding.logContent
                 val clipboardManager =
-                    getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                 val clipData = ClipData.newPlainText("GotifyLog", content.text.toString())
                 clipboardManager.setPrimaryClip(clipData)
                 Utils.showSnackBar(this, getString(R.string.logs_copied))

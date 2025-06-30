@@ -5,13 +5,13 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.preference.ListPreference
 import androidx.preference.ListPreferenceDialogFragmentCompat
 import androidx.preference.Preference
@@ -128,7 +128,7 @@ internal class SettingsActivity :
         private fun openSystemAlertWindowPermissionPage(): Boolean {
             Intent(
                 Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                Uri.parse("package:${requireContext().packageName}")
+                "package:${requireContext().packageName}".toUri()
             ).apply {
                 startActivity(this)
             }

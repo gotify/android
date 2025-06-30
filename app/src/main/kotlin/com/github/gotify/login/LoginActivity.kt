@@ -215,7 +215,7 @@ internal class LoginActivity : AppCompatActivity() {
 
         try {
             resultLauncher.launch(Intent.createChooser(intent, getString(descriptionId)))
-        } catch (e: ActivityNotFoundException) {
+        } catch (_: ActivityNotFoundException) {
             // case for user not having a file browser installed
             Utils.showSnackBar(this, getString(R.string.please_install_file_browser))
         }

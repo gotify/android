@@ -1,5 +1,6 @@
 package com.github.gotify.messages
 
+import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -8,7 +9,6 @@ import android.content.IntentFilter
 import android.graphics.Canvas
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
@@ -21,6 +21,8 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.net.toUri
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout.SimpleDrawerListener
 import androidx.lifecycle.ViewModelProvider
@@ -188,7 +190,7 @@ internal class MessagesActivity :
     }
 
     private fun openDocumentation() {
-        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://gotify.net/docs/pushmsg"))
+        val browserIntent = Intent(Intent.ACTION_VIEW, "https://gotify.net/docs/pushmsg".toUri())
         startActivity(browserIntent)
     }
 
@@ -317,6 +319,7 @@ internal class MessagesActivity :
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(receiver, filter, RECEIVER_EXPORTED)
         } else {
+            @SuppressLint("UnspecifiedRegisterReceiverFlag")
             registerReceiver(receiver, filter)
         }
         launchCoroutine {
@@ -409,7 +412,7 @@ internal class MessagesActivity :
                 icon = DrawableCompat.wrap(drawable.mutate())
                 DrawableCompat.setTint(icon!!, iconColorId)
             }
-            background = ColorDrawable(backgroundColorId)
+            background = backgroundColorId.toDrawable()
         }
 
         override fun onMove(

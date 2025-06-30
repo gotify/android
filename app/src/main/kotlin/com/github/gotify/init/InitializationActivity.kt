@@ -3,13 +3,13 @@ package com.github.gotify.init
 import android.Manifest
 import android.app.AlarmManager
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.github.gotify.R
 import com.github.gotify.Settings
@@ -126,7 +126,7 @@ internal class InitializationActivity : AppCompatActivity() {
             .setPositiveButton(getString(R.string.permissions_dialog_grant)) { _, _ ->
                 Intent(
                     android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
-                    Uri.parse("package:$packageName")
+                    "package:$packageName".toUri()
                 ).apply {
                     activityResultLauncher.launch(this)
                 }
