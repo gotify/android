@@ -10,11 +10,11 @@ plugins {
 
 android {
     namespace = "com.github.gotify"
-    compileSdk = 35
+    compileSdk = 36
     defaultConfig {
         applicationId = "com.github.gotify"
         minSdk = 23
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 33
         versionName = "2.8.2"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
