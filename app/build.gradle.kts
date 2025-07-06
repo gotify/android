@@ -5,16 +5,16 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    id("org.jmailen.kotlinter") version "4.4.1"
+    id("org.jmailen.kotlinter") version "5.1.1"
 }
 
 android {
     namespace = "com.github.gotify"
-    compileSdk = 35
+    compileSdk = 36
     defaultConfig {
         applicationId = "com.github.gotify"
         minSdk = 23
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 33
         versionName = "2.8.2"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -79,15 +79,15 @@ dependencies {
     val markwonVersion = "4.6.2"
     val tinylogVersion = "2.7.0"
     implementation(project(":client"))
-    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("androidx.vectordrawable:vectordrawable:1.2.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
 
-    implementation("com.github.cyb3rko:QuickPermissions-Kotlin:1.1.5")
+    implementation("com.github.cyb3rko:QuickPermissions-Kotlin:1.1.6")
     implementation("io.coil-kt:coil:$coilVersion")
     implementation("io.coil-kt:coil-svg:$coilVersion")
     implementation("io.noties.markwon:core:$markwonVersion")
@@ -99,9 +99,9 @@ dependencies {
     implementation("org.tinylog:tinylog-api-kotlin:$tinylogVersion")
     implementation("org.tinylog:tinylog-impl:$tinylogVersion")
 
-    implementation("com.google.code.gson:gson:2.11.0")
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("org.threeten:threetenbp:1.7.0")
+    implementation("com.google.code.gson:gson:2.13.1")
+    implementation("com.squareup.retrofit2:retrofit:3.0.0")
+    implementation("org.threeten:threetenbp:1.7.1")
 }
 
 configurations {

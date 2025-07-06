@@ -3,12 +3,12 @@ package com.github.gotify
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.util.Base64
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.graphics.drawable.toDrawable
 import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import coil.decode.DataSource
@@ -148,7 +148,7 @@ class DataDecoderFactory : Fetcher.Factory<Uri> {
 
         return Fetcher {
             DrawableResult(
-                drawable = BitmapDrawable(options.context.resources, bitmap),
+                drawable = bitmap.toDrawable(options.context.resources),
                 isSampled = false,
                 dataSource = DataSource.MEMORY
             )

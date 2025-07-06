@@ -10,12 +10,12 @@ import android.content.pm.ServiceInfo
 import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.Network
-import android.net.Uri
 import android.os.Build
 import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import com.github.gotify.BuildConfig
 import com.github.gotify.CoilInstance
 import com.github.gotify.MarkwonFactory
@@ -331,7 +331,7 @@ internal class WebSocketService : Service() {
 
         if (url != null) {
             intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(url)
+            intent.data = url.toUri()
         } else {
             intent = Intent(this, MessagesActivity::class.java)
         }

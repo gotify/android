@@ -1,9 +1,9 @@
 package com.github.gotify.messages
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import com.github.gotify.databinding.ActivityDialogIntentUrlBinding
 
 internal class IntentUrlDialogActivity : AppCompatActivity() {
@@ -18,7 +18,7 @@ internal class IntentUrlDialogActivity : AppCompatActivity() {
         binding.openButton.setOnClickListener {
             finish()
             Intent(Intent.ACTION_VIEW).apply {
-                data = Uri.parse(intentUrl)
+                data = intentUrl?.toUri()
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 startActivity(this)
             }
