@@ -96,6 +96,9 @@
     <string name="setting_key_intent_dialog_permission">intent_dialog_permission</string>
     <string name="setting_summary_intent_dialog_permission">To always show incoming intent URLs, give permission to show this app on top of other apps.</string>
     <string name="setting_summary_intent_dialog_permission_granted">Permission granted.</string>
+    <string name="setting_intent_automatic">Automatically show intent URLs</string>
+    <string name="setting_key_intent_automatic">intent_automatic</string>
+    <string name="setting_summary_intent_automatic">Always automatically show/activate intent URLs. Only do this when you trust the source!</string>
     <string name="push_message">Push message</string>
     <string name="appListDescription">App:</string>
     <string name="priorityDescription">Priority:</string>
