@@ -314,25 +314,23 @@ internal class WebSocketService : Service() {
             "intentUrl"
         )
 
-        val shouldInstantlyOpen = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
-            getString(R.string.setting_key_intent_automatic),
-           resources.getBoolean(R.bool.intent_automatic)
-        )
-
         if (intentUrl != null) {
-            if (shouldInstantlyOpen) {
-                Intent(Intent.ACTION_VIEW).apply {
-                    data = intentUrl.toUri()
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    startActivity(this)
-                }
-            } else {
-                intent = Intent(this, IntentUrlDialogActivity::class.java).apply {
+            val prompt = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
+                getString(R.string.setting_key_prompt_onreceive_intent),
+                resources.getBoolean(R.bool.prompt_onreceive_intent)
+            )
+            val onReceiveIntent = if (prompt) {
+                Intent(this, IntentUrlDialogActivity::class.java).apply {
                     putExtra(IntentUrlDialogActivity.EXTRA_KEY_URL, intentUrl)
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 }
-                startActivity(intent)
+            } else {
+                Intent(Intent.ACTION_VIEW).apply {
+                    data = intentUrl.toUri()
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
             }
+            startActivity(onReceiveIntent)
         }
 
         val url = Extras.getNestedValue(

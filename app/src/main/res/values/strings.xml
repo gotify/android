@@ -96,9 +96,9 @@
     <string name="setting_key_intent_dialog_permission">intent_dialog_permission</string>
     <string name="setting_summary_intent_dialog_permission">To always show incoming intent URLs, give permission to show this app on top of other apps.</string>
     <string name="setting_summary_intent_dialog_permission_granted">Permission granted.</string>
-    <string name="setting_intent_automatic">Automatically show intent URLs</string>
-    <string name="setting_key_intent_automatic">intent_automatic</string>
-    <string name="setting_summary_intent_automatic">Always automatically show/activate intent URLs. Only do this when you trust the source!</string>
+    <string name="setting_prompt_onreceive_intent">Confirm onReceive intents</string>
+    <string name="setting_key_prompt_onreceive_intent">prompt_onreceive_intent</string>
+    <string name="setting_summary_prompt_onreceive_intent">If enabled, a dialog is shown before onReceive.intentUrl is executed.</string>
     <string name="push_message">Push message</string>
     <string name="appListDescription">App:</string>
     <string name="priorityDescription">Priority:</string>
