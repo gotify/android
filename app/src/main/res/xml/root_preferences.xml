@@ -42,7 +42,13 @@
         <SwitchPreferenceCompat
             android:key="@string/setting_key_intent_dialog_permission"
             android:title="@string/setting_intent_dialog_permission"
-            tools:summary="@string/setting_summary_intent_dialog_permission" />
+            android:summary="@string/setting_summary_intent_dialog_permission" />
+
+        <SwitchPreferenceCompat
+            android:key="@string/setting_key_prompt_onreceive_intent"
+            android:title="@string/setting_prompt_onreceive_intent"
+            android:defaultValue="@bool/prompt_onreceive_intent"
+            android:summary="@string/setting_summary_prompt_onreceive_intent" />
     </PreferenceCategory>
 
 </PreferenceScreen>

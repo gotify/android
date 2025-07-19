@@ -16,6 +16,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.preference.PreferenceManager
 import com.github.gotify.BuildConfig
 import com.github.gotify.CoilInstance
 import com.github.gotify.MarkwonFactory
@@ -314,11 +315,22 @@ internal class WebSocketService : Service() {
         )
 
         if (intentUrl != null) {
-            intent = Intent(this, IntentUrlDialogActivity::class.java).apply {
-                putExtra(IntentUrlDialogActivity.EXTRA_KEY_URL, intentUrl)
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            val prompt = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
+                getString(R.string.setting_key_prompt_onreceive_intent),
+                resources.getBoolean(R.bool.prompt_onreceive_intent)
+            )
+            val onReceiveIntent = if (prompt) {
+                Intent(this, IntentUrlDialogActivity::class.java).apply {
+                    putExtra(IntentUrlDialogActivity.EXTRA_KEY_URL, intentUrl)
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+            } else {
+                Intent(Intent.ACTION_VIEW).apply {
+                    data = intentUrl.toUri()
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
             }
-            startActivity(intent)
+            startActivity(onReceiveIntent)
         }
 
         val url = Extras.getNestedValue(
