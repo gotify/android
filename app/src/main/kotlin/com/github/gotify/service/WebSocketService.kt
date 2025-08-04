@@ -9,6 +9,7 @@ import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.graphics.Color
 import android.net.ConnectivityManager
+import android.net.LinkProperties
 import android.net.Network
 import android.os.Build
 import android.os.IBinder
@@ -55,6 +56,12 @@ internal class WebSocketService : Service() {
             override fun onAvailable(network: Network) {
                 super.onAvailable(network)
                 Logger.info("WebSocket: Network available, reconnect if needed.")
+                connection?.start()
+            }
+
+            override fun onLinkPropertiesChanged(network: Network, linkProperties: LinkProperties) {
+                super.onLinkPropertiesChanged(network, linkProperties)
+                Logger.info("WebSocket: Network properties changed, reconnect if needed.")
                 connection?.start()
             }
         }
