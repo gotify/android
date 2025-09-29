@@ -15,8 +15,8 @@ android {
         applicationId = "com.github.gotify"
         minSdk = 23
         targetSdk = 36
-        versionCode = 33
-        versionName = "2.8.2"
+        versionCode = 34
+        versionName = "2.9.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         signingConfig = signingConfigs.getByName("debug")
