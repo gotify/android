@@ -78,6 +78,13 @@ internal class SettingsActivity :
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
+            findPreference<SwitchPreferenceCompat>(
+                getString(R.string.setting_key_low_data_mode)
+            )?.onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { _, _ ->
+                    showRestartDialog()
+                    true
+                }
             findPreference<ListPreference>(
                 getString(R.string.setting_key_message_layout)
             )?.onPreferenceChangeListener =

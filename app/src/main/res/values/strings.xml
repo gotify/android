@@ -99,6 +99,12 @@
     <string name="setting_prompt_onreceive_intent">Confirm onReceive intents</string>
     <string name="setting_key_prompt_onreceive_intent">prompt_onreceive_intent</string>
     <string name="setting_summary_prompt_onreceive_intent">If enabled, a dialog is shown before onReceive.intentUrl is executed.</string>
+
+    <string name="setting_general">General</string>
+    <string name="setting_low_data_mode">Low data mode</string>
+    <string name="setting_low_data_mode_summary">Disable loading images from the server</string>
+    <string name="setting_key_low_data_mode">low_data_mode</string>
+
     <string name="push_message">Push message</string>
     <string name="appListDescription">App:</string>
     <string name="priorityDescription">Priority:</string>

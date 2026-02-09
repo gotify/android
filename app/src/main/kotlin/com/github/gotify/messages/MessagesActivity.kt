@@ -198,6 +198,10 @@ internal class MessagesActivity :
         val menu: Menu = binding.navView.menu
         menu.removeGroup(R.id.apps)
         viewModel.targetReferences.clear()
+
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        val lowDataMode = prefs.getBoolean(getString(R.string.setting_key_low_data_mode), false)
+
         updateMessagesAndStopLoading(viewModel.messages[viewModel.appId])
         var selectedItem = menu.findItem(R.id.nav_all_messages)
         applications.indices.forEach { index ->
@@ -205,16 +209,20 @@ internal class MessagesActivity :
             val item = menu.add(R.id.apps, index, APPLICATION_ORDER, app.name)
             item.isCheckable = true
             if (app.id == viewModel.appId) selectedItem = item
-            val t = Utils.toDrawable { icon -> item.icon = icon }
-            viewModel.targetReferences.add(t)
-            val request = ImageRequest.Builder(this)
-                .data(Utils.resolveAbsoluteUrl(viewModel.settings.url + "/", app.image))
-                .error(R.drawable.ic_alarm)
-                .placeholder(R.drawable.ic_placeholder)
-                .size(100, 100)
-                .target(t)
-                .build()
-            CoilInstance.get(this).enqueue(request)
+            if (lowDataMode) {
+                item.setIcon(R.drawable.ic_placeholder)
+            } else {
+                val t = Utils.toDrawable { icon -> item.icon = icon }
+                viewModel.targetReferences.add(t)
+                val request = ImageRequest.Builder(this)
+                    .data(Utils.resolveAbsoluteUrl(viewModel.settings.url + "/", app.image))
+                    .error(R.drawable.ic_alarm)
+                    .placeholder(R.drawable.ic_placeholder)
+                    .size(100, 100)
+                    .target(t)
+                    .build()
+                CoilInstance.get(this).enqueue(request)
+            }
         }
         selectAppInMenu(selectedItem)
     }

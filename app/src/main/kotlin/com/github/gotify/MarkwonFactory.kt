@@ -40,11 +40,17 @@ import org.commonmark.parser.Parser
 import org.tinylog.kotlin.Logger
 
 internal object MarkwonFactory {
-    fun createForMessage(context: Context, imageLoader: ImageLoader): Markwon {
-        return Markwon.builder(context)
+    fun createForMessage(
+        context: Context,
+        imageLoader: ImageLoader,
+        lowDataMode: Boolean = false
+    ): Markwon {
+        val builder = Markwon.builder(context)
             .usePlugin(CorePlugin.create())
             .usePlugin(MovementMethodPlugin.create(TableAwareMovementMethod.create()))
-            .usePlugin(
+
+        if (!lowDataMode) {
+            builder.usePlugin(
                 CoilImagesPlugin.create(
                     object : CoilImagesPlugin.CoilStore {
                         override fun load(drawable: AsyncDrawable): ImageRequest {
@@ -68,6 +74,9 @@ internal object MarkwonFactory {
                     imageLoader
                 )
             )
+        }
+
+        return builder
             .usePlugin(StrikethroughPlugin.create())
             .usePlugin(TablePlugin.create(context))
             .usePlugin(object : AbstractMarkwonPlugin() {

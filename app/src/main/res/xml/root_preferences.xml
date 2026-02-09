@@ -2,6 +2,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <PreferenceCategory app:title="@string/setting_general">
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="@string/setting_key_low_data_mode"
+            android:title="@string/setting_low_data_mode"
+            android:summary="@string/setting_low_data_mode_summary" />
+    </PreferenceCategory>
+
     <PreferenceCategory app:title="@string/settings_appearance" >
         <ListPreference
             android:defaultValue="@string/theme_default"
