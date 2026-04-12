@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import com.github.gotify.R
+import com.github.gotify.CfAccessSettings
 import com.github.gotify.SSLSettings
 import com.github.gotify.Settings
 import com.github.gotify.Utils
@@ -51,6 +52,9 @@ internal class LoginActivity : AppCompatActivity() {
     private var caCertPath: String? = null
     private var clientCertPath: String? = null
     private var clientCertPassword: String? = null
+    private var cfAccessEnabled = false
+    private var cfAccessClientId = ""
+    private var cfAccessClientSecret = ""
     private lateinit var advancedDialog: AdvancedDialog
 
     private val caDialogResultLauncher =
@@ -145,7 +149,7 @@ internal class LoginActivity : AppCompatActivity() {
         binding.checkurl.visibility = View.GONE
 
         try {
-            ClientFactory.versionApi(settings, tempSslSettings(), url)
+            ClientFactory.versionApi(settings, tempSslSettings(), url, tempCfAccessSettings())
                 .version
                 .enqueue(Callback.callInUI(this, onValidUrl(url), onInvalidUrl(url)))
         } catch (e: Exception) {
@@ -192,15 +196,21 @@ internal class LoginActivity : AppCompatActivity() {
                 invalidateUrl()
                 clientCertPath = null
             }
-            .onClose { newPassword ->
+            .onClose { newPassword, newCfEnabled, newCfClientId, newCfClientSecret ->
                 clientCertPassword = newPassword
+                cfAccessEnabled = newCfEnabled
+                cfAccessClientId = newCfClientId
+                cfAccessClientSecret = newCfClientSecret
             }
             .show(
                 disableSslValidation,
                 caCertPath,
                 caCertCN,
                 clientCertPath,
-                clientCertPassword
+                clientCertPassword,
+                cfAccessEnabled,
+                cfAccessClientId,
+                cfAccessClientSecret
             )
     }
 
@@ -254,7 +264,9 @@ internal class LoginActivity : AppCompatActivity() {
         binding.login.visibility = View.GONE
         binding.loginProgress.visibility = View.VISIBLE
 
-        val client = ClientFactory.basicAuth(settings, tempSslSettings(), username, password)
+        val client = ClientFactory.basicAuth(
+            settings, tempSslSettings(), username, password, tempCfAccessSettings()
+        )
         client.createService(UserApi::class.java)
             .currentUser()
             .enqueue(
@@ -311,6 +323,9 @@ internal class LoginActivity : AppCompatActivity() {
         settings.caCertPath = caCertPath
         settings.clientCertPath = clientCertPath
         settings.clientCertPassword = clientCertPassword
+        settings.cfAccessEnabled = cfAccessEnabled
+        settings.cfAccessClientId = cfAccessClientId
+        settings.cfAccessClientSecret = cfAccessClientSecret
 
         Utils.showSnackBar(this, getString(R.string.created_client))
         startActivity(Intent(this, InitializationActivity::class.java))
@@ -338,6 +353,14 @@ internal class LoginActivity : AppCompatActivity() {
             caCertPath,
             clientCertPath,
             clientCertPassword
+        )
+    }
+
+    private fun tempCfAccessSettings(): CfAccessSettings {
+        return CfAccessSettings(
+            cfAccessEnabled,
+            cfAccessClientId,
+            cfAccessClientSecret
         )
     }
 

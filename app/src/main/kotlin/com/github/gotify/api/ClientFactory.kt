@@ -1,5 +1,6 @@
 package com.github.gotify.api
 
+import com.github.gotify.CfAccessSettings
 import com.github.gotify.SSLSettings
 import com.github.gotify.Settings
 import com.github.gotify.client.ApiClient
@@ -12,18 +13,23 @@ internal object ClientFactory {
     private fun unauthorized(
         settings: Settings,
         sslSettings: SSLSettings,
-        baseUrl: String
+        baseUrl: String,
+        cfAccessSettings: CfAccessSettings = settings.cfAccessSettings()
     ): ApiClient {
-        return defaultClient(arrayOf(), settings, sslSettings, baseUrl)
+        return defaultClient(arrayOf(), settings, sslSettings, baseUrl, cfAccessSettings)
     }
 
     fun basicAuth(
         settings: Settings,
         sslSettings: SSLSettings,
         username: String,
-        password: String
+        password: String,
+        cfAccessSettings: CfAccessSettings = settings.cfAccessSettings()
     ): ApiClient {
-        val client = defaultClient(arrayOf("basicAuth"), settings, sslSettings)
+        val client = defaultClient(
+            arrayOf("basicAuth"), settings, sslSettings,
+            cfAccessSettings = cfAccessSettings
+        )
         val auth = client.apiAuthorizations["basicAuth"] as HttpBasicAuth
         auth.username = username
         auth.password = password
@@ -40,9 +46,11 @@ internal object ClientFactory {
     fun versionApi(
         settings: Settings,
         sslSettings: SSLSettings = settings.sslSettings(),
-        baseUrl: String = settings.url
+        baseUrl: String = settings.url,
+        cfAccessSettings: CfAccessSettings = settings.cfAccessSettings()
     ): VersionApi {
-        return unauthorized(settings, sslSettings, baseUrl).createService(VersionApi::class.java)
+        return unauthorized(settings, sslSettings, baseUrl, cfAccessSettings)
+            .createService(VersionApi::class.java)
     }
 
     fun userApiWithToken(settings: Settings): UserApi {
@@ -53,10 +61,19 @@ internal object ClientFactory {
         authentications: Array<String>,
         settings: Settings,
         sslSettings: SSLSettings = settings.sslSettings(),
-        baseUrl: String = settings.url
+        baseUrl: String = settings.url,
+        cfAccessSettings: CfAccessSettings = settings.cfAccessSettings()
     ): ApiClient {
         val client = ApiClient(authentications)
         CertUtils.applySslSettings(client.okBuilder, sslSettings)
+        if (cfAccessSettings.enabled) {
+            client.okBuilder.addInterceptor(
+                CloudflareAccessInterceptor(
+                    cfAccessSettings.clientId,
+                    cfAccessSettings.clientSecret
+                )
+            )
+        }
         client.adapterBuilder.baseUrl("$baseUrl/")
         return client
     }

@@ -45,6 +45,9 @@
     <string name="select_client_file">Select a Client Certificate File</string>
     <string name="client_cert_password">Certificate Password</string>
     <string name="client_cert_password_missing">Password required</string>
+    <string name="enable_cf_access">Enable Cloudflare Access</string>
+    <string name="cf_access_client_id">CF-Access-Client-Id</string>
+    <string name="cf_access_client_secret">CF-Access-Client-Secret</string>
     <string name="please_install_file_browser">Please install a file browser</string>
     <string name="select_ca_failed">Failed to read CA cert: %s</string>
     <string name="select_client_failed">Failed to read client cert: %s</string>
@@ -123,6 +126,15 @@
     <string name="setting_exponential_backoff_title">Exponential Backoff</string>
     <string name="setting_exponential_backoff_summary">Exponentially increase the reconnect delay for each reconnect attempt</string>
     <string name="setting_key_exponential_backoff">reconnect_exponential_backoff</string>
+
+    <string name="setting_cloudflare_access">Cloudflare Access</string>
+    <string name="setting_cf_access_enabled">Enable Cloudflare Access</string>
+    <string name="setting_cf_access_enabled_summary">Add CF-Access headers to all requests</string>
+    <string name="setting_cf_access_client_id">Client ID</string>
+    <string name="setting_cf_access_client_secret">Client Secret</string>
+    <string name="setting_key_cf_access_enabled">cf_access_enabled</string>
+    <string name="setting_key_cf_access_client_id">cf_access_client_id</string>
+    <string name="setting_key_cf_access_client_secret">cf_access_client_secret</string>
 
     <string name="notification_channel_title_foreground">Gotify foreground notification</string>
     <string name="notification_channel_title_min">Min priority messages (&lt;1)</string>

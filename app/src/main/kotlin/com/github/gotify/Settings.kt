@@ -45,6 +45,15 @@ internal class Settings(context: Context) {
     var clientCertPassword: String?
         get() = sharedPreferences.getString("clientCertPass", null)
         set(value) = sharedPreferences.edit { putString("clientCertPass", value) }
+    var cfAccessEnabled: Boolean
+        get() = sharedPreferences.getBoolean("cfAccessEnabled", false)
+        set(value) = sharedPreferences.edit { putBoolean("cfAccessEnabled", value) }
+    var cfAccessClientId: String
+        get() = sharedPreferences.getString("cfAccessClientId", "")!!
+        set(value) = sharedPreferences.edit { putString("cfAccessClientId", value) }
+    var cfAccessClientSecret: String
+        get() = sharedPreferences.getString("cfAccessClientSecret", "")!!
+        set(value) = sharedPreferences.edit { putString("cfAccessClientSecret", value) }
 
     init {
         sharedPreferences = context.getSharedPreferences("gotify", Context.MODE_PRIVATE)
@@ -61,6 +70,9 @@ internal class Settings(context: Context) {
         caCertPath = null
         clientCertPath = null
         clientCertPassword = null
+        cfAccessEnabled = false
+        cfAccessClientId = ""
+        cfAccessClientSecret = ""
     }
 
     fun setUser(name: String?, admin: Boolean) {
@@ -73,6 +85,14 @@ internal class Settings(context: Context) {
             caCertPath,
             clientCertPath,
             clientCertPassword
+        )
+    }
+
+    fun cfAccessSettings(): CfAccessSettings {
+        return CfAccessSettings(
+            cfAccessEnabled,
+            cfAccessClientId,
+            cfAccessClientSecret
         )
     }
 

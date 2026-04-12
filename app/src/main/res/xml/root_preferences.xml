@@ -65,4 +65,21 @@
             android:defaultValue="true" />
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="@string/setting_cloudflare_access">
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="@string/setting_key_cf_access_enabled"
+            android:title="@string/setting_cf_access_enabled"
+            android:summary="@string/setting_cf_access_enabled_summary"
+            app:singleLineTitle="false" />
+        <EditTextPreference
+            android:key="@string/setting_key_cf_access_client_id"
+            android:title="@string/setting_cf_access_client_id"
+            android:dependency="@string/setting_key_cf_access_enabled" />
+        <EditTextPreference
+            android:key="@string/setting_key_cf_access_client_secret"
+            android:title="@string/setting_cf_access_client_secret"
+            android:dependency="@string/setting_key_cf_access_enabled" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

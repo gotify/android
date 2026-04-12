@@ -22,6 +22,7 @@ import coil.request.ImageRequest
 import coil.request.Options
 import coil.request.SuccessResult
 import com.github.gotify.api.CertUtils
+import com.github.gotify.api.CloudflareAccessInterceptor
 import com.github.gotify.client.model.Application
 import java.io.IOException
 import okhttp3.Credentials
@@ -31,7 +32,7 @@ import okhttp3.Response
 import org.tinylog.kotlin.Logger
 
 object CoilInstance {
-    private var holder: Pair<SSLSettings, ImageLoader>? = null
+    private var holder: Triple<SSLSettings, CfAccessSettings, ImageLoader>? = null
 
     @Throws(IOException::class)
     fun getImageFromUrl(
@@ -78,22 +79,34 @@ object CoilInstance {
 
     @Synchronized
     fun get(context: Context): ImageLoader {
-        val newSettings = Settings(context).sslSettings()
+        val settings = Settings(context)
+        val newSslSettings = settings.sslSettings()
+        val newCfSettings = settings.cfAccessSettings()
         val copy = holder
-        if (copy != null && copy.first == newSettings) {
-            return copy.second
+        if (copy != null && copy.first == newSslSettings && copy.second == newCfSettings) {
+            return copy.third
         }
-        return makeImageLoader(context, newSettings).also { holder = it }.second
+        return makeImageLoader(context, newSslSettings, newCfSettings)
+            .also { holder = it }.third
     }
 
     private fun makeImageLoader(
         context: Context,
-        sslSettings: SSLSettings
-    ): Pair<SSLSettings, ImageLoader> {
+        sslSettings: SSLSettings,
+        cfAccessSettings: CfAccessSettings
+    ): Triple<SSLSettings, CfAccessSettings, ImageLoader> {
         val builder = OkHttpClient
             .Builder()
             .addInterceptor(BasicAuthInterceptor())
         CertUtils.applySslSettings(builder, sslSettings)
+        if (cfAccessSettings.enabled) {
+            builder.addInterceptor(
+                CloudflareAccessInterceptor(
+                    cfAccessSettings.clientId,
+                    cfAccessSettings.clientSecret
+                )
+            )
+        }
         val loader = ImageLoader.Builder(context)
             .okHttpClient(builder.build())
             .diskCache {
@@ -106,7 +119,7 @@ object CoilInstance {
                 add(DataDecoderFactory())
             }
             .build()
-        return sslSettings to loader
+        return Triple(sslSettings, cfAccessSettings, loader)
     }
 }
 

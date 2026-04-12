@@ -19,6 +19,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreferenceCompat
 import com.github.gotify.R
+import com.github.gotify.Settings as GotifySettings
 import com.github.gotify.Utils
 import com.github.gotify.databinding.SettingsActivityBinding
 import com.github.gotify.service.WebSocketService
@@ -68,8 +69,11 @@ internal class SettingsActivity :
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
+        private lateinit var settings: GotifySettings
+
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
+            settings = GotifySettings(requireContext())
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 findPreference<SwitchPreferenceCompat>(
                     getString(R.string.setting_key_notification_channels)
@@ -95,6 +99,42 @@ internal class SettingsActivity :
                 getString(R.string.setting_key_exponential_backoff)
             )?.onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { _, _ ->
+                    requestWebSocketRestart()
+                    true
+                }
+            initCfAccessPreferences()
+        }
+
+        private fun initCfAccessPreferences() {
+            val cfEnabledPref = findPreference<SwitchPreferenceCompat>(
+                getString(R.string.setting_key_cf_access_enabled)
+            )
+            val cfClientIdPref = findPreference<androidx.preference.EditTextPreference>(
+                getString(R.string.setting_key_cf_access_client_id)
+            )
+            val cfClientSecretPref = findPreference<androidx.preference.EditTextPreference>(
+                getString(R.string.setting_key_cf_access_client_secret)
+            )
+
+            cfEnabledPref?.isChecked = settings.cfAccessEnabled
+            cfClientIdPref?.text = settings.cfAccessClientId
+            cfClientSecretPref?.text = settings.cfAccessClientSecret
+
+            cfEnabledPref?.onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { _, newValue ->
+                    settings.cfAccessEnabled = newValue as Boolean
+                    requestWebSocketRestart()
+                    true
+                }
+            cfClientIdPref?.onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { _, newValue ->
+                    settings.cfAccessClientId = newValue as String
+                    requestWebSocketRestart()
+                    true
+                }
+            cfClientSecretPref?.onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { _, newValue ->
+                    settings.cfAccessClientSecret = newValue as String
                     requestWebSocketRestart()
                     true
                 }

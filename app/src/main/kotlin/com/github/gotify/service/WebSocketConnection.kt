@@ -5,9 +5,11 @@ import android.app.AlarmManager.OnAlarmListener
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import com.github.gotify.CfAccessSettings
 import com.github.gotify.SSLSettings
 import com.github.gotify.Utils
 import com.github.gotify.api.CertUtils
+import com.github.gotify.api.CloudflareAccessInterceptor
 import com.github.gotify.client.model.Message
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
@@ -30,7 +32,8 @@ internal class WebSocketConnection(
     private val token: String?,
     private val alarmManager: AlarmManager,
     private val reconnectDelay: Duration,
-    private val exponentialBackoff: Boolean
+    private val exponentialBackoff: Boolean,
+    cfAccessSettings: CfAccessSettings = CfAccessSettings(false, "", "")
 ) {
     companion object {
         private val ID = AtomicLong(0)
@@ -56,6 +59,14 @@ internal class WebSocketConnection(
             .pingInterval(1, TimeUnit.MINUTES)
             .connectTimeout(10, TimeUnit.SECONDS)
         CertUtils.applySslSettings(builder, settings)
+        if (cfAccessSettings.enabled) {
+            builder.addInterceptor(
+                CloudflareAccessInterceptor(
+                    cfAccessSettings.clientId,
+                    cfAccessSettings.clientSecret
+                )
+            )
+        }
         client = builder.build()
     }
 

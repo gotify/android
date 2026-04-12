@@ -18,7 +18,7 @@ internal class AdvancedDialog(
     private lateinit var onClickRemoveCaCertificate: Runnable
     private lateinit var onClickSelectClientCertificate: Runnable
     private lateinit var onClickRemoveClientCertificate: Runnable
-    private lateinit var onClose: (password: String) -> Unit
+    private lateinit var onClose: (password: String, cfAccessEnabled: Boolean, cfAccessClientId: String, cfAccessClientSecret: String) -> Unit
 
     fun onDisableSSLChanged(
         onCheckedChangeListener: CompoundButton.OnCheckedChangeListener?
@@ -47,7 +47,9 @@ internal class AdvancedDialog(
         return this
     }
 
-    fun onClose(onClose: (password: String) -> Unit): AdvancedDialog {
+    fun onClose(
+        onClose: (password: String, cfAccessEnabled: Boolean, cfAccessClientId: String, cfAccessClientSecret: String) -> Unit
+    ): AdvancedDialog {
         this.onClose = onClose
         return this
     }
@@ -57,7 +59,10 @@ internal class AdvancedDialog(
         caCertPath: String? = null,
         caCertCN: String?,
         clientCertPath: String? = null,
-        clientCertPassword: String?
+        clientCertPassword: String?,
+        cfAccessEnabled: Boolean = false,
+        cfAccessClientId: String = "",
+        cfAccessClientSecret: String = ""
     ): AdvancedDialog {
         binding = AdvancedSettingsDialogBinding.inflate(layoutInflater)
         binding.disableSSL.isChecked = disableSSL
@@ -82,15 +87,37 @@ internal class AdvancedDialog(
         } else {
             showRemoveClientCertificate()
         }
+        binding.enableCfAccess.isChecked = cfAccessEnabled
+        setCfAccessFieldsVisibility(cfAccessEnabled)
+        if (cfAccessClientId.isNotEmpty()) {
+            binding.cfAccessClientIdEdittext.setText(cfAccessClientId)
+        }
+        if (cfAccessClientSecret.isNotEmpty()) {
+            binding.cfAccessClientSecretEdittext.setText(cfAccessClientSecret)
+        }
+        binding.enableCfAccess.setOnCheckedChangeListener { _, isChecked ->
+            setCfAccessFieldsVisibility(isChecked)
+        }
         MaterialAlertDialogBuilder(context)
             .setView(binding.root)
             .setTitle(R.string.advanced_settings)
             .setPositiveButton(context.getString(R.string.done), null)
             .setOnDismissListener {
-                onClose(binding.clientCertPasswordEdittext.text.toString())
+                onClose(
+                    binding.clientCertPasswordEdittext.text.toString(),
+                    binding.enableCfAccess.isChecked,
+                    binding.cfAccessClientIdEdittext.text.toString(),
+                    binding.cfAccessClientSecretEdittext.text.toString()
+                )
             }
             .show()
         return this
+    }
+
+    private fun setCfAccessFieldsVisibility(visible: Boolean) {
+        val visibility = if (visible) android.view.View.VISIBLE else android.view.View.GONE
+        binding.cfAccessClientIdLayout.visibility = visibility
+        binding.cfAccessClientSecretLayout.visibility = visibility
     }
 
     private fun showSelectCaCertificate() {

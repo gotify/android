@@ -63,4 +63,54 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp" />
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/enableCfAccess"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/enable_cf_access" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/cf_access_client_id_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:maxWidth="280dp"
+        android:visibility="gone">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/cf_access_client_id_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:inputType="text"
+            android:importantForAutofill="no"
+            android:hint="@string/cf_access_client_id" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/cf_access_client_secret_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:maxWidth="280dp"
+        android:visibility="gone">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/cf_access_client_secret_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:inputType="textPassword"
+            android:importantForAutofill="no"
+            android:hint="@string/cf_access_client_secret" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
 </LinearLayout>

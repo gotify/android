@@ -133,7 +133,8 @@ internal class WebSocketService : Service() {
             settings.token,
             alarmManager,
             reconnectDelay,
-            exponentialBackoff
+            exponentialBackoff,
+            settings.cfAccessSettings()
         )
             .onOpen { onOpen() }
             .onClose { onClose() }
