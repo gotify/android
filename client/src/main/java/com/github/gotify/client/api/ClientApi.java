@@ -49,15 +49,16 @@ public interface ClientApi {
   /**
    * Elevate a client session.
    * Requires elevated authentication.
+   * @param id the client id (required)
    * @param body the elevation request (required)
    * @return Call&lt;Void&gt;
    */
   @Headers({
     "Content-Type:application/json"
   })
-  @POST("client:elevate")
+  @POST("client/{id}/elevate")
   Call<Void> elevateClient(
-    @retrofit2.http.Body ElevateRequest body
+    @retrofit2.http.Path("id") Long id, @retrofit2.http.Body ElevateRequest body
   );
 
   /**

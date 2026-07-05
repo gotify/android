@@ -13,6 +13,8 @@ import com.github.gotify.client.model.Application;
 import com.github.gotify.client.model.ApplicationParams;
 import com.github.gotify.client.model.Error;
 import java.io.File;
+import com.github.gotify.client.model.SecurityUpdateAction;
+import com.github.gotify.client.model.SecurityUpdateActionResponse;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,6 +66,21 @@ public interface ApplicationApi {
   @DELETE("application/{id}/image")
   Call<Void> removeAppImage(
     @retrofit2.http.Path("id") Long id
+  );
+
+  /**
+   * Perform security updates on an application.
+   * Requires elevated authentication.
+   * @param id the application id (required)
+   * @param body security update action descriptor (required)
+   * @return Call&lt;SecurityUpdateActionResponse&gt;
+   */
+  @Headers({
+    "Content-Type:application/json"
+  })
+  @PUT("application/{id}/security")
+  Call<SecurityUpdateActionResponse> updateAppSecurity(
+    @retrofit2.http.Path("id") Long id, @retrofit2.http.Body SecurityUpdateAction body
   );
 
   /**

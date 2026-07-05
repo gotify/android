@@ -25,6 +25,7 @@ src/main/java/com/github/gotify/client/model/Application.java
 src/main/java/com/github/gotify/client/model/ApplicationParams.java
 src/main/java/com/github/gotify/client/model/Client.java
 src/main/java/com/github/gotify/client/model/ClientParams.java
+src/main/java/com/github/gotify/client/model/CreateMessage.java
 src/main/java/com/github/gotify/client/model/CreateUserExternal.java
 src/main/java/com/github/gotify/client/model/CurrentUser.java
 src/main/java/com/github/gotify/client/model/ElevateRequest.java
@@ -39,6 +40,9 @@ src/main/java/com/github/gotify/client/model/OIDCExternalTokenResponse.java
 src/main/java/com/github/gotify/client/model/PagedMessages.java
 src/main/java/com/github/gotify/client/model/Paging.java
 src/main/java/com/github/gotify/client/model/PluginConf.java
+src/main/java/com/github/gotify/client/model/RegenerateTokenResponse.java
+src/main/java/com/github/gotify/client/model/SecurityUpdateAction.java
+src/main/java/com/github/gotify/client/model/SecurityUpdateActionResponse.java
 src/main/java/com/github/gotify/client/model/UpdateUserExternal.java
 src/main/java/com/github/gotify/client/model/User.java
 src/main/java/com/github/gotify/client/model/UserPass.java

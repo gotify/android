@@ -15,6 +15,7 @@ package com.github.gotify.client.model;
 
 import java.util.Objects;
 import java.util.Arrays;
+import com.github.gotify.client.model.RegenerateTokenResponse;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -23,37 +24,37 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 
 /**
- * ElevateRequest
+ * The SecurityUpdateActionResponse holds information about the response to a security update request.
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", comments = "Generator version: 7.19.0")
-public class ElevateRequest {
-  public static final String SERIALIZED_NAME_DURATION_SECONDS = "durationSeconds";
-  @SerializedName(SERIALIZED_NAME_DURATION_SECONDS)
-  @javax.annotation.Nonnull
-  private Long durationSeconds;
+public class SecurityUpdateActionResponse {
+  public static final String SERIALIZED_NAME_REGENERATE_TOKEN = "regenerateToken";
+  @SerializedName(SERIALIZED_NAME_REGENERATE_TOKEN)
+  @javax.annotation.Nullable
+  private RegenerateTokenResponse regenerateToken;
 
-  public ElevateRequest() {
+  public SecurityUpdateActionResponse() {
   }
 
-  public ElevateRequest durationSeconds(@javax.annotation.Nonnull Long durationSeconds) {
+  public SecurityUpdateActionResponse regenerateToken(@javax.annotation.Nullable RegenerateTokenResponse regenerateToken) {
     
-    this.durationSeconds = durationSeconds;
+    this.regenerateToken = regenerateToken;
     return this;
   }
 
   /**
-   * How long the elevation should last, in seconds.
-   * @return durationSeconds
+   * Get regenerateToken
+   * @return regenerateToken
    */
-  @javax.annotation.Nonnull
+  @javax.annotation.Nullable
 
-  public Long getDurationSeconds() {
-    return durationSeconds;
+  public RegenerateTokenResponse getRegenerateToken() {
+    return regenerateToken;
   }
 
 
-  public void setDurationSeconds(@javax.annotation.Nonnull Long durationSeconds) {
-    this.durationSeconds = durationSeconds;
+  public void setRegenerateToken(@javax.annotation.Nullable RegenerateTokenResponse regenerateToken) {
+    this.regenerateToken = regenerateToken;
   }
 
   @Override
@@ -64,20 +65,20 @@ public class ElevateRequest {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ElevateRequest elevateRequest = (ElevateRequest) o;
-    return Objects.equals(this.durationSeconds, elevateRequest.durationSeconds);
+    SecurityUpdateActionResponse securityUpdateActionResponse = (SecurityUpdateActionResponse) o;
+    return Objects.equals(this.regenerateToken, securityUpdateActionResponse.regenerateToken);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(durationSeconds);
+    return Objects.hash(regenerateToken);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ElevateRequest {\n");
-    sb.append("    durationSeconds: ").append(toIndentedString(durationSeconds)).append("\n");
+    sb.append("class SecurityUpdateActionResponse {\n");
+    sb.append("    regenerateToken: ").append(toIndentedString(regenerateToken)).append("\n");
     sb.append("}");
     return sb.toString();
   }
