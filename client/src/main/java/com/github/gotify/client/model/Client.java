@@ -28,10 +28,25 @@ import java.time.OffsetDateTime;
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", comments = "Generator version: 7.19.0")
 public class Client {
+  public static final String SERIALIZED_NAME_CREATED_AT = "createdAt";
+  @SerializedName(SERIALIZED_NAME_CREATED_AT)
+  @javax.annotation.Nonnull
+  private OffsetDateTime createdAt;
+
   public static final String SERIALIZED_NAME_ELEVATED_UNTIL = "elevatedUntil";
   @SerializedName(SERIALIZED_NAME_ELEVATED_UNTIL)
   @javax.annotation.Nullable
   private OffsetDateTime elevatedUntil;
+
+  public static final String SERIALIZED_NAME_EXPIRES_AFTER_INACTIVITY_SECONDS = "expiresAfterInactivitySeconds";
+  @SerializedName(SERIALIZED_NAME_EXPIRES_AFTER_INACTIVITY_SECONDS)
+  @javax.annotation.Nullable
+  private Long expiresAfterInactivitySeconds;
+
+  public static final String SERIALIZED_NAME_EXPIRES_AT = "expiresAt";
+  @SerializedName(SERIALIZED_NAME_EXPIRES_AT)
+  @javax.annotation.Nullable
+  private OffsetDateTime expiresAt;
 
   public static final String SERIALIZED_NAME_ID = "id";
   @SerializedName(SERIALIZED_NAME_ID)
@@ -50,7 +65,7 @@ public class Client {
 
   public static final String SERIALIZED_NAME_TOKEN = "token";
   @SerializedName(SERIALIZED_NAME_TOKEN)
-  @javax.annotation.Nonnull
+  @javax.annotation.Nullable
   private String token;
 
   public Client() {
@@ -60,17 +75,33 @@ public class Client {
    */
   
   public Client(
+     OffsetDateTime createdAt, 
      OffsetDateTime elevatedUntil, 
+     OffsetDateTime expiresAt, 
      Long id, 
      OffsetDateTime lastUsed, 
      String token
   ) {
     this();
+    this.createdAt = createdAt;
     this.elevatedUntil = elevatedUntil;
+    this.expiresAt = expiresAt;
     this.id = id;
     this.lastUsed = lastUsed;
     this.token = token;
   }
+
+  /**
+   * The date the client was created.
+   * @return createdAt
+   */
+  @javax.annotation.Nonnull
+
+  public OffsetDateTime getCreatedAt() {
+    return createdAt;
+  }
+
+
 
   /**
    * The time until which this client&#39;s session is elevated.
@@ -80,6 +111,39 @@ public class Client {
 
   public OffsetDateTime getElevatedUntil() {
     return elevatedUntil;
+  }
+
+
+
+  public Client expiresAfterInactivitySeconds(@javax.annotation.Nullable Long expiresAfterInactivitySeconds) {
+    
+    this.expiresAfterInactivitySeconds = expiresAfterInactivitySeconds;
+    return this;
+  }
+
+  /**
+   * The number of seconds of inactivity after which the client is removed. 0 means the client never expires.
+   * @return expiresAfterInactivitySeconds
+   */
+  @javax.annotation.Nullable
+
+  public Long getExpiresAfterInactivitySeconds() {
+    return expiresAfterInactivitySeconds;
+  }
+
+
+  public void setExpiresAfterInactivitySeconds(@javax.annotation.Nullable Long expiresAfterInactivitySeconds) {
+    this.expiresAfterInactivitySeconds = expiresAfterInactivitySeconds;
+  }
+
+  /**
+   * The time at which this client will expire due to inactivity, or null if it never expires.
+   * @return expiresAt
+   */
+  @javax.annotation.Nullable
+
+  public OffsetDateTime getExpiresAt() {
+    return expiresAt;
   }
 
 
@@ -133,7 +197,7 @@ public class Client {
    * The client token. Can be used as &#x60;clientToken&#x60;. See Authentication.
    * @return token
    */
-  @javax.annotation.Nonnull
+  @javax.annotation.Nullable
 
   public String getToken() {
     return token;
@@ -150,7 +214,10 @@ public class Client {
       return false;
     }
     Client client = (Client) o;
-    return Objects.equals(this.elevatedUntil, client.elevatedUntil) &&
+    return Objects.equals(this.createdAt, client.createdAt) &&
+        Objects.equals(this.elevatedUntil, client.elevatedUntil) &&
+        Objects.equals(this.expiresAfterInactivitySeconds, client.expiresAfterInactivitySeconds) &&
+        Objects.equals(this.expiresAt, client.expiresAt) &&
         Objects.equals(this.id, client.id) &&
         Objects.equals(this.lastUsed, client.lastUsed) &&
         Objects.equals(this.name, client.name) &&
@@ -159,14 +226,17 @@ public class Client {
 
   @Override
   public int hashCode() {
-    return Objects.hash(elevatedUntil, id, lastUsed, name, token);
+    return Objects.hash(createdAt, elevatedUntil, expiresAfterInactivitySeconds, expiresAt, id, lastUsed, name, token);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Client {\n");
+    sb.append("    createdAt: ").append(toIndentedString(createdAt)).append("\n");
     sb.append("    elevatedUntil: ").append(toIndentedString(elevatedUntil)).append("\n");
+    sb.append("    expiresAfterInactivitySeconds: ").append(toIndentedString(expiresAfterInactivitySeconds)).append("\n");
+    sb.append("    expiresAt: ").append(toIndentedString(expiresAt)).append("\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    lastUsed: ").append(toIndentedString(lastUsed)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");

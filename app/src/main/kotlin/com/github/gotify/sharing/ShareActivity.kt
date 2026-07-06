@@ -16,7 +16,7 @@ import com.github.gotify.api.ApiException
 import com.github.gotify.api.ClientFactory
 import com.github.gotify.client.api.MessageApi
 import com.github.gotify.client.model.Application
-import com.github.gotify.client.model.Message
+import com.github.gotify.client.model.CreateMessage
 import com.github.gotify.databinding.ActivityShareBinding
 import com.github.gotify.messages.provider.ApplicationHolder
 import kotlinx.coroutines.Dispatchers
@@ -107,7 +107,7 @@ internal class ShareActivity : AppCompatActivity() {
             return
         }
 
-        val message = Message()
+        val message = CreateMessage()
         if (titleText.isNotEmpty()) {
             message.title = titleText
         }
@@ -115,7 +115,7 @@ internal class ShareActivity : AppCompatActivity() {
         message.priority = priority.toLong()
 
         launchCoroutine {
-            val response = executeMessageCall(appIndex, message)
+            val response = executeMessageCall(appsHolder.get()[appIndex], message)
             withContext(Dispatchers.Main) {
                 if (response) {
                     Toast.makeText(this@ShareActivity, "Pushed!", Toast.LENGTH_LONG).show()
@@ -131,10 +131,16 @@ internal class ShareActivity : AppCompatActivity() {
         }
     }
 
-    private fun executeMessageCall(appIndex: Int, message: Message): Boolean {
-        val pushClient = ClientFactory.clientToken(settings, appsHolder.get()[appIndex].token)
+    private fun executeMessageCall(app: Application, message: CreateMessage): Boolean {
+        // In gotify 3.0, tokens aren't returned in the API anymore, but the push api allows setting the appid with client auth.
+        val client = if (app.token == null) {
+            message.appid = app.id
+            ClientFactory.clientToken(settings)
+        } else {
+            ClientFactory.clientToken(settings, app.token)
+        }
         return try {
-            val messageApi = pushClient.createService(MessageApi::class.java)
+            val messageApi = client.createService(MessageApi::class.java)
             Api.execute(messageApi.createMessage(message))
             true
         } catch (apiException: ApiException) {

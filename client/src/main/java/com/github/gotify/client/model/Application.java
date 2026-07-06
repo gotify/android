@@ -28,6 +28,11 @@ import java.time.OffsetDateTime;
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", comments = "Generator version: 7.19.0")
 public class Application {
+  public static final String SERIALIZED_NAME_CREATED_AT = "createdAt";
+  @SerializedName(SERIALIZED_NAME_CREATED_AT)
+  @javax.annotation.Nonnull
+  private OffsetDateTime createdAt;
+
   public static final String SERIALIZED_NAME_DEFAULT_PRIORITY = "defaultPriority";
   @SerializedName(SERIALIZED_NAME_DEFAULT_PRIORITY)
   @javax.annotation.Nullable
@@ -70,7 +75,7 @@ public class Application {
 
   public static final String SERIALIZED_NAME_TOKEN = "token";
   @SerializedName(SERIALIZED_NAME_TOKEN)
-  @javax.annotation.Nonnull
+  @javax.annotation.Nullable
   private String token;
 
   public Application() {
@@ -80,6 +85,7 @@ public class Application {
    */
   
   public Application(
+     OffsetDateTime createdAt, 
      Long id, 
      String image, 
      Boolean internal, 
@@ -87,12 +93,25 @@ public class Application {
      String token
   ) {
     this();
+    this.createdAt = createdAt;
     this.id = id;
     this.image = image;
     this.internal = internal;
     this.lastUsed = lastUsed;
     this.token = token;
   }
+
+  /**
+   * The date the application was created.
+   * @return createdAt
+   */
+  @javax.annotation.Nonnull
+
+  public OffsetDateTime getCreatedAt() {
+    return createdAt;
+  }
+
+
 
   public Application defaultPriority(@javax.annotation.Nullable Long defaultPriority) {
     
@@ -230,7 +249,7 @@ public class Application {
    * The application token. Can be used as &#x60;appToken&#x60;. See Authentication.
    * @return token
    */
-  @javax.annotation.Nonnull
+  @javax.annotation.Nullable
 
   public String getToken() {
     return token;
@@ -247,7 +266,8 @@ public class Application {
       return false;
     }
     Application application = (Application) o;
-    return Objects.equals(this.defaultPriority, application.defaultPriority) &&
+    return Objects.equals(this.createdAt, application.createdAt) &&
+        Objects.equals(this.defaultPriority, application.defaultPriority) &&
         Objects.equals(this.description, application.description) &&
         Objects.equals(this.id, application.id) &&
         Objects.equals(this.image, application.image) &&
@@ -260,13 +280,14 @@ public class Application {
 
   @Override
   public int hashCode() {
-    return Objects.hash(defaultPriority, description, id, image, internal, lastUsed, name, sortKey, token);
+    return Objects.hash(createdAt, defaultPriority, description, id, image, internal, lastUsed, name, sortKey, token);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Application {\n");
+    sb.append("    createdAt: ").append(toIndentedString(createdAt)).append("\n");
     sb.append("    defaultPriority: ").append(toIndentedString(defaultPriority)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");

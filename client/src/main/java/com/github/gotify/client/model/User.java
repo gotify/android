@@ -21,6 +21,7 @@ import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
+import java.time.OffsetDateTime;
 
 /**
  * The User holds information about permission and other stuff.
@@ -31,6 +32,11 @@ public class User {
   @SerializedName(SERIALIZED_NAME_ADMIN)
   @javax.annotation.Nonnull
   private Boolean admin;
+
+  public static final String SERIALIZED_NAME_CREATED_AT = "createdAt";
+  @SerializedName(SERIALIZED_NAME_CREATED_AT)
+  @javax.annotation.Nonnull
+  private OffsetDateTime createdAt;
 
   public static final String SERIALIZED_NAME_ID = "id";
   @SerializedName(SERIALIZED_NAME_ID)
@@ -49,9 +55,11 @@ public class User {
    */
   
   public User(
+     OffsetDateTime createdAt, 
      Long id
   ) {
     this();
+    this.createdAt = createdAt;
     this.id = id;
   }
 
@@ -75,6 +83,18 @@ public class User {
   public void setAdmin(@javax.annotation.Nonnull Boolean admin) {
     this.admin = admin;
   }
+
+  /**
+   * The date the user was created.
+   * @return createdAt
+   */
+  @javax.annotation.Nonnull
+
+  public OffsetDateTime getCreatedAt() {
+    return createdAt;
+  }
+
+
 
   /**
    * The user id.
@@ -119,13 +139,14 @@ public class User {
     }
     User user = (User) o;
     return Objects.equals(this.admin, user.admin) &&
+        Objects.equals(this.createdAt, user.createdAt) &&
         Objects.equals(this.id, user.id) &&
         Objects.equals(this.name, user.name);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(admin, id, name);
+    return Objects.hash(admin, createdAt, id, name);
   }
 
   @Override
@@ -133,6 +154,7 @@ public class User {
     StringBuilder sb = new StringBuilder();
     sb.append("class User {\n");
     sb.append("    admin: ").append(toIndentedString(admin)).append("\n");
+    sb.append("    createdAt: ").append(toIndentedString(createdAt)).append("\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("}");

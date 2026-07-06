@@ -23,37 +23,37 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 
 /**
- * ElevateRequest
+ * The SecurityUpdateAction describes the details of a requested security update.
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", comments = "Generator version: 7.19.0")
-public class ElevateRequest {
-  public static final String SERIALIZED_NAME_DURATION_SECONDS = "durationSeconds";
-  @SerializedName(SERIALIZED_NAME_DURATION_SECONDS)
-  @javax.annotation.Nonnull
-  private Long durationSeconds;
+public class SecurityUpdateAction {
+  public static final String SERIALIZED_NAME_REGENERATE_TOKEN = "regenerateToken";
+  @SerializedName(SERIALIZED_NAME_REGENERATE_TOKEN)
+  @javax.annotation.Nullable
+  private Boolean regenerateToken;
 
-  public ElevateRequest() {
+  public SecurityUpdateAction() {
   }
 
-  public ElevateRequest durationSeconds(@javax.annotation.Nonnull Long durationSeconds) {
+  public SecurityUpdateAction regenerateToken(@javax.annotation.Nullable Boolean regenerateToken) {
     
-    this.durationSeconds = durationSeconds;
+    this.regenerateToken = regenerateToken;
     return this;
   }
 
   /**
-   * How long the elevation should last, in seconds.
-   * @return durationSeconds
+   * Whether to regenerate the token. Your client token must be elevated to perform this action.
+   * @return regenerateToken
    */
-  @javax.annotation.Nonnull
+  @javax.annotation.Nullable
 
-  public Long getDurationSeconds() {
-    return durationSeconds;
+  public Boolean getRegenerateToken() {
+    return regenerateToken;
   }
 
 
-  public void setDurationSeconds(@javax.annotation.Nonnull Long durationSeconds) {
-    this.durationSeconds = durationSeconds;
+  public void setRegenerateToken(@javax.annotation.Nullable Boolean regenerateToken) {
+    this.regenerateToken = regenerateToken;
   }
 
   @Override
@@ -64,20 +64,20 @@ public class ElevateRequest {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ElevateRequest elevateRequest = (ElevateRequest) o;
-    return Objects.equals(this.durationSeconds, elevateRequest.durationSeconds);
+    SecurityUpdateAction securityUpdateAction = (SecurityUpdateAction) o;
+    return Objects.equals(this.regenerateToken, securityUpdateAction.regenerateToken);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(durationSeconds);
+    return Objects.hash(regenerateToken);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ElevateRequest {\n");
-    sb.append("    durationSeconds: ").append(toIndentedString(durationSeconds)).append("\n");
+    sb.append("class SecurityUpdateAction {\n");
+    sb.append("    regenerateToken: ").append(toIndentedString(regenerateToken)).append("\n");
     sb.append("}");
     return sb.toString();
   }

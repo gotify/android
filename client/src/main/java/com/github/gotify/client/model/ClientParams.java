@@ -27,12 +27,38 @@ import java.io.IOException;
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", comments = "Generator version: 7.19.0")
 public class ClientParams {
+  public static final String SERIALIZED_NAME_EXPIRES_AFTER_INACTIVITY_SECONDS = "expiresAfterInactivitySeconds";
+  @SerializedName(SERIALIZED_NAME_EXPIRES_AFTER_INACTIVITY_SECONDS)
+  @javax.annotation.Nullable
+  private Long expiresAfterInactivitySeconds;
+
   public static final String SERIALIZED_NAME_NAME = "name";
   @SerializedName(SERIALIZED_NAME_NAME)
   @javax.annotation.Nonnull
   private String name;
 
   public ClientParams() {
+  }
+
+  public ClientParams expiresAfterInactivitySeconds(@javax.annotation.Nullable Long expiresAfterInactivitySeconds) {
+    
+    this.expiresAfterInactivitySeconds = expiresAfterInactivitySeconds;
+    return this;
+  }
+
+  /**
+   * The number of seconds of inactivity after which the client is removed. 0 (or omitted) means the client never expires.
+   * @return expiresAfterInactivitySeconds
+   */
+  @javax.annotation.Nullable
+
+  public Long getExpiresAfterInactivitySeconds() {
+    return expiresAfterInactivitySeconds;
+  }
+
+
+  public void setExpiresAfterInactivitySeconds(@javax.annotation.Nullable Long expiresAfterInactivitySeconds) {
+    this.expiresAfterInactivitySeconds = expiresAfterInactivitySeconds;
   }
 
   public ClientParams name(@javax.annotation.Nonnull String name) {
@@ -65,18 +91,20 @@ public class ClientParams {
       return false;
     }
     ClientParams clientParams = (ClientParams) o;
-    return Objects.equals(this.name, clientParams.name);
+    return Objects.equals(this.expiresAfterInactivitySeconds, clientParams.expiresAfterInactivitySeconds) &&
+        Objects.equals(this.name, clientParams.name);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name);
+    return Objects.hash(expiresAfterInactivitySeconds, name);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ClientParams {\n");
+    sb.append("    expiresAfterInactivitySeconds: ").append(toIndentedString(expiresAfterInactivitySeconds)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("}");
     return sb.toString();

@@ -23,38 +23,39 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 
 /**
- * ElevateRequest
+ * The RegenerateTokenResponse holds information about the response to the regenerate token action.
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", comments = "Generator version: 7.19.0")
-public class ElevateRequest {
-  public static final String SERIALIZED_NAME_DURATION_SECONDS = "durationSeconds";
-  @SerializedName(SERIALIZED_NAME_DURATION_SECONDS)
+public class RegenerateTokenResponse {
+  public static final String SERIALIZED_NAME_TOKEN = "token";
+  @SerializedName(SERIALIZED_NAME_TOKEN)
   @javax.annotation.Nonnull
-  private Long durationSeconds;
+  private String token;
 
-  public ElevateRequest() {
+  public RegenerateTokenResponse() {
   }
-
-  public ElevateRequest durationSeconds(@javax.annotation.Nonnull Long durationSeconds) {
-    
-    this.durationSeconds = durationSeconds;
-    return this;
+  /**
+   * Constructor with only readonly parameters
+   */
+  
+  public RegenerateTokenResponse(
+     String token
+  ) {
+    this();
+    this.token = token;
   }
 
   /**
-   * How long the elevation should last, in seconds.
-   * @return durationSeconds
+   * The new token.
+   * @return token
    */
   @javax.annotation.Nonnull
 
-  public Long getDurationSeconds() {
-    return durationSeconds;
+  public String getToken() {
+    return token;
   }
 
 
-  public void setDurationSeconds(@javax.annotation.Nonnull Long durationSeconds) {
-    this.durationSeconds = durationSeconds;
-  }
 
   @Override
   public boolean equals(Object o) {
@@ -64,20 +65,20 @@ public class ElevateRequest {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ElevateRequest elevateRequest = (ElevateRequest) o;
-    return Objects.equals(this.durationSeconds, elevateRequest.durationSeconds);
+    RegenerateTokenResponse regenerateTokenResponse = (RegenerateTokenResponse) o;
+    return Objects.equals(this.token, regenerateTokenResponse.token);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(durationSeconds);
+    return Objects.hash(token);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ElevateRequest {\n");
-    sb.append("    durationSeconds: ").append(toIndentedString(durationSeconds)).append("\n");
+    sb.append("class RegenerateTokenResponse {\n");
+    sb.append("    token: ").append(toIndentedString(token)).append("\n");
     sb.append("}");
     return sb.toString();
   }

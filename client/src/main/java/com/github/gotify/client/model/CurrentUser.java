@@ -38,6 +38,11 @@ public class CurrentUser {
   @javax.annotation.Nullable
   private Long clientId;
 
+  public static final String SERIALIZED_NAME_CREATED_AT = "createdAt";
+  @SerializedName(SERIALIZED_NAME_CREATED_AT)
+  @javax.annotation.Nonnull
+  private OffsetDateTime createdAt;
+
   public static final String SERIALIZED_NAME_ELEVATED_UNTIL = "elevatedUntil";
   @SerializedName(SERIALIZED_NAME_ELEVATED_UNTIL)
   @javax.annotation.Nullable
@@ -61,11 +66,13 @@ public class CurrentUser {
   
   public CurrentUser(
      Long clientId, 
+     OffsetDateTime createdAt, 
      OffsetDateTime elevatedUntil, 
      Long id
   ) {
     this();
     this.clientId = clientId;
+    this.createdAt = createdAt;
     this.elevatedUntil = elevatedUntil;
     this.id = id;
   }
@@ -99,6 +106,18 @@ public class CurrentUser {
 
   public Long getClientId() {
     return clientId;
+  }
+
+
+
+  /**
+   * The date the user was created.
+   * @return createdAt
+   */
+  @javax.annotation.Nonnull
+
+  public OffsetDateTime getCreatedAt() {
+    return createdAt;
   }
 
 
@@ -159,6 +178,7 @@ public class CurrentUser {
     CurrentUser currentUser = (CurrentUser) o;
     return Objects.equals(this.admin, currentUser.admin) &&
         Objects.equals(this.clientId, currentUser.clientId) &&
+        Objects.equals(this.createdAt, currentUser.createdAt) &&
         Objects.equals(this.elevatedUntil, currentUser.elevatedUntil) &&
         Objects.equals(this.id, currentUser.id) &&
         Objects.equals(this.name, currentUser.name);
@@ -166,7 +186,7 @@ public class CurrentUser {
 
   @Override
   public int hashCode() {
-    return Objects.hash(admin, clientId, elevatedUntil, id, name);
+    return Objects.hash(admin, clientId, createdAt, elevatedUntil, id, name);
   }
 
   @Override
@@ -175,6 +195,7 @@ public class CurrentUser {
     sb.append("class CurrentUser {\n");
     sb.append("    admin: ").append(toIndentedString(admin)).append("\n");
     sb.append("    clientId: ").append(toIndentedString(clientId)).append("\n");
+    sb.append("    createdAt: ").append(toIndentedString(createdAt)).append("\n");
     sb.append("    elevatedUntil: ").append(toIndentedString(elevatedUntil)).append("\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");

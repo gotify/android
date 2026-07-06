@@ -21,6 +21,7 @@ import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,6 +40,11 @@ public class PluginConf {
   @SerializedName(SERIALIZED_NAME_CAPABILITIES)
   @javax.annotation.Nonnull
   private List<String> capabilities = new ArrayList<>();
+
+  public static final String SERIALIZED_NAME_CREATED_AT = "createdAt";
+  @SerializedName(SERIALIZED_NAME_CREATED_AT)
+  @javax.annotation.Nonnull
+  private OffsetDateTime createdAt;
 
   public static final String SERIALIZED_NAME_ENABLED = "enabled";
   @SerializedName(SERIALIZED_NAME_ENABLED)
@@ -83,6 +89,7 @@ public class PluginConf {
   
   public PluginConf(
      String author, 
+     OffsetDateTime createdAt, 
      Long id, 
      String license, 
      String modulePath, 
@@ -91,6 +98,7 @@ public class PluginConf {
   ) {
     this();
     this.author = author;
+    this.createdAt = createdAt;
     this.id = id;
     this.license = license;
     this.modulePath = modulePath;
@@ -138,6 +146,18 @@ public class PluginConf {
   public void setCapabilities(@javax.annotation.Nonnull List<String> capabilities) {
     this.capabilities = capabilities;
   }
+
+  /**
+   * The date the plugin was created.
+   * @return createdAt
+   */
+  @javax.annotation.Nonnull
+
+  public OffsetDateTime getCreatedAt() {
+    return createdAt;
+  }
+
+
 
   public PluginConf enabled(@javax.annotation.Nonnull Boolean enabled) {
     
@@ -252,6 +272,7 @@ public class PluginConf {
     PluginConf pluginConf = (PluginConf) o;
     return Objects.equals(this.author, pluginConf.author) &&
         Objects.equals(this.capabilities, pluginConf.capabilities) &&
+        Objects.equals(this.createdAt, pluginConf.createdAt) &&
         Objects.equals(this.enabled, pluginConf.enabled) &&
         Objects.equals(this.id, pluginConf.id) &&
         Objects.equals(this.license, pluginConf.license) &&
@@ -263,7 +284,7 @@ public class PluginConf {
 
   @Override
   public int hashCode() {
-    return Objects.hash(author, capabilities, enabled, id, license, modulePath, name, token, website);
+    return Objects.hash(author, capabilities, createdAt, enabled, id, license, modulePath, name, token, website);
   }
 
   @Override
@@ -272,6 +293,7 @@ public class PluginConf {
     sb.append("class PluginConf {\n");
     sb.append("    author: ").append(toIndentedString(author)).append("\n");
     sb.append("    capabilities: ").append(toIndentedString(capabilities)).append("\n");
+    sb.append("    createdAt: ").append(toIndentedString(createdAt)).append("\n");
     sb.append("    enabled: ").append(toIndentedString(enabled)).append("\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    license: ").append(toIndentedString(license)).append("\n");

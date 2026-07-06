@@ -9,6 +9,7 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import okhttp3.MultipartBody;
 
+import com.github.gotify.client.model.CreateMessage;
 import com.github.gotify.client.model.Error;
 import com.github.gotify.client.model.Message;
 import com.github.gotify.client.model.PagedMessages;
@@ -22,7 +23,7 @@ import java.util.Set;
 public interface MessageApi {
   /**
    * Create a message.
-   * __NOTE__: This API ONLY accepts an application token as authentication.
+   * __NOTE__: When authenticating with a client token or basic auth, the request body must include \&quot;appid\&quot; referencing an application owned by the authenticated user. When authenticating with an application token, the application is derived from the token and any \&quot;appid\&quot; in the body is ignored.
    * @param body the message to add (required)
    * @return Call&lt;Message&gt;
    */
@@ -31,7 +32,7 @@ public interface MessageApi {
   })
   @POST("message")
   Call<Message> createMessage(
-    @retrofit2.http.Body Message body
+    @retrofit2.http.Body CreateMessage body
   );
 
   /**
