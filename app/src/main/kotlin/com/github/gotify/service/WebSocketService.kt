@@ -420,6 +420,22 @@ internal class WebSocketService : Service() {
         b.setContentText(newMessage ?: message)
         b.setStyle(NotificationCompat.BigTextStyle().bigText(formattedMessage))
 
+        if (id > 0) {
+            val deleteIntent = Intent(this, NotificationActionReceiver::class.java)
+                .putExtra(NotificationActionReceiver.EXTRA_MESSAGE_ID, id)
+            val deletePendingIntent = PendingIntent.getBroadcast(
+                this,
+                Utils.longToInt(id),
+                deleteIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+            b.addAction(
+                R.drawable.ic_delete,
+                getString(R.string.delete_message),
+                deletePendingIntent
+            )
+        }
+
         val notificationImageUrl = Extras.getNestedValue(
             String::class.java,
             extras,
@@ -470,6 +486,6 @@ internal class WebSocketService : Service() {
             .setContentIntent(contentIntent)
 
         val notificationManager = this.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(-5, builder.build())
+        notificationManager.notify(NotificationSupport.ID.GROUP_SUMMARY, builder.build())
     }
 }

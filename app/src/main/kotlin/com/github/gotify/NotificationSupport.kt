@@ -229,5 +229,6 @@ internal object NotificationSupport {
     object ID {
         const val FOREGROUND = -1
         const val GROUPED = -2
+        const val GROUP_SUMMARY = -5
     }
 }
